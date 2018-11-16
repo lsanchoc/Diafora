@@ -1,4 +1,4 @@
-<h1>TaxComp<h1>
+<h1>TaxComp</h1>
 
 <p>Este proyecto busca explorar nuevas herramientas y metodos para la visualizacion de grandes jerarquias taxonoomicas</p>
 <h3>Como correr el proyecto:</h3>
