@@ -7,7 +7,7 @@
 	<li>Entrar a la carpeta api downloader</li>
 	<li>Correr el comando npm install(Esto para instalar las dependencias del proyecto)</li>
 	<li>Correr el comando npm start</li>
-	<li><a target="_blank" rel="noopener noreferrer" href="http://locahost:3000" >Acceder a la direccion en que corre el servidor</a></li>
+	<li><a target="_blank" rel="noopener noreferrer" href="http://localhost:3000" >Acceder a la direccion en que corre el servidor</a></li>
 </ul>
 </br>
 <h3>Utilizacion del repositorio</h3>
