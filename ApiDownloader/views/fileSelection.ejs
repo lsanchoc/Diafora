@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8"/>
+	<link href="/stylesheets/estilos.css" rel="stylesheet">
+	<script type="text/javascript" src="/javascripts/fileSelection/verificacion.js"></script>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*"> 
+    <title> Open Taxonomies </title>
+</head>
+<body>
+	<h1>Select</h1>
+	<p id="error_text" class="alert_display"></p>
+	<div id="content" class="selection_body">
+		<input id="file1" class="file_input" type="file" name="Taxonomy1" value="Taxonomy1" accept=".json"></input></br>
+		<input id="file2" class="file_input"type="file" name="Taxonomy2" value="Taxonomy2" accept=".json"></input></br>
+		<input type="button" onclick="VerificarDatos()" name="Save" id="Save" class="Save" value="Load"></br>
+		<button onclick="onDownload()" class="not_important_button">Descargar Taxonomias</button>
+		<button class="not_important_button">Acerca de</button>
+	</div>
+</body>
+</html>
