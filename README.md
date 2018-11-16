@@ -1,6 +1,6 @@
 <h1>TaxComp</h1>
 
-<p>Este proyecto busca explorar nuevas herramientas y metodos para la visualizacion de grandes jerarquias taxonoomicas</p>
+<p>Este proyecto busca explorar nuevas herramientas y metodos para la visualizacion de grandes jerarquias taxonomicas</p>
 <h3>Como correr el proyecto:</h3>
 <ul style="list-style-type:circle">
 	<li>Instalar node js</li>
