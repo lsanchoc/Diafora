@@ -3,6 +3,7 @@
 <p>Este proyecto busca explorar nuevas herramientas y metodos para la visualizacion de grandes jerarquias taxonomicas</p>
 <h3>Como correr el proyecto:</h3>
 <ul style="list-style-type:circle">
+	<li>Clonar o descargar este repositorio</li>
 	<li>Instalar node js</li>
 	<li>Entrar a la carpeta api downloader</li>
 	<li>Correr el comando npm install(Esto para instalar las dependencias del proyecto)</li>
