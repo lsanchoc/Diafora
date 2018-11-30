@@ -27,7 +27,7 @@ var initOptions = {
     "hierarchy_distance":700,
     "width" : 350,
     "height" : 500,
-    separation: 200,
+    separation: 100,
     "background-color" : undefined,
     "stroke-color" : undefined,
     "indent-stroke" : 0.5,
@@ -37,11 +37,11 @@ var initOptions = {
 	"text-color": undefined,
 	"remove-color":undefined,
 	"add-color":undefined,
-	"split-color":"#f442f1",
-	"merge-color":"#3db1f4",
+	"split-color":"#ff96cf",
+	"merge-color":"#ff9a47",
 	"rename-color":"#FFFFFF",
 	"move-color":"#FFFFFF",
-	"equal-color":"#AAAAAA",
+	"equal-color":"#e8e8e8",
 }
 
 
@@ -122,18 +122,18 @@ function setup() {
 	initOptions["hover-color"] = color(249,211,149);
 	initOptions["text-color"] = color(0,0,0);
 	initOptions["hover-color-rect"] = color(48, 44, 66);
-	initOptions["remove-color"] = color(142, 21, 0);
-	initOptions["add-color"] = color(12, 155, 10);
+	initOptions["remove-color"] = color(255, 96, 96);
+	initOptions["add-color"] = color(142, 247, 140);
 
 
 	countChildren(tree);
 	levelList = createRankList(tree);
-	initializeIndentedTree(tree,levelList,initOptions);
+	initializeIndentedTree(tree,levelList,initOptions,1);
 	
 
 	countChildren(tree2);
 	levelList2 = createRankList(tree2);
-	initializeIndentedTree(tree2,levelList2,initOptions);
+	initializeIndentedTree(tree2,levelList2,initOptions,-1);
 	
 
 	calculate_all_merges(levelList,levelList2);
@@ -164,8 +164,8 @@ function draw() {
   let base_y = windowWidth/2 - initOptions.width/2;
   //optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
   //optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
-  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation,0);
-  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation-initOptions["width"],0)
+  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation,0,false);
+  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation,0,true)
 
   /*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,initOptions.separation,0);
@@ -185,7 +185,7 @@ function draw() {
   click = false;
 }
 
-function initializeIndentedTree(originalTree,listByLevel,options){
+function initializeIndentedTree(originalTree,listByLevel,options,growDirection){
     proccesByLevel(originalTree,function(node){
       node.x = 0;
       node.y = 0;
@@ -206,7 +206,7 @@ function initializeIndentedTree(originalTree,listByLevel,options){
     
     unfoldNode(originalTree,initOptions);
 
-    setIndentCordinates(originalTree,options);
+    setIndentCordinates(originalTree,options,growDirection);
     calculateSize(originalTree,options);
 	calculateCordinates(originalTree,options,0,0);
 
@@ -229,7 +229,7 @@ async function recalculateTree(originalTree,options,callback) {
   	changed = false;
 }
 
-function setIndentCordinates(root, options){
+function setIndentCordinates(root, options,growDirection){
   let pendingNodes = [];
   pendingNodes.push(root);
   
@@ -240,7 +240,9 @@ function setIndentCordinates(root, options){
     for(childIndex = 0; childIndex < actual.c.length; childIndex++){
       let childNode = actual.c[childIndex];
       if(childNode){
-      childNode.x = actual.x + options.indent;
+      childNode.x = Math.abs(actual.x) + options.indent;
+      childNode.x *= growDirection;
+      //if(growDirection < 0) childNode.x -= textWidth()
       childNode.width = actual.width-options.indent;
       pendingNodes.push(childNode);
       }
@@ -319,6 +321,7 @@ function calculateCordinates(root, options, xPos,yPos){
     
     if(actual !== null && actual !== undefined && !actual.collapsed){
     let acumulatedHeigth = options.defaultSize;
+
     for(childIndex = 0; childIndex < actual.c.length; childIndex++){
       let childNode = actual.c[childIndex];
       if(childNode){
@@ -384,7 +387,7 @@ function drawIndentedTree(treeRoot, options){
   
 }
 
-function optimizedDrawIndentedTree(listByRank,options,xpos,ypos){
+function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
 	let domains = listByRank["domain"];
 	let kingdom = listByRank["kingdom"];
 	let phylum = listByRank["phylum"];
@@ -405,25 +408,25 @@ function optimizedDrawIndentedTree(listByRank,options,xpos,ypos){
 		drawCutNode(kingdom[taxon],yPointer,yPointer+windowWidth*totalCanvasWidth,options)
 	}
 	//colorMode(HSB,100);
-	drawHierarchyLevel(phylum,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(tclass,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(order,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(superfamily,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(family,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(subfamily,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(tribe,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(genus,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(subgenus,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(species,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(subspecies,options,yPointer,xpos,ypos);
-	drawHierarchyLevel(infraspecies,options,yPointer,xpos,ypos);
+	drawHierarchyLevel(phylum,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(tclass,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(order,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(superfamily,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(family,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(subfamily,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(tribe,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(genus,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(subgenus,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(species,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(subspecies,options,yPointer,xpos,ypos,isRight);
+	drawHierarchyLevel(infraspecies,options,yPointer,xpos,ypos,isRight);
 	
 	
 	//colorMode(RGB, 255);
 	
 	}
 
-function drawHierarchyLevel(taxons,options,pointer,xpos,ypos){
+function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 	if(taxons.length <= 0) return;
 	let initial = findHead(taxons,pointer);
 	//console.log(taxons[0].r+ `->${taxons[initial].n}:  `+initial+ " -------- " + Math.floor(yPointer) +"--"+taxons[initial].y);
@@ -431,23 +434,35 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos){
 	let iniBrigthnes = (options.hsbBrigthnes + options.hsbbrigthnesIncrement*getValueOfRank(taxons[0].r))%100;
 	//console.log(taxons[0].r+": " + initial);
 	let draws = 0;
+	let extra_pos = 0;
 
+	if(isRight){
+		extra_pos = -taxons[0].width;
+	}
 
 	for(let taxon = initial; taxon < taxons.length; taxon++){
 		let node = taxons[taxon];
 		
 		if(node.f.length <= 0 || !node.f[node.f.length-1].collapsed){
 			draws++;
+			
 			fill(iniColor,0,iniBrigthnes);
 			//drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			if(isRight){
+			let size = (node.totalSpecies) ? node.totalSpecies : "";
+			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-textWidth(node.r +":"+node.n + " " + size),ypos);
+			}
+			else{
 			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			}
 			if(interface_variables.squares){
 			drawInside(node, xpos,ypos, options);
 			}
 			if(interface_variables.lines){
 				drawIndent(node, xpos,ypos, options);
 			}
-			drawResumeBars(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			drawResumeBars(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+extra_pos,ypos);
+			
 			//drawResumeDots(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			//drawLines(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			//drawNode(node,options);
@@ -818,10 +833,10 @@ function drawResumeCircles(node,initialY,finalY,options,xpos,ypos){
 
 
 function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
-
+	noStroke();
 	//necesita cambiarse por value of rank
 	if(node.collapsed && node.r.toLowerCase() != "species"){
-		let bar_width = options["width"] - node.x;
+		let bar_width = options["width"] - Math.abs(node.x);
 		let bar_heigth = node["height"] - options.defaultSize;
 		let unit = bar_width/node.desendece;
 		let bar_x = node.x + xpos;
