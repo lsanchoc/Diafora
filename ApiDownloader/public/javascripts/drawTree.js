@@ -15,12 +15,15 @@ if(!tree || !tree2){
 
 var initOptions = {
     defaultSize : 20,
+    defaultBarSize: 10,
     indent : 30,
     increment: 20,
     hsbColor: 30,
     hsbIncrement: 2,
     hsbBrigthnes: 50,
     hsbbrigthnesIncrement: 7,
+    use_log_scale:false,
+    use_resume_bars:true,
     log_increment: 15,
     log_scale: 5,
     "circle-padding": 3,
@@ -180,7 +183,13 @@ function draw() {
 	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
   	//console.log(mouseX +"---"+mouseY);
   
-
+  	//check if we are using bars
+  	if(initOptions.use_resume_bars != interface_variables.bars){
+  		initOptions.use_resume_bars = interface_variables.bars
+  		//update the tree if we are not using bars
+  		recalculateTree(tree,initOptions,function(){return;});
+  		recalculateTree(tree2,initOptions,function(){return;});
+  	}
 
   click = false;
 }
@@ -295,13 +304,30 @@ function calculateSize(root, options){
   
 	
 }
-
+/*
+//return node logaritimicScale
 function getNodeSize(node, options){
 	if(node.desendece)
 		return options.defaultSize + Math.log(node.desendece)/Math.log(options.log_scale)*options.log_increment;
 	return options.defaultSize;
 				
 }
+*/
+
+//return node logaritimicScale
+function getNodeSize(node, options){
+	//stores how much extra size the node gets
+	let extra = 0;
+	
+	if(node.desendece && options.use_log_scale && options.use_resume_bars)
+		extra =  Math.log(node.desendece)/Math.log(options.log_scale)*options.log_increment;
+	else if(node.desendece && options.use_resume_bars)
+		extra = options.defaultBarSize;
+	console.log({options,extra});
+	return (options.defaultSize+extra);
+				
+}
+
 
 function increaseFamilySize(node, increment){
 	node.f.forEach(function(fam){

@@ -5,6 +5,7 @@ var interface_variables = {
 	squares:false,
 	removed:false,
 	added:false,
+	bars:false
 }
 
 function onSalir(){
@@ -39,5 +40,7 @@ function onAddedChange(){
 	interface_variables.added = !interface_variables.added;
 }
 
-
+function onBarsChange(){
+	interface_variables.bars = !interface_variables.added;
+}
 //showInfo("tortuga", "body");

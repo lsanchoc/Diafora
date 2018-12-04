@@ -60,7 +60,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		}
 	);
 
-	//serach for new nodes, and moves
+	//search for new nodes, and moves
 	//duplicated work, should be optimized
 	rigth_nodes.forEach(
 		function(node){
