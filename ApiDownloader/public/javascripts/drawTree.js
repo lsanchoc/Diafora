@@ -40,7 +40,7 @@ var initOptions = {
 	"text-color": undefined,
 	"remove-color":undefined,
 	"add-color":undefined,
-	"split-color":"#ff96cf",
+	"split-color":"#e066ff",
 	"merge-color":"#ff9a47",
 	"rename-color":"#FFFFFF",
 	"move-color":"#FFFFFF",
@@ -126,7 +126,7 @@ function setup() {
 	initOptions["text-color"] = color(0,0,0);
 	initOptions["hover-color-rect"] = color(48, 44, 66);
 	initOptions["remove-color"] = color(255, 96, 96);
-	initOptions["add-color"] = color(142, 247, 140);
+	initOptions["add-color"] = color(177, 255, 175);
 
 
 	countChildren(tree);
@@ -168,7 +168,7 @@ function draw() {
   //optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
   //optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
   optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation,0,false);
-  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation,0,true)
+  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation,0,true);
 
   /*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,initOptions.separation,0);
@@ -482,7 +482,7 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			}
 			if(interface_variables.squares){
-			drawInside(node, xpos,ypos, options);
+			drawInside(node, xpos+extra_pos,ypos, options);
 			}
 			if(interface_variables.lines){
 				drawIndent(node, xpos,ypos, options);
@@ -853,6 +853,7 @@ function drawResumeDots(node,initialY,finalY,options,xpos,ypos){
 		}
 }
 }
+
 function drawResumeCircles(node,initialY,finalY,options,xpos,ypos){
 
 }
