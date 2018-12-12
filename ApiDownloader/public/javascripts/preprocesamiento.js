@@ -26,7 +26,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 	left_nodes.forEach(function (node){
 		left_map[node.n] = node;
 		node.moved = false;
-		node.sinonym_number = 0;
+		//node.sinonym_number = 0;
 		node.equivalent = [];
 	});
 
@@ -34,7 +34,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		rigth_map[node.n] = node;
 		node.moved = false;
 		node.equivalent = [];
-		node.sinonym_number = 0;
+		//node.sinonym_number = 0;
 	});
 
 
@@ -51,16 +51,22 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 				}*/
 				node.equivalent.push(equivalent);
 				//equivalent.equivalent.push(node);
-
+				//Compare the parent of each node
 				if(equivalent.f[equivalent.f.length - 1].n != node.f[node.f.length - 1].n){
 					node.moved = true;
 					equivalent.moved = true;
+					//increase move counter for familiar nodes
+					node.f.forEach(
+					function(familiar){
+						familiar.totalMoves++;
+					}
+					)
 				}
 			}
 		}
 	);
 
-	//search for new nodes, and moves
+	//search for removes, and moves
 	//duplicated work, should be optimized
 	rigth_nodes.forEach(
 		function(node){
@@ -74,10 +80,17 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 				}*/
 				node.equivalent.push(equivalent);
 				//equivalent.equivalent.push(node);
-
+				//Compare the parent of each node
 				if(equivalent.f[equivalent.f.length - 1].n != node.f[node.f.length - 1].n){
 					node.moved = true;
 					equivalent.moved = true;
+					//increase move counter for familiar nodes
+					node.f.forEach(
+					function(familiar){
+						familiar.totalMoves++;
+					}
+					)
+
 				}
 			}
 		}
@@ -88,6 +101,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 	let synonims_left = [];
 	let synonims_rigth = [];
 
+	//add synonim to node
 	left_nodes.forEach(function (node){
 		node.s.forEach(function(sinonym){
 			let sinonym_node = rigth_map[sinonym];
@@ -98,6 +112,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		});
 	});
 
+	//add synonim to node
 	rigth_nodes.forEach(function (node){
 		node.s.forEach(function(sinonym){
 			let sinonym_node = left_map[sinonym];
@@ -117,12 +132,27 @@ function name_changes_left(node_list){
 	node_list.forEach(
 		function(node){
 			let equivalence = node.equivalent.length;
+			//console.log(node.equivalent);
 			 if(equivalence > 1){
+
 				node.f.forEach(function(familiar){familiar.totalSplits++});
 				node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalSplits++})});
 				node.split = true;
-			}else if(equivalence == 1){
-				node.rename = true;
+			}else if(equivalence == 1 && !node.moved){
+				let eq_node = node.equivalent[0];
+				let same_author = compare_author(node.a,eq_node.a);
+				
+				if(node.n == eq_node.n && same_author){
+					node.rename = false;
+				}else{
+					node.rename = true;
+					node.f.forEach(
+					function(familiar){
+						familiar.totalRenames++;
+					}
+					)
+				}
+				//node.rename = true;
 			}else{
 				node.removed = true;
 				node.f.forEach(
@@ -140,17 +170,25 @@ function name_changes_right(node_list){
 	node_list.forEach(
 		function(node){
 			let equivalence = node.equivalent.length;
-			if(equivalence == 1){
-				if(node.n != node.equivalent[0]){
-					node.renamed = true;
-					node.f.forEach(function(familiar){familiar.renames++});
-				}
-			}else if(equivalence > 1){
+			if(equivalence > 1){
 				node.f.forEach(function(familiar){familiar.totalMerges++});
 				node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalMerges++})});
 				node.merge = true;
-			}else if(equivalence == 1){
-				node.rename = true;
+			}else if(equivalence == 1 && !node.moved){
+				let eq_node = node.equivalent[0];
+				let same_author = compare_author(node.a,eq_node.a);
+				
+				if(node.n == eq_node.n && same_author){
+					node.rename = false;
+				}else{
+					node.rename = true;
+					node.f.forEach(
+					function(familiar){
+						familiar.totalRenames++;
+					}
+					)
+				}
+				//node.rename = true;
 			}else{
 				node.added = true;
 				node.f.forEach(
@@ -179,7 +217,7 @@ function calculate_all_merges(left_tree, rigth_tree){
 	);
 
 
-	
+
 	/*verificar_name_changes(left_tree["class"],rigth_tree["class"]);
 	verificar_name_changes(left_tree["order"],rigth_tree["order"]);
 	verificar_name_changes(left_tree["superfamily"],rigth_tree["superfamily"]);
@@ -199,3 +237,20 @@ function calculate_all_merges(left_tree, rigth_tree){
 	*/
 
 }
+
+
+function compare_author(first_author, second_author){
+	if(first_author.length != second_author.length){
+		return false;
+	}else{
+		for(let author_slot = 0;author_slot <  first_author.length; author_slot++){
+			if(first_author[author_slot] != second_author[author_slot]){
+				//console.log({first_author,second_author});
+				return false;
+			}
+		}
+		return true;
+	}
+
+}
+	

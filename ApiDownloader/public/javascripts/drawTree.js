@@ -40,8 +40,8 @@ var initOptions = {
 	"add-color":undefined,
 	"split-color":"#e066ff",
 	"merge-color":"#ff9a47",
-	"rename-color":"#FFFFFF",
-	"move-color":"#FFFFFF",
+	"rename-color":"#AAAACC",
+	"move-color":"#333333",
 	"equal-color":"#e8e8e8",
 }
 
@@ -322,7 +322,7 @@ function getNodeSize(node, options){
 		extra =  Math.log(node.desendece)/Math.log(options.log_scale)*options.log_increment;
 	else if(node.desendece && options.use_resume_bars)
 		extra = options.defaultBarSize;
-	console.log({options,extra});
+	//console.log({options,extra});
 	return (options.defaultSize+extra);
 				
 }
@@ -565,7 +565,9 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 			let merges = "----Merges: "+ node.totalMerges;
 			let removes = "<br>Removes: "+ node.totalRemoves;
 			let insertions = "----Insertions: "+ node.totalInsertions;
-			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions);
+			let renames = "<br>Renames: "+ node.totalRenames;
+			let moves = "----Moves: "+ node.totalMoves;
+			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves);
 		}
 
 
@@ -882,8 +884,9 @@ function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 		rect(bar_x, bar_y,node.totalMerges*unit,bar_heigth);
 		bar_x += node.totalMerges*unit;
 		//moves
-		rect(bar_x, bar_y,0*unit,bar_heigth);
-		bar_x += 0*unit;
+		fill(options["move-color"]);
+		rect(bar_x, bar_y,node.totalMoves*unit,bar_heigth);
+		bar_x += node.totalMoves*unit;
 		//removes
 		fill(options["remove-color"]);
 		rect(bar_x, bar_y, node.totalRemoves*unit,bar_heigth);
@@ -892,6 +895,10 @@ function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 		fill(options["add-color"]);
 		rect(bar_x, bar_y, node.totalInsertions*unit,bar_heigth);
 		bar_x += node.totalInsertions*unit;
+		//renames
+		fill(options["rename-color"]);
+		rect(bar_x, bar_y, node.totalRenames*unit,bar_heigth);
+		bar_x += node.totalRenames*unit;
 		//nonde
 		fill(options["equal-color"]);
 		rect(bar_x, bar_y, bar_width + (node.x + xpos - bar_x)  ,bar_heigth);
