@@ -120,7 +120,7 @@ function setup() {
 	initOptions["background-color"] = color(255,180,40);
 	initOptions["stroke-color"] = color(0,0,0);
 	initOptions["indent-stroke-color"] = color(80,80,80);
-	initOptions["hover-color"] = color(249,211,149);
+	initOptions["hover-color"] = color(120,80,87);
 	initOptions["text-color"] = color(0,0,0);
 	initOptions["hover-color-rect"] = color(48, 44, 66);
 	initOptions["remove-color"] = color(255, 96, 96);
@@ -472,15 +472,20 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 		
 		if(node.f.length <= 0 || !node.f[node.f.length-1].collapsed){
 			draws++;
-			
+			let size = (node.totalSpecies) ? node.totalSpecies : "";
+			let node_text_width = textWidth(node.r +":"+node.n + " " + size);
 			fill(iniColor,0,iniBrigthnes);
 			//drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			if(isRight){
-			let size = (node.totalSpecies) ? node.totalSpecies : "";
-			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-textWidth(node.r +":"+node.n + " " + size),ypos);
+			
+			//a lot of dangerous magin numbers, they control the displcacement of the left tree text and button
+			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-node_text_width-25,ypos);
+			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-10,ypos);
 			}
 			else{
-			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+15,ypos);
+			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			
 			}
 			if(interface_variables.squares){
 			drawInside(node, xpos+extra_pos,ypos, options);
@@ -540,7 +545,7 @@ function isOnScreen(node,yScreenPos,screenHeight){
 		return false;
 	}
 
-
+//basic node drawing function
 function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	let clicked = false;
 	//hover interaction
@@ -552,7 +557,6 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	}else{
 		fill(options["text-color"]);
 	}
-
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node.width,options.defaultSize)){
 		fill(options["hover-color"]); 
 
@@ -571,6 +575,51 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 		}
 
 
+		/*if(click && !changed){
+			//keep visible nodes list clean
+			let cleaning_function;
+			let elder = getRoot(node);
+
+			if(node.collapsed){
+				unfoldNode(node);
+				cleaning_function = function(){node.c.forEach( 
+				function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
+			};
+			}else{
+				foldNode(node);
+				cleaning_function = undefined;
+			}
+			changed = true;
+			
+			click = false;
+			recalculateTree(elder,initOptions,function(){
+				if(cleaning_function){cleaning_function(elder);}
+				});
+			//console.log({visible_lbr});
+  			//recalculateTree(tree2,initOptions);
+			//console.log("updating");
+		}*/
+
+	}
+
+	noStroke();
+	if(node.y >= initialY && node.y <= finalY){
+		let size = (node.totalSpecies) ? node.totalSpecies : "";
+		text(node.r +":"+node.n + " " + size,node.x +5 +xpos,node.y+15);
+	}
+	
+}
+
+function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
+	fill("#FFFFFF");
+	stroke("#000000");
+	strokeWeight(2);
+	let button_size = 12;
+	let button_padding = 3;
+	let node_x_pos = node.x + xpos;
+	let node_y_pos = node.y + ypos + 4;
+	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node_x_pos,node_y_pos,button_size,button_size)){
+		button_size *=  1.2;
 		if(click && !changed){
 			//keep visible nodes list clean
 			let cleaning_function;
@@ -595,14 +644,11 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
   			//recalculateTree(tree2,initOptions);
 			//console.log("updating");
 		}
-
 	}
-
-	noStroke();
-	if(node.y >= initialY && node.y <= finalY){
-		let size = (node.totalSpecies) ? node.totalSpecies : "";
-		text(node.r +":"+node.n + " " + size,node.x +5 +xpos,node.y+15);
-	}
+	rect(node_x_pos,node_y_pos,button_size ,button_size );
+	line(node_x_pos + button_padding,node_y_pos + button_size /2, node_x_pos + button_size - button_padding ,node_y_pos + button_size /2);
+	if(node.collapsed)
+	line(node_x_pos + button_size /2,node_y_pos +button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
 	
 }
 
