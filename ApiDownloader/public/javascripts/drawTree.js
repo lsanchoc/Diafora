@@ -24,6 +24,8 @@ var initOptions = {
     use_resume_bars:true,
     log_increment: 15,
     log_scale: 5,
+    text_size: 12,
+    text_hover: 14,
     "circle-padding": 3,
     "hierarchy_distance":700,
     "width" : 350,
@@ -559,7 +561,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	}
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node.width,options.defaultSize)){
 		fill(options["hover-color"]); 
-
+		textSize(options.text_hover);
 		//this functions comes from drawMene.js
 		if(showInfo){
 			let author = node.a == "" ? "" : `<br>Author:${node.a}`;
@@ -606,6 +608,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	if(node.y >= initialY && node.y <= finalY){
 		let size = (node.totalSpecies) ? node.totalSpecies : "";
 		text(node.r +":"+node.n + " " + size,node.x +5 +xpos,node.y+15);
+		textSize(options.text_size);
 	}
 	
 }
