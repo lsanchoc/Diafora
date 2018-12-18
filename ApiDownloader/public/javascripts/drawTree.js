@@ -42,8 +42,8 @@ var initOptions = {
 	"add-color":undefined,
 	"split-color":"#e066ff",
 	"merge-color":"#ff9a47",
-	"rename-color":"#AAAACC",
-	"move-color":"#333333",
+	"rename-color":"#a37c58",
+	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
 }
 
@@ -614,6 +614,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 }
 
 function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
+	if(node.c.length <= 0 )return;
 	fill("#FFFFFF");
 	stroke("#000000");
 	strokeWeight(2);

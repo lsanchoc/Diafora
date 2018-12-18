@@ -165,6 +165,7 @@ class TaxonomyTree {
 	}
 	//parameters: id of target specie, start index, return maximun of 50 results per api call
 	apiCallById(TaxonId,start){
+		//console.log(TaxonId);
 		this.working = true;
 		//register and api call awaiting response
 		this.pendingJobs++;
@@ -251,8 +252,8 @@ class TaxonomyTree {
 			if(retry < MAX_RETRYS){
 			let retryRequest = createCORSRequest("GET",url);
 			let myself = this;
-			etryRequest.onreadystatechange = function (xhr) {
-				myself.handleResult(xhttpName, url,retry+1);
+			retryRequest.onreadystatechange = function (xhr) {
+				myself.handleResult(retryRequest, url,retry+1);
 			};
         
 			retryRequest.send();
@@ -369,7 +370,14 @@ class TaxonomyTree {
 		if(originalJson.synonyms !== undefined){
 				let synonyms = originalJson.synonyms;
 				for(let i = 0; i < synonyms.length; i++){
-						newTaxon.s.push(synonyms[i].name);
+						let newSynonim = {};
+						newSynonim.n = synonyms[i].name;
+						let symAuthorInfo = getAuthor(synonyms[i].author);
+						newSynonim.a = symAuthorInfo.a;
+						newSynonim.ad = symAuthorInfo.ad;
+						newTaxon.s.push(newSynonim);
+						//console.log(synonyms[i]);
+
 				}
 		}
 		newTaxon.c = newChildTaxons;
@@ -405,6 +413,8 @@ function parseConvertedXml(convertedJson){
 function loadParsedXmlResult(jsonXmlChild){
 		let newResult = {};
 		//console.log(jsonXmlChild);
+		//quick and ugly bugfix of some results in diferent format
+		if(jsonXmlChild.accepted_name) jsonXmlChild = jsonXmlChild.accepted_name[0];
 		newResult.name = jsonXmlChild.name[0]["_value"];
 		newResult.id = jsonXmlChild.id[0]["_value"];
 		newResult.child_taxa = [];
@@ -460,6 +470,10 @@ function getAuthor(authorString){
     let authorData = {};
     authorData.authorDate = [];
     authorData.author = [];
+    if(!authorString)return authorData;
+    if(Array.isArray(authorString)){
+    	authorString = authorString.toString();
+    }
     let processedData;
 	if(botanyPattern.exec(authorString)){
         processedData = authorString.split(botanyPattern);
@@ -467,6 +481,7 @@ function getAuthor(authorString){
         authorString = authorString.replace(zoologyPattern,'');
         processedData = authorString.split(regularPattern);
     }else{
+    	//console.log(authorString);
         processedData = authorString.split(regularPattern);
     }   
     for(let i = 0; i < processedData.length; i++){
