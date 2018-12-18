@@ -171,15 +171,18 @@ function draw() {
   optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation,0,false);
   optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation,0,true);
 
-  /*levelList["species"].forEach(function(taxon){
-		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,initOptions.separation,0);
+  	left_pos = {x: initOptions.separation, y: 0};
+  	right_pos = {x: windowWidth-initOptions.separation, y: 0};
+
+  	levelList["species"].forEach(function(taxon){
+		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
 			
 	});
 
 	levelList2["species"].forEach(function(taxon){
-		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,initOptions.separation,0);
+		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,right_pos,left_pos,-1);
 			
-	});*/
+	});
 	
 	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
   	//console.log(mouseX +"---"+mouseY);
@@ -503,6 +506,7 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 			//drawNode(node,options);
 			//drawNode(node,options)
 
+
 		}
 		if(node.y > yPointer + windowHeight*totalCanvasHeight){break;}
 
@@ -656,12 +660,15 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
 	
 }
 
-function drawLines(node,initialY,finalY,options,xpos,ypos){
+function drawLines(node,initialY,finalY,options,left_pos,right_pos,mod){
+
 	if(node.equivalent && node.equivalent.length > 1){
 		if(node.split){
 			stroke(options["split-color"]);
+			fill(options["split-color"]);
 		}else if(node.merge){
 			stroke(options["merge-color"]);
+			fill(options["merge-color"]);
 		}
 		let fuente = node;
 		while(fuente.f.length > 0 && fuente.f[fuente.f.length-1].collapsed){
@@ -674,17 +681,32 @@ function drawLines(node,initialY,finalY,options,xpos,ypos){
 					while(target.f.length > 0 && target.f[target.f.length-1].collapsed){
 						target = target.f[target.f.length-1];
 					}
+					let size = (node.totalSpecies) ? node.totalSpecies : "";
+					let target_size = (target.totalSpecies) ? target.totalSpecies : "";
+					let node_text_width = textWidth(node.r +":"+node.n + " " + size);
+					let target_text_width = textWidth(target.r +":"+target.n + " " + target_size);
+					let originalCoord = {x:fuente.x+left_pos.x + mod*node_text_width, y: fuente.y+left_pos.y +options.defaultSize/2*mod};
+					let targetCoord = {x:target.x+right_pos.x - mod*target_text_width,y: target.y+right_pos.y-options.defaultSize/2*mod};
+
 					//stroke(0);
+					
 					noFill();
 					strokeWeight(1);
 					beginShape();
-					curveVertex(fuente.x + xpos -10 ,fuente.y + ypos);
-					curveVertex(fuente.x + xpos,fuente.y + ypos);
-					curveVertex(fuente.x + xpos +150,fuente.y + ypos);
-					curveVertex(target.x + windowWidth - options.separation - options["width"] - 150,target.y);
-					curveVertex(target.x + windowWidth - options.separation - options["width"],target.y);
-					curveVertex(target.x + windowWidth - options.separation - options["width"] + 10,target.y);
+					curveVertex(originalCoord.x,originalCoord.y);
+					curveVertex(originalCoord.x,originalCoord.y);
+					curveVertex(originalCoord.x+50*mod,originalCoord.y);
+					curveVertex(originalCoord.x+150*mod,(originalCoord.y+targetCoord.y)/2);
+					curveVertex(targetCoord.x-150*mod,(originalCoord.y+targetCoord.y)/2);
+					curveVertex(targetCoord.x-50*mod,targetCoord.y);
+					curveVertex(targetCoord.x,targetCoord.y);
+					curveVertex(targetCoord.x,targetCoord.y);
 					endShape();
+					//line(originalCoord.x,originalCoord.y,targetCoord.x,targetCoord.y);
+
+					ellipse(originalCoord.x,originalCoord.y,10,10);
+					ellipse(targetCoord.x,targetCoord.y,10,10);
+
 
 					//line(fuente.x + xpos,fuente.y + ypos,target.x + windowWidth - options.separation - options["width"],target.y);
 				}
