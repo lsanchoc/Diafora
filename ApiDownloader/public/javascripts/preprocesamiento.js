@@ -30,7 +30,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		node.moved = false;
 		//node.sinonym_number = 0;
 		node.equivalent = [];
-		console.log(node);
+		//console.log(node);
 	});
 
 	rigth_nodes.forEach(function (node){
@@ -111,7 +111,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		node.s.forEach(function(sinonym){
 			console.log(sinonym);
 			let sinonym_node = rigth_map[sinonym.n];
-			if(sinonym_node && compare_author_date(node,sinonym_node)){
+			if(sinonym_node && compare_author_date(node,sinonym_node) && node.n != sinonym.n){
 				node.equivalent.push(sinonym_node);
 				synonims_left.push({left: node, rigth: sinonym_node});
 			}
@@ -122,7 +122,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 	rigth_nodes.forEach(function (node){
 		node.s.forEach(function(sinonym){
 			let sinonym_node = left_map[sinonym.n];
-			if(sinonym_node && compare_author_date(node,sinonym_node)){
+			if(sinonym_node && compare_author_date(node,sinonym_node) && node.n != sinonym.n){
 				node.equivalent.push(sinonym_node);
 				synonims_rigth.push({left: sinonym_node, rigth: node});
 			}
@@ -140,7 +140,7 @@ function name_changes_left(node_list){
 			let equivalence = node.equivalent.length;
 			//console.log(equivalence);
 			 if(equivalence > 1){
-
+			 	//console.log(node);
 				node.f.forEach(function(familiar){familiar.totalSplits++});
 				//node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalSplits++})});
 				node.split = true;

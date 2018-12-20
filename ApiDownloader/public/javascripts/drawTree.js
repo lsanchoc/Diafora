@@ -685,8 +685,8 @@ function drawLines(node,initialY,finalY,options,left_pos,right_pos,mod){
 					let target_size = (target.totalSpecies) ? target.totalSpecies : "";
 					let node_text_width = textWidth(node.r +":"+node.n + " " + size);
 					let target_text_width = textWidth(target.r +":"+target.n + " " + target_size);
-					let originalCoord = {x:fuente.x+left_pos.x + mod*node_text_width, y: fuente.y+left_pos.y +options.defaultSize/2*mod};
-					let targetCoord = {x:target.x+right_pos.x - mod*target_text_width,y: target.y+right_pos.y-options.defaultSize/2*mod};
+					let originalCoord = {x:fuente.x+left_pos.x + mod*node_text_width, y: fuente.y+left_pos.y +options.defaultSize/2};
+					let targetCoord = {x:target.x+right_pos.x - mod*target_text_width,y: target.y+right_pos.y+options.defaultSize/2};
 
 					//stroke(0);
 					

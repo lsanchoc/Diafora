@@ -373,10 +373,10 @@ class TaxonomyTree {
 						let newSynonim = {};
 						newSynonim.n = synonyms[i].name;
 						let symAuthorInfo = getAuthor(synonyms[i].author);
-						newSynonim.a = symAuthorInfo.a;
-						newSynonim.ad = symAuthorInfo.ad;
+						newSynonim.a = symAuthorInfo.author;
+						newSynonim.ad = symAuthorInfo.authorDate;
 						newTaxon.s.push(newSynonim);
-						//console.log(synonyms[i]);
+						//console.log(synonyms[i].author,symAuthorInfo);
 
 				}
 		}
@@ -450,6 +450,7 @@ function loadParsedXmlResult(jsonXmlChild){
 			for(let synonymIndex = 0; synonymIndex < synonymsArray.length;synonymIndex++){
 				let processedSynonym =  {}; //childrenArray[childrenIndex];
 				processedSynonym.name= synonymsArray[synonymIndex].name[0]["_value"];
+				processedSynonym.author = synonymsArray[synonymIndex].author[0]["_value"];
 				newResult.synonyms.push(processedSynonym);
 				//console.log(processedChild);
 			}
