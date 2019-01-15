@@ -109,7 +109,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 	//add synonim to node
 	left_nodes.forEach(function (node){
 		node.s.forEach(function(sinonym){
-			console.log(sinonym);
+			//console.log(sinonym);
 			let sinonym_node = rigth_map[sinonym.n];
 			if(sinonym_node && compare_author_date(node,sinonym_node) && node.n != sinonym.n){
 				node.equivalent.push(sinonym_node);
@@ -171,6 +171,7 @@ function name_changes_left(node_list){
 	);
 }
 
+//try to store info on left side
 //preguntar sobre el conteo de merges
 function name_changes_right(node_list){
 	node_list.forEach(
@@ -179,7 +180,7 @@ function name_changes_right(node_list){
 			if(equivalence > 1){
 				node.f.forEach(function(familiar){familiar.totalMerges++});
 				//node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalMerges++})});
-				node.merge = true;
+				//node.merge = true;
 			}else if(equivalence == 1 && !node.moved){
 				let eq_node = node.equivalent[0];
 				let same_author = compare_author(node.a,eq_node.a);

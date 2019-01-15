@@ -142,6 +142,10 @@ function setup() {
 
 	calculate_all_merges(levelList,levelList2);
 
+
+	update_lines(tree);
+	//update_lines(tree2);
+
 	//console.log(tree);
 	//console.log(levelList);
 }
@@ -174,16 +178,16 @@ function draw() {
   	left_pos = {x: initOptions.separation, y: 0};
   	right_pos = {x: windowWidth-initOptions.separation, y: 0};
 
-  	levelList["species"].forEach(function(taxon){
+  	/*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
 			
-	});
+	});*/
 
-	levelList2["species"].forEach(function(taxon){
+	/*levelList2["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,right_pos,left_pos,-1);
 			
-	});
-	
+	});*/
+	ls_drawLines(initOptions);
 	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
   	//console.log(mouseX +"---"+mouseY);
   
@@ -659,7 +663,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
 	line(node_x_pos + button_size /2,node_y_pos +button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
 	
 }
-
+/*
 function drawLines(node,initialY,finalY,options,left_pos,right_pos,mod){
 
 	if(node.equivalent && node.equivalent.length > 1){
@@ -714,7 +718,7 @@ function drawLines(node,initialY,finalY,options,left_pos,right_pos,mod){
 			);
 		
 	}
-}
+}*/
 
 
 //add element to rendering queue
