@@ -1,13 +1,16 @@
+// Importing variables
 var MongoClient = require('mongodb').MongoClient,format=require('util').format;
 var path = require('path');
 const NodeCache = require( "node-cache" );
 const taxCache = new NodeCache();
 
+// URL concerning connection to MongoDB
 var url = 'mongodb://localhost:27017';
 
+// Allows to manage files and directories
 var fs = require('fs');
 
-//Go to the path of the taxonomies
+// Go to the path of the taxonomies, given a directory name
 function readFiles(dirname) {
   fs.readdir(dirname, function(err, filenames) {
     if (err) {
@@ -22,7 +25,7 @@ function readFiles(dirname) {
   
 }
 
-//Read the taxonomies JSON
+// Read the taxonomies in JSON format, given a file names array, and the desired directory
 function onFileNames(filenames,dirname){
 	filenames.forEach(function(filename) {
       fs.readFile(dirname + filename, 'utf-8', function(err, content) {
@@ -36,23 +39,25 @@ function onFileNames(filenames,dirname){
     });
 }
 
-//On each JSON consume the information and put on the date base
+// On each JSON, retrieve the information and store it on the Mongo database
 function onFileContent(filename,content){
-	//console.log(content);
-	let newTaxonomie = JSON.parse(content); 
+	// JSON library parses the given content for the requested taxonomy
+	let newTaxonomy = JSON.parse(content); 
+	// Open Mongo connection
 	MongoClient.connect(url,{connectTimeoutMS:72000000,socketTimeoutMS:72000000}, function(err, db) {
 	  if (err) {
-      console.log("primer if");
-      throw err;
-      console.log(err);
-    }
-    let filenameAux = filename.split(".")[0]
-	  divideJson(newTaxonomie,filenameAux,db);
-    db.close();
+        //console.log("primer if");
+        throw err;
+        console.log(err);
+      }
+      let filenameAux = filename.split(".")[0]
+	  divideJson(newTaxonomy,filenameAux,db);
+      db.close();
 	});
 
 }
 
+// JSON divider, to separate each node's children from its parents, until there are no pending children
 function divideJson(jsonTax,filename,db){
   let pendings = [];
   pendings.push(jsonTax);
@@ -60,7 +65,7 @@ function divideJson(jsonTax,filename,db){
     let actual = pendings.pop();
     let children = actual.c;
     let newChildren = [];
-    for(let i = 0;i < children.length ;i++){
+    for(let i = 0; i < children.length; i++){
       if(children[i] != null && children[i] !== undefined){
         let nameChild = {};
         //console.log(children[i]);
@@ -75,6 +80,7 @@ function divideJson(jsonTax,filename,db){
   }
 }
 
+// Inserts the JSON documents into the Mongo database
 function insert(jsonTaxon,filename,db){
   //console.log(filename);
   var dbo = db.db("downloaderTax");
@@ -91,9 +97,10 @@ function insert(jsonTaxon,filename,db){
     });
 }
 
-function consult(taxonomie,name,stats){
+// Searches for the requested taxonomy, given the parent taxonomy and its actual name
+function consult(taxonomy,name,stats){
   //console.log(stats);
-  console.log(`Consulta en ${taxonomie} buscando ${name}`);
+  console.log(`Consulta en ${taxonomy} buscando ${name}`);
   MongoClient.connect(url,{connectTimeoutMS:20000,socketTimeoutMS:20000}, function(err, db) {
 	if (err) {
       console.log(stats);
@@ -101,23 +108,27 @@ function consult(taxonomie,name,stats){
       console.log(err);
     }
 	
+	// Consults for a taxonomy containing the given name
     var dbo = db.db("downloaderTax");
-      dbo.collection(taxonomie).findOne({"n" : name}, function(err, result) {
+    dbo.collection(taxonomy).findOne({"n" : name}, function(err, result) {
       if (err){
         throw err;
-        console.log("error en consulta a bd");
+        console.log("Error en consulta a BD");
       } 
       //console.log(stats.completeJobs);
-     //console.log(result);
-     delete result["_id"];  //delete the id to avoid useless information
+      //console.log(result);
+      
+	  delete result["_id"];  //delete the id to avoid useless information
       taxCache.set(name,result);
       stats.completeJobs++;
       stats.pendingJobs--;
-      let children = result.c;
+      
+	  // Adds the taxonomy's children one by one
+	  let children = result.c;
 	  console.log(result);
-      for(let childIndex = 0;childIndex < children.length;childIndex++){
+      for(let childIndex = 0; childIndex < children.length; childIndex++){
         stats.pendingJobs++;
-        consult(taxonomie,children[childIndex].n,stats);
+        consult(taxonomy, children[childIndex].n,stats);
       }
 
       db.close();
@@ -125,7 +136,8 @@ function consult(taxonomie,name,stats){
   });
 }
 
-function consultTree(taxonomie,name,stats,intervalObj,res){
+// Consults in a taxonomy tree, parting from a root node
+function consultTree(taxonomy,name,stats,intervalObj,res){
   if(stats.pendingJobs <= 0){
     clearInterval(intervalObj);
     let pendings = [];
@@ -138,6 +150,7 @@ function consultTree(taxonomie,name,stats,intervalObj,res){
   }
 }
 
+// Builds a taxon from the pending nodes of a taxonomy
 function buildTaxon(pending){
   //console.log(taxCache);
   let actual = taxCache.get(pending.pop());
@@ -151,17 +164,18 @@ function buildTaxon(pending){
   return actual;
 }
 
-
-function buildTreeTax(taxonomie,name,res){
+// Builds a tree from the given taxonomy, to reflect its structure with nodes and branches
+function buildTreeTax(taxonomy,name,res){
   //console.log(name);
   let stats = {pendingJobs:1,completeJobs:0};
-  consult(taxonomie,name,stats);
+  consult(taxonomy,name,stats);
   let intervalObj = setInterval(() => {
-  consultTree(taxonomie,name,stats,intervalObj,res);
+  consultTree(taxonomy,name,stats,intervalObj,res);
   }, 500);
 
 }
 
+// Shows the whole taxonomy collection from the Mongo database as an array
 function showCollections(){
   console.log('Taxonomy names listing');
   let arrayNames = [];
