@@ -180,14 +180,13 @@ function draw() {
 
   	/*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
-			
 	});*/
 
 	/*levelList2["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,right_pos,left_pos,-1);
 			
 	});*/
-	ls_drawLines(initOptions);
+	ls_drawLines(initOptions,yPointer,left_pos,right_pos);
 	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
   	//console.log(mouseX +"---"+mouseY);
   
@@ -652,6 +651,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
 			recalculateTree(elder,initOptions,function(){
 				if(cleaning_function){cleaning_function(elder);}
 				});
+			update_lines(node);
 			//console.log({visible_lbr});
   			//recalculateTree(tree2,initOptions);
 			//console.log("updating");

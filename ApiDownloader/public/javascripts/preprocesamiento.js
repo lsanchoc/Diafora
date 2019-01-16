@@ -180,7 +180,7 @@ function name_changes_right(node_list){
 			if(equivalence > 1){
 				node.f.forEach(function(familiar){familiar.totalMerges++});
 				//node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalMerges++})});
-				//node.merge = true;
+				node.merge = true;
 			}else if(equivalence == 1 && !node.moved){
 				let eq_node = node.equivalent[0];
 				let same_author = compare_author(node.a,eq_node.a);
