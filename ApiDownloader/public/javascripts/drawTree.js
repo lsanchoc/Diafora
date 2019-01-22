@@ -60,6 +60,10 @@ var levelList2//list of nodes contained in every level of hierarchy
 //position of canvas focus
 var xPointer = 0;
 var yPointer = 0;
+var dispLefTree = 0;
+var dispRightTree = 0;
+var targetDispLefTree = 0;
+var targetDispRightTree = 0;
 
 const SCROLL_SPEED = 0.4;
 
@@ -111,6 +115,9 @@ function MouseClicked(){
 }
 
 function setup() {
+	console.log({dispLefTree,dispRightTree,targetDispLefTree,targetDispRightTree});
+	
+
 	//make canvas size dynamic
 	canvas = createCanvas(windowWidth*totalCanvasWidth, windowHeight*totalCanvasHeight);
 	canvas.parent('sketch-holder');
@@ -164,6 +171,10 @@ function windowResized() {
 }
 
 function draw() {
+	//smooth node focusing
+	dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
+	dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
+
   translate(xPointer,-yPointer);
   background(255);
   fill(0);
@@ -172,11 +183,11 @@ function draw() {
   let base_y = windowWidth/2 - initOptions.width/2;
   //optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
   //optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
-  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation,0,false);
-  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation,0,true);
+  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation ,dispLefTree,false);
+  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation ,dispRightTree,true);
 
-  	left_pos = {x: initOptions.separation, y: 0};
-  	right_pos = {x: windowWidth-initOptions.separation, y: 0};
+  	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  	right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
 
   	/*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
@@ -463,6 +474,8 @@ function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
 
 function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 	if(taxons.length <= 0) return;
+	//ypos += isRight ? dispRightTree : dispLefTree
+	pointer += isRight ? 0 : -ypos;
 	let initial = findHead(taxons,pointer);
 	//console.log(taxons[0].r+ `->${taxons[initial].n}:  `+initial+ " -------- " + Math.floor(yPointer) +"--"+taxons[initial].y);
 	let iniColor = (options.hsbColor + options.hsbIncrement*getValueOfRank(taxons[0].r))%100;
@@ -482,17 +495,18 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 			draws++;
 			let size = (node.totalSpecies) ? node.totalSpecies : "";
 			let node_text_width = textWidth(node.r +":"+node.n + " " + size);
+			node.tw = node_text_width;
 			fill(iniColor,0,iniBrigthnes);
 			//drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			if(isRight){
 			
 			//a lot of dangerous magin numbers, they control the displcacement of the left tree text and button
-			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-node_text_width-25,ypos);
-			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-10,ypos);
+			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-node_text_width-25,ypos,isRight,node_text_width);
+			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos-10,ypos,isRight);
 			}
 			else{
-			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+15,ypos);
-			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
+			drawOnlyText(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+15,ypos,isRight,node_text_width);
+			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos,isRight);
 			
 			}
 			if(interface_variables.squares){
@@ -511,7 +525,7 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 
 
 		}
-		if(node.y > yPointer + windowHeight*totalCanvasHeight){break;}
+		if(node.y > pointer + windowHeight*totalCanvasHeight){break;}
 
 	}
 	
@@ -555,7 +569,7 @@ function isOnScreen(node,yScreenPos,screenHeight){
 	}
 
 //basic node drawing function
-function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
+function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_width){
 	let clicked = false;
 	//hover interaction
 	fill(options["text-color"]);
@@ -566,7 +580,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	}else{
 		fill(options["text-color"]);
 	}
-	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node.width,options.defaultSize)){
+	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node_text_width,options.defaultSize)){
 		fill(options["hover-color"]); 
 		textSize(options.text_hover);
 		//this functions comes from drawMene.js
@@ -583,7 +597,25 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves);
 		}
 
+		if(click){
+			if(node.equivalent.length > 0){
+				if(isRight){
+					targetDispLefTree = node.y - findOpen(node.equivalent[0]).y;
+					yPointer -= targetDispRightTree;
+					targetDispRightTree = 0;
+					dispRightTree = 0;
+					
+				}else{
+					targetDispRightTree = node.y - findOpen(node.equivalent[0]).y;
+					yPointer -= targetDispLefTree;
+					targetDispLefTree = 0;
+					dispLefTree = 0;
+				}
+				console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
+			}
+			
+		}
 		/*if(click && !changed){
 			//keep visible nodes list clean
 			let cleaning_function;
@@ -612,15 +644,15 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos){
 	}
 
 	noStroke();
-	if(node.y >= initialY && node.y <= finalY){
-		let size = (node.totalSpecies) ? node.totalSpecies : "";
-		text(node.r +":"+node.n + " " + size,node.x +5 +xpos,node.y+15);
-		textSize(options.text_size);
-	}
+
+	let size = (node.totalSpecies) ? node.totalSpecies : "";
+	text(node.r +":"+node.n + " " + size,node.x +5 +xpos,ypos + node.y+15);
+	textSize(options.text_size);
+	
 	
 }
 
-function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
+function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	if(node.c.length <= 0 )return;
 	fill("#FFFFFF");
 	stroke("#000000");
@@ -651,7 +683,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos){
 			recalculateTree(elder,initOptions,function(){
 				if(cleaning_function){cleaning_function(elder);}
 				});
-			update_lines(node);
+			update_lines(node,isRight);
 			//console.log({visible_lbr});
   			//recalculateTree(tree2,initOptions);
 			//console.log("updating");
