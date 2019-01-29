@@ -45,6 +45,7 @@ var initOptions = {
 	"rename-color":"#a37c58",
 	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
+	"atractionForce":1,
 }
 
 
@@ -151,6 +152,11 @@ function setup() {
 
 
 	update_lines(tree);
+	updateP(initOptions,lines.splits);
+	updateP(initOptions,lines.merges);
+	sort_tree_nodes(tree);
+	sort_tree_nodes(tree2);
+	
 	//update_lines(tree2);
 
 	//console.log(tree);
@@ -594,7 +600,8 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let insertions = "----Insertions: "+ node.totalInsertions;
 			let renames = "<br>Renames: "+ node.totalRenames;
 			let moves = "----Moves: "+ node.totalMoves;
-			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves);
+			let pv = "<br>----P: "+ node.p;
+			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
 		}
 
 		if(click){
@@ -687,6 +694,10 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			//console.log({visible_lbr});
   			//recalculateTree(tree2,initOptions);
 			//console.log("updating");
+			updateP(initOptions,lines.splits);
+			updateP(initOptions,lines.merges);
+			sort_tree_nodes(tree);
+			sort_tree_nodes(tree2);
 		}
 	}
 	rect(node_x_pos,node_y_pos,button_size ,button_size );
