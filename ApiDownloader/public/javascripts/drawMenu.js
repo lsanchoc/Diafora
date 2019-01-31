@@ -5,6 +5,8 @@ var interface_variables = {
 	squares:false,
 	removed:false,
 	added:false,
+	bars:false,
+	bundling: 0.5,
 }
 
 function onSalir(){
@@ -39,5 +41,13 @@ function onAddedChange(){
 	interface_variables.added = !interface_variables.added;
 }
 
+function onBarsChange(){
+	interface_variables.bars = !interface_variables.bars;
+}
 
+
+function onSliderChange(value){
+	interface_variables.bundling = value/100;
+	//console.log(value/100);
+}
 //showInfo("tortuga", "body");

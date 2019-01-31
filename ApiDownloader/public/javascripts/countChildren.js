@@ -254,7 +254,10 @@ function countChildren(root){
                   node.totalMerges = 0;
                   node.totalRemoves = 0;
                   node.totalInsertions = 0;
-                  node.totalInsertions = 0;
+                  node.totalMoves = 0;
+                  node.totalRenames = 0;
+                  node.tw = 0; //textWidth
+                  node.p = 0;
                 });
   memoryTreeIteration(root,disperceChildCount);
   

@@ -9,8 +9,10 @@
 	<script src = "/javascripts/drawMenu.js" ></script>
 	<script src = "/javascripts/countChildren.js" ></script>
 	<script src = "/javascripts/preprocesamiento.js" ></script>
+	<script src = "/javascripts/lineSystem.js" ></script>
+	<script src = "/javascripts/ordering.js" ></script>
 	<script src = "/javascripts/drawTree.js" ></script>
-
+	
   </head>
   <body>
     <div class="headerTittle">
@@ -18,6 +20,11 @@
 			Taxonomy Visualizer
 		</h1>
 		<button class="vis_button" onclick="onSalir()">Salir</button>
+		<button class="sort_button" onclick="sort_and_update_lines()">Sort</button>
+		<div class="slidecontainer">
+		  	<input type="range" min="0" max="100" value="50" class="slider" id="myRange" 
+		  	oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
+		</div>
     </div>
 		<div id="sketch-holder">
 		<!-- Our sketch will go here! -->
@@ -27,6 +34,7 @@
 		<input type="checkbox" name="cajas" onclick="onBoxChange()">Show boxes</input>
 		<input type="checkbox" name="removes" onclick="onRemovedChange()">Removes</input>
 		<input type="checkbox" name="add" onclick="onAddedChange()">Adds</input>
+		<input type="checkbox" name="bars" onclick="onBarsChange()">Bars</input>
 	</div>
 	<div class="infoSquare">
 		<p class="infoTitle"></p>
