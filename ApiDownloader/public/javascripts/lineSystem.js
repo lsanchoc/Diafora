@@ -11,30 +11,75 @@ var lines = {
 	merges:[],
 	equals:[],
 	renames:[],
+	groups:[],
+}
+
+//c is color
+function setLineColor(line, options){
+	switch(line.c){
+		case "split":
+			stroke(options["split-color"]);
+			break;
+		case "merge":
+			stroke(options["merge-color"]);
+			break;
+		default:
+			stroke(0);
+	}
 }
 
 
-
-
-
 //draws all lines
-function ls_drawLines(options,initialY,leftPos,rightPos){
+function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 	
 	//console.log(lines);
-	curveTightness(-2);
-	smooth()
-	noFill();
-	stroke(options["split-color"]);
-	lines.splits.forEach(function(ln){
+	curveTightness(0);
+	//smooth()
+	//noFill();
+	//stroke(options["split-color"]);
+	/*lines.splits.forEach(function(ln){
 		//console.log(ln.o.x,ln.o.y,ln.t.x,ln.t.y);
 		strokeWeight(ln.a);
 		ls_drawLine(options,ln.o,ln.t,leftPos,rightPos);
+		//let media = getMedia(ln, leftPos,rightPos);
+		//ellipse(media.x,media.y,30,30);
 	});
 	stroke(options["merge-color"]);
 	lines.merges.forEach(function(ln){
 		strokeWeight(ln.a);
 		ls_drawLine(options,ln.o,ln.t,leftPos,rightPos);
-	});
+		//let media = getMedia(ln, leftPos,rightPos);
+		//ellipse(media.x,media.y,30,30);
+	});*/
+
+
+	fill(255,0,0);
+	//draw group data
+
+	//draw lines on bundles
+	lines.groups.forEach(
+		(group) =>{
+			group.l.forEach(
+				(line) => {
+					strokeWeight(line.a);
+					setLineColor(line,options);
+					let newCenter = getMedia(line, leftPos,rightPos);
+					newCenter = {x: (group.m.x *bundling + newCenter.x*(1-bundling)), y: (group.m.y *bundling + newCenter.y*(1-bundling))}
+					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
+				}
+			)
+		}
+	)
+
+	//center of bundle
+	/*
+	lines.groups.forEach(
+		(group) => {
+			ellipse(group.m.x,group.m.y,20,20);
+		}
+	);
+	*/
+
 }
 
 
@@ -46,7 +91,38 @@ function ls_drawLine(options,nodeA, nodeB,leftPos,rightPos){
 	let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
 	curve(origin.x*2, origin.y-50,origin.x + 15 ,origin.y,goal.x -20,goal.y,goal.x ,goal.y+20);
 	//line(origin.x,origin.y,goal.x,goal.y);
+}
 
+function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
+	 	let origin = {x: leftPos.x + nodeA.x + nodeA.tw, y: leftPos.y +nodeA.y + options.defaultSize/2}
+		let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
+
+
+		let dist = 0.7;
+		let mid_origin_center = {x: (origin.x* dist + center.x*(1-dist)), y: (origin.y* dist + center.y*(1-dist))}
+		let mid_goal_center = {x: (goal.x* dist + center.x*(1-dist)), y: (goal.y* dist + center.y*(1-dist))}
+
+		let extra = 10;
+	 	noFill();
+        beginShape();
+        curveVertex(origin.x,origin.y);
+        curveVertex(origin.x,origin.y);
+        bezierVertex(mid_origin_center.x,mid_origin_center.y,origin.x,origin.y,origin.x,origin.y);
+        curveVertex(center.x,center.y);
+        bezierVertex(goal.x,goal.y,mid_goal_center.x,mid_goal_center.y,goal.x,goal.y);
+        curveVertex(goal.x,goal.y);
+        endShape();
+
+
+        //drawBezierPoints(mid_origin_center.x,mid_origin_center.y,origin.x,origin.y,origin.x,origin.y);
+        //drawBezierPoints(goal.x,goal.y,mid_goal_center.x,mid_goal_center.y,goal.x,goal.y);
+        //drawBezierPoints(center.x -extra,center.y, center.x + extra,center.y, center.x,center.y);
+}
+
+function drawBezierPoints(x1,y1,x2,y2,x3,y3){
+ 		ellipse(x1,y1,10,10);
+        ellipse(x2,y2,10,10);
+        ellipse(x3,y3,10,10);
 }
 
 
@@ -123,9 +199,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.splits.push({"o": target, "t": fuente ,"a" : 1});	
+							lines.splits.push({"o": target, "t": fuente ,"a" : 1, c:"split"});	
 							}else{
-							lines.splits.push({"o": fuente, "t": target ,"a" : 1});	
+							lines.splits.push({"o": fuente, "t": target ,"a" : 1, c:"split"});	
 							}
 						}
 						
@@ -147,9 +223,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.merges.push({"o": target, "t": fuente,"a" : 1});
+							lines.merges.push({"o": target, "t": fuente,"a" : 1,c:"merge"});
 							}else{
-							lines.merges.push({"o": fuente, "t": target,"a" : 1});
+							lines.merges.push({"o": fuente, "t": target,"a" : 1,c:"merge"});
 							}
 						}
 						//console.log("found: " +found);
@@ -215,8 +291,124 @@ function removeLinesOf(node){
 	})
 	lines.merges = newMerges;
 
-	console.log(lines);
+	//console.log(lines);
 }
+
+
+
+
+
+//bundling
+
+
+function createBundles(posL,posR,radius){
+	let median = [];
+	let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(lines.equals)));
+	groupsOf(all_lines,posR,posL,radius)
+
+
+
+}
+
+
+//based on dbscanAlgorithm customized for grouping of line mid point
+//from https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68
+function groupsOf(all_lines,posL,posR,radius){
+	let groups = [];
+
+	//stores nodes that need to get its distance compared
+	let pivot_index = [];
+	//gets a random starting poin
+	
+
+
+	let actualGroup = undefined;
+
+	while(all_lines.length > 0){
+
+
+		//there are no neighbors in range
+		if(pivot_index.length <= 0){
+
+			if(actualGroup) groups.push(actualGroup);
+			
+			pivot_index.push(Math.floor(Math.random() * Math.floor(all_lines.length-1)));
+			actualGroup = {m :{x:0,y:0}, l:[]}
+			//console.log("Random!!");
+		}
+
+
+		//get latest pivot node
+		let current_index = pivot_index.pop();
+		let pivot_line = all_lines[current_index];
+		if(!pivot_line) continue; //skip current cicle
+		//console.log(current_index,pivot_line,all_lines.length,all_lines,pivot_index);
+		let pivot_media = getMedia(pivot_line,posL,posR);
+		
+		//remove from lines
+		all_lines.splice(current_index,1);
+
+		
+		//update media of group
+		actualGroup.m.x *= actualGroup.l.length/(actualGroup.l.length+1);
+		actualGroup.m.x += pivot_media.x/(actualGroup.l.length+1);
+		//console.log(actualGroup.m.x,pivot_media.x);
+		actualGroup.m.y *= actualGroup.l.length/(actualGroup.l.length+1);
+		actualGroup.m.y += pivot_media.y/(actualGroup.l.length+1);
+
+		//update actual group
+		actualGroup.l.push(pivot_line);
+
+		//search if next item is close enought
+		if(current_index  < all_lines.length -1 && getPointDistance( pivot_media,getMedia(all_lines[current_index],posL,posR)) < radius){
+			//console.log("inside top : ",current_index);
+
+			pivot_index.push(current_index);
+		}
+		//search if previous item is close enought
+		if(current_index  >= 1 && getPointDistance(pivot_media , getMedia(all_lines[current_index -1],posL,posR)) < radius ){
+			//console.log("inside bot : ",current_index -1);
+			//smaler should be removed at last
+			pivot_index.unshift(current_index-1);
+		}
+		//console.log("continuing");
+
+		
+	}
+	//push last group
+	if(actualGroup) groups.push(actualGroup);
+
+	//console.log(groups.length);
+
+	
+
+	lines.groups = groups;
+}
+
+
+function getMedia(line, posL,posR){
+	let newMedian = {};
+	newMedian.x = (line.o.x+posL.x+line.t.x+posR.x)/2;
+	newMedian.y = (line.o.y+posL.y+line.t.y+posR.y)/2;
+	return newMedian;
+}
+
+
+//euclidean distance
+//could use 1 dimensional distance of y axis
+function getPointDistance(pointA,pointB){
+	let a = pointA.x - pointB.x;
+	let b = pointA.y - pointB.y;
+	//let c = Math.sqrt( a*a + b*b );
+	return Math.sqrt( a*a + b*b );;
+}
+
+
+
+
+
+
+
 
 
 

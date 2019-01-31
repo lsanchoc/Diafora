@@ -7,6 +7,17 @@ console.log(tree2);
 
 //const loadingUrl = "http://localhost:3000/"
 
+
+/**
+Todo List !!!!!!!!!!!!!!!!!!!!!!!!
+--The insertion sort on push into unfolded should be repared, causes nodes to disappear
+--Comments
+--Bug that dissapears nodes when focusing by clicking right node, on the rendering system
+**/
+
+
+
+
 if(!tree || !tree2){
 	window.location.replace(loadingUrl);
 }
@@ -45,7 +56,8 @@ var initOptions = {
 	"rename-color":"#a37c58",
 	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
-	"atractionForce":1,
+	"atractionForce":0.01,
+	 bundle_radius: 100,
 }
 
 
@@ -150,18 +162,22 @@ function setup() {
 
 	calculate_all_merges(levelList,levelList2);
 
-
+	/*
 	update_lines(tree);
 	updateP(initOptions,lines.splits);
 	updateP(initOptions,lines.merges);
 	sort_tree_nodes(tree);
 	sort_tree_nodes(tree2);
-	
+	*/
+	update_lines(tree);
+	sort_and_update_lines();
+
 	//update_lines(tree2);
 
 	//console.log(tree);
 	//console.log(levelList);
 }
+
 function mouseWheel(event) {
 	yPointer -= event.delta*SCROLL_SPEED;
 	//print(event.delta);
@@ -203,7 +219,9 @@ function draw() {
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,right_pos,left_pos,-1);
 			
 	});*/
-	ls_drawLines(initOptions,yPointer,left_pos,right_pos);
+
+	//bundling comes from draw_menu js
+	ls_drawLines(initOptions,yPointer,left_pos,right_pos,interface_variables.bundling);
 	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
   	//console.log(mouseX +"---"+mouseY);
   
@@ -600,7 +618,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let insertions = "----Insertions: "+ node.totalInsertions;
 			let renames = "<br>Renames: "+ node.totalRenames;
 			let moves = "----Moves: "+ node.totalMoves;
-			let pv = "<br>----P: "+ node.p;
+			let pv = "<br>----P: "+ node.y;
 			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
 		}
 
@@ -696,8 +714,17 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			//console.log("updating");
 			updateP(initOptions,lines.splits);
 			updateP(initOptions,lines.merges);
-			sort_tree_nodes(tree);
-			sort_tree_nodes(tree2);
+			//create groups for hierarchical edge bundling
+
+
+			//recreate lines
+	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+	  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
+
+	  		//console.log("rp: ",right_pos.x);
+	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+			//sort_tree_nodes(tree);
+			//sort_tree_nodes(tree2);
 		}
 	}
 	rect(node_x_pos,node_y_pos,button_size ,button_size );
@@ -706,62 +733,6 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	line(node_x_pos + button_size /2,node_y_pos +button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
 	
 }
-/*
-function drawLines(node,initialY,finalY,options,left_pos,right_pos,mod){
-
-	if(node.equivalent && node.equivalent.length > 1){
-		if(node.split){
-			stroke(options["split-color"]);
-			fill(options["split-color"]);
-		}else if(node.merge){
-			stroke(options["merge-color"]);
-			fill(options["merge-color"]);
-		}
-		let fuente = node;
-		while(fuente.f.length > 0 && fuente.f[fuente.f.length-1].collapsed){
-						fuente = fuente.f[fuente.f.length-1];
-					}
-		node.equivalent.forEach(
-				function(eq){
-
-					let target = eq;
-					while(target.f.length > 0 && target.f[target.f.length-1].collapsed){
-						target = target.f[target.f.length-1];
-					}
-					let size = (node.totalSpecies) ? node.totalSpecies : "";
-					let target_size = (target.totalSpecies) ? target.totalSpecies : "";
-					let node_text_width = textWidth(node.r +":"+node.n + " " + size);
-					let target_text_width = textWidth(target.r +":"+target.n + " " + target_size);
-					let originalCoord = {x:fuente.x+left_pos.x + mod*node_text_width, y: fuente.y+left_pos.y +options.defaultSize/2};
-					let targetCoord = {x:target.x+right_pos.x - mod*target_text_width,y: target.y+right_pos.y+options.defaultSize/2};
-
-					//stroke(0);
-					
-					noFill();
-					strokeWeight(1);
-					beginShape();
-					curveVertex(originalCoord.x,originalCoord.y);
-					curveVertex(originalCoord.x,originalCoord.y);
-					curveVertex(originalCoord.x+50*mod,originalCoord.y);
-					curveVertex(originalCoord.x+150*mod,(originalCoord.y+targetCoord.y)/2);
-					curveVertex(targetCoord.x-150*mod,(originalCoord.y+targetCoord.y)/2);
-					curveVertex(targetCoord.x-50*mod,targetCoord.y);
-					curveVertex(targetCoord.x,targetCoord.y);
-					curveVertex(targetCoord.x,targetCoord.y);
-					endShape();
-					//line(originalCoord.x,originalCoord.y,targetCoord.x,targetCoord.y);
-
-					ellipse(originalCoord.x,originalCoord.y,10,10);
-					ellipse(targetCoord.x,targetCoord.y,10,10);
-
-
-					//line(fuente.x + xpos,fuente.y + ypos,target.x + windowWidth - options.separation - options["width"],target.y);
-				}
-
-			);
-		
-	}
-}*/
 
 
 //add element to rendering queue
@@ -1024,4 +995,59 @@ function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 		
 	}
 
+
+	
+
 }
+
+//sorts and update relation lines
+async function sort_and_update_lines(){
+		//update_lines(tree);
+		updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
+		updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
+		//sort_tree_nodes(tree);
+		//sort_tree_nodes(tree2);
+		//physics based sort :3
+
+
+		
+		let sort_iterations = 10;
+		//simulate n steps of sort
+		for(let i = 0; i < sort_iterations; i++){
+			//calculates a simulation step of physical atraction btwen nodes
+			sort_all_lines(targetDispLefTree,targetDispRightTree);
+			recalculateTree(tree,initOptions,function(){return;});
+  			recalculateTree(tree2,initOptions,function(){return;});
+		}
+		
+
+		
+
+
+  		//create groups for hierarchical edge bundling
+  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
+
+  		
+
+
+  		//sort visible node order
+  		Object.keys(tree.visible_lbr).forEach(function(rank){
+  			rank = rank.toLowerCase();
+  			//console.log(rank.toUpperCase(),tree.visible_lbr[rank].length);
+  			tree.visible_lbr[rank].sort((a, b) => + parseFloat(a.y) - parseFloat(b.y))
+  			//tree.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
+  		});
+
+  		Object.keys(tree2.visible_lbr).forEach(function(rank){
+  			rank = rank.toLowerCase();
+  			//console.log(rank.toUpperCase(),tree.visible_lbr[rank].length);
+  			tree2.visible_lbr[rank].sort((a, b) => + parseFloat(a.y) - parseFloat(b.y))
+  			//tree2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
+  		});
+
+
+  		//console.log("rp: ",right_pos.x);
+  		//bundles should be created after sorting
+  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+	}
