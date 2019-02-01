@@ -623,7 +623,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 		}
 
 		if(click){
-			if(node.equivalent.length > 0){
+			if(node.equivalent && node.equivalent.length > 0){
 				if(isRight){
 					targetDispLefTree = node.y - findOpen(node.equivalent[0]).y;
 					yPointer -= targetDispRightTree;
