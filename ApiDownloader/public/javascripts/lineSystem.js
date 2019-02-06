@@ -11,6 +11,7 @@ var lines = {
 	merges:[],
 	equals:[],
 	renames:[],
+	moves:[],
 	groups:[],
 }
 
@@ -23,9 +24,26 @@ function setLineColor(line, options){
 		case "merge":
 			stroke(options["merge-color"]);
 			break;
+		case "rename":
+			stroke(options["rename-color"]);
+			break;
+		case "equal":
+			stroke(options["equal-color"]);
+			break;
+		case "move":
+			stroke(options["move-color"]);
+			break;
 		default:
 			stroke(0);
 	}
+}
+
+
+//random for debug
+var seed = 1;
+function custom_random() {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
 }
 
 
@@ -55,14 +73,17 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 
 	fill(255,0,0);
 	//draw group data
+//rq
 
+	seed = 328;
 	//draw lines on bundles
 	lines.groups.forEach(
 		(group) =>{
+			stroke(custom_random()*255,custom_random()*255,custom_random()*255);
 			group.l.forEach(
 				(line) => {
-					strokeWeight(line.a);
-					setLineColor(line,options);
+					strokeWeight(Math.min(line.a,14));
+					//setLineColor(line,options);
 					let newCenter = getMedia(line, leftPos,rightPos);
 					newCenter = {x: (group.m.x *bundling + newCenter.x*(1-bundling)), y: (group.m.y *bundling + newCenter.y*(1-bundling))}
 					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
@@ -102,6 +123,9 @@ function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
 		let mid_origin_center = {x: (origin.x* dist + center.x*(1-dist)), y: (origin.y* dist + center.y*(1-dist))}
 		let mid_goal_center = {x: (goal.x* dist + center.x*(1-dist)), y: (goal.y* dist + center.y*(1-dist))}
 
+		//debug middle
+		ellipse(center.x,center.y,5,5);
+
 		let extra = 10;
 	 	noFill();
         beginShape();
@@ -112,6 +136,7 @@ function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
         bezierVertex(goal.x,goal.y,mid_goal_center.x,mid_goal_center.y,goal.x,goal.y);
         curveVertex(goal.x,goal.y);
         endShape();
+
 
 
         //drawBezierPoints(mid_origin_center.x,mid_origin_center.y,origin.x,origin.y,origin.x,origin.y);
@@ -230,6 +255,69 @@ function updateNodeLines(originalNode,isRight){
 						}
 						//console.log("found: " +found);
 					});
+				}else if(node.rename || node.equivalent[0].rename ){
+					//we found a merge
+					//console.log("merge!!!");
+					node.equivalent.forEach(function(eq,index){
+						let target = findOpen(eq);
+						var found = false;
+						lines.renames.forEach(function(rnm){
+							if ((rnm.o == fuente && rnm.t == target) || (rnm.o == target && rnm.t == fuente)){
+								rnm.a++;
+								found = true;
+							}
+						})
+						if(!found){
+							if(isRight){
+							lines.renames.push({"o": target, "t": fuente,"a" : 1,c:"rename"});
+							}else{
+							lines.renames.push({"o": fuente, "t": target,"a" : 1,c:"rename"});
+							}
+						}
+						//console.log("found: " +found);
+					});
+				}else if(node.moved || node.equivalent[0].moved){
+					//we found a merge
+					//console.log("merge!!!");
+					node.equivalent.forEach(function(eq,index){
+						let target = findOpen(eq);
+						var found = false;
+						lines.moves.forEach(function(mov){
+							if ((mov.o == fuente && mov.t == target) || (mov.o == target && mov.t == fuente)){
+								mov.a++;
+								found = true;
+							}
+						})
+						if(!found){
+							if(isRight){
+							lines.moves.push({"o": target, "t": fuente,"a" : 1,c:"move"});
+							}else{
+							lines.moves.push({"o": fuente, "t": target,"a" : 1,c:"move"});
+							}
+						}
+						//console.log("found: " +found);
+					});
+				}else{
+					//we found a merge
+					//console.log("merge!!!");
+					node.equivalent.forEach(function(eq,index){
+						let target = findOpen(eq);
+						var found = false;
+						lines.equals.forEach(function(mrg){
+							if ((mrg.o == fuente && mrg.t == target) || (mrg.o == target && mrg.t == fuente)){
+								mrg.a++;
+								found = true;
+							}
+						})
+						if(!found){
+							if(isRight){
+							lines.equals.push({"o": target, "t": fuente,"a" : 1,c:"equal"});
+							}else{
+							lines.equals.push({"o": fuente, "t": target,"a" : 1,c:"equal"});
+							}
+						}
+						//console.log("found: " +found);
+					});
 				}
 				
 			}
@@ -291,6 +379,43 @@ function removeLinesOf(node){
 	})
 	lines.merges = newMerges;
 
+	let newRenames = [];
+	lines.renames.forEach(function(rnm){
+		if(rnm.o.n != node.n && rnm.t.n != node.n){
+			newRenames.push(rnm);
+		}else{
+			console.log("Removed renames: ", rnm.o.n, "  ", rnm.t.n);
+		}
+
+
+	})
+
+	lines.renames = newRenames;
+
+	let newEquals = [];
+	lines.equals.forEach(function(eql){
+		if(eql.o.n != node.n && eql.t.n != node.n){
+			newEquals.push(eql);
+		}else{
+			console.log("Removed merges: ", eql.o.n, "  ", eql.t.n);
+		}
+
+
+	})
+	lines.equals = newEquals;
+
+	let newMoves = [];
+	lines.moves.forEach(function(mov){
+		if(mov.o.n != node.n && mov.t.n != node.n){
+			newMoves.push(mov);
+		}else{
+			console.log("Removed merges: ", mov.o.n, "  ", mov.t.n);
+		}
+
+
+	})
+	lines.moves = newMoves;
+
 	//console.log(lines);
 }
 
@@ -299,11 +424,31 @@ function removeLinesOf(node){
 
 
 //bundling
+//sorts all lines in array by media
+function sort_lines_simple(line_array,posL,posR){
+	//console.log(posR,posL);
+	line_array.sort(
+		(a,b) => { 
+			let mediaA = getMedia(a,posL,posR).y;
+			let mediaB = getMedia(b,posL,posR).y;
+			if(mediaA > mediaB){
+				return 1;
+			}else if(mediaA < mediaB){
+				return -1;
+			}else{
+				return 0;
+			}
+		}
+
+	)
+
+}
 
 
 function createBundles(posL,posR,radius){
 	let median = [];
-	let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(lines.equals)));
+	let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
+	sort_lines_simple(all_lines,posL,posR);
 	groupsOf(all_lines,posR,posL,radius)
 
 

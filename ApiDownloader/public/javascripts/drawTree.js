@@ -57,7 +57,8 @@ var initOptions = {
 	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
 	"atractionForce":0.01,
-	 bundle_radius: 100,
+	 bundle_radius: 80,
+	 dirtyNodes:false,
 }
 
 
@@ -456,6 +457,11 @@ function drawIndentedTree(treeRoot, options){
 }
 
 function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
+	if(options.dirtyNodes){
+		sortVisualNodes(options);
+	}
+
+
 	let domains = listByRank["domain"];
 	let kingdom = listByRank["kingdom"];
 	let phylum = listByRank["phylum"];
@@ -499,7 +505,8 @@ function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
 function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 	if(taxons.length <= 0) return;
 	//ypos += isRight ? dispRightTree : dispLefTree
-	pointer += isRight ? 0 : -ypos;
+	//pointer += isRight ? 0 : -ypos;
+	pointer += isRight ? -dispRightTree : -dispLefTree;
 	let initial = findHead(taxons,pointer);
 	//console.log(taxons[0].r+ `->${taxons[initial].n}:  `+initial+ " -------- " + Math.floor(yPointer) +"--"+taxons[initial].y);
 	let iniColor = (options.hsbColor + options.hsbIncrement*getValueOfRank(taxons[0].r))%100;
@@ -618,7 +625,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let insertions = "----Insertions: "+ node.totalInsertions;
 			let renames = "<br>Renames: "+ node.totalRenames;
 			let moves = "----Moves: "+ node.totalMoves;
-			let pv = "<br>----P: "+ node.y;
+			let pv = "<br>----P: "+ node.p;
 			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
 		}
 
@@ -636,6 +643,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 					targetDispLefTree = 0;
 					dispLefTree = 0;
 				}
+				forceRenderUpdate(initOptions);
 				console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
 			}
@@ -725,6 +733,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
 			//sort_tree_nodes(tree);
 			//sort_tree_nodes(tree2);
+
 		}
 	}
 	rect(node_x_pos,node_y_pos,button_size ,button_size );
@@ -1003,8 +1012,7 @@ function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 //sorts and update relation lines
 async function sort_and_update_lines(){
 		//update_lines(tree);
-		updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
-		updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
+		
 		//sort_tree_nodes(tree);
 		//sort_tree_nodes(tree2);
 		//physics based sort :3
@@ -1014,6 +1022,10 @@ async function sort_and_update_lines(){
 		let sort_iterations = 10;
 		//simulate n steps of sort
 		for(let i = 0; i < sort_iterations; i++){
+			//calculate forces for this step
+			updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
+
 			//calculates a simulation step of physical atraction btwen nodes
 			sort_all_lines(targetDispLefTree,targetDispRightTree);
 			recalculateTree(tree,initOptions,function(){return;});
@@ -1030,8 +1042,30 @@ async function sort_and_update_lines(){
 
   		
 
+  		forceRenderUpdate(initOptions);
+  		
 
-  		//sort visible node order
+  		//console.log("rp: ",right_pos.x);
+  		//bundles should be created after sorting
+  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+	}
+
+
+//moves the node and tells the grafic system that things need to be reordered;
+function moveNode(node,newX,newY,options){
+	options.dirtyNodes = true;
+	node.x = newX;
+	node.y =newY;
+}
+//when you modify position of nodes you need to tell the drawing system
+function forceRenderUpdate(options){
+	options.dirtyNodes = true;
+}
+
+
+
+function sortVisualNodes(options){
+	//sort visible node order
   		Object.keys(tree.visible_lbr).forEach(function(rank){
   			rank = rank.toLowerCase();
   			//console.log(rank.toUpperCase(),tree.visible_lbr[rank].length);
@@ -1046,8 +1080,6 @@ async function sort_and_update_lines(){
   			//tree2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
   		});
 
+  		options.dirtyNodes = false;
 
-  		//console.log("rp: ",right_pos.x);
-  		//bundles should be created after sorting
-  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
-	}
+}

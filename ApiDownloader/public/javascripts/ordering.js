@@ -129,8 +129,9 @@ function updateP(options,p_lines,yPosL,yPosR){
 		//console.log({distance,direction});
 		//calcula la prioridad que tiene una linea para moverce hacia una direccion
 		//se suma ya que puede tene un valor p aportado por otra linea que lo toco
-		line.t.p += direction* Math.abs(distance)* options.atractionForce/* line.a*/; //a es la cantidad de lineas representadas por ese nodo	
-		line.o.p += -line.o.p;
+		let force = direction* Math.abs(distance)* options.atractionForce;
+		line.t.p += force;/* line.a*/; //a es la cantidad de lineas representadas por ese nodo	
+		line.o.p -= force;
 		//console.log(line.o.n,line.t.n,distance,line.a ,line.o.p,line.t.p);
 
 	});
