@@ -159,7 +159,7 @@ function name_changes_left(node_list){
 					)
 				}
 				//node.rename = true;
-			}else{
+			}else if(equivalence == 0){
 				node.removed = true;
 				node.f.forEach(
 					function(familiar){
@@ -196,7 +196,7 @@ function name_changes_right(node_list){
 					)
 				}
 				//node.rename = true;
-			}else{
+			}else if(equivalence == 0){
 				node.added = true;
 				node.f.forEach(
 					function(familiar){
