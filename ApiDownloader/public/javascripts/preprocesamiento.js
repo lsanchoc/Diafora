@@ -188,7 +188,7 @@ function name_changes_right(node_list){
 				if(node.n == eq_node.n && same_author){
 					node.rename = false;
 				}else{
-					console.log(node.a,eq_node);
+					//console.log(node.a,eq_node);
 					node.rename = true;
 					node.f.forEach(
 					function(familiar){

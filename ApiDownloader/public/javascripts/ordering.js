@@ -34,10 +34,15 @@ function custom_sort(node){
 
 function sort_all_lines(yPosL, yPosR){
 	//console.log(lines);
-	sort_lines(lines.splits,yPosL, yPosR);
-	sort_lines(lines.merges,yPosL, yPosR);
-	sort_lines(lines.equals,yPosL, yPosR);
-	sort_lines(lines.renames,yPosL, yPosR);
+	//sort_lines(lines.splits,yPosL, yPosR);
+	//sort_lines(lines.merges,yPosL, yPosR);
+	//sort_lines(lines.equals,yPosL, yPosR);
+	//sort_lines(lines.renames,yPosL, yPosR);
+	//sort_lines(lines.moves,yPosL, yPosR);
+
+	let all_lines = get_all_lines();
+	sort_lines(all_lines,yPosL, yPosR);
+
 
 	//console.log("sorted !!!!!!!!");
 }
@@ -61,6 +66,9 @@ function sort_lines(actual_lines,yPosL,yPosR){
 			let source_index = binarySearch(dad.c,source,0,dad.c.length-1);
 			let target_index = binarySearch(mom.c,target,0,mom.c.length-1);
 
+
+
+			//console.log(source,target);
 			//physics based sort of source
 			if(dad.c[source_index] == source){
 				
@@ -69,6 +77,7 @@ function sort_lines(actual_lines,yPosL,yPosR){
 				newIndex = Math.max(newIndex,0);
 				newIndex = Math.min(newIndex,dad.c.length-1);
 
+				//console.log(source,target,dad.c,newIndex);
 				//check if change produces an improvement is not exact becaus positions are not updated yet, but it will do
 				if(getDistance(source,target,yPosL,yPosR) > getDistance(dad.c[newIndex],target,yPosL,yPosR)){
 
@@ -133,6 +142,7 @@ function updateP(options,p_lines,yPosL,yPosR){
 		line.t.p += force;/* line.a*/; //a es la cantidad de lineas representadas por ese nodo	
 		line.o.p -= force;
 		//console.log(line.o.n,line.t.n,distance,line.a ,line.o.p,line.t.p);
+		
 
 	});
 

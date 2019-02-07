@@ -15,6 +15,32 @@ var lines = {
 	groups:[],
 }
 
+//returns filtered lines acording to user interface
+//when variables are changed we require to update bundles
+function get_all_lines(){
+
+	let all_lines = [];
+	//console.log(lines);
+	if(interface_variables.split){
+		all_lines = all_lines.concat(lines.splits);
+	}
+	if(interface_variables.merge){
+		all_lines = all_lines.concat(lines.merges);
+	}
+	if(interface_variables.rename){
+		all_lines = all_lines.concat(lines.renames);
+	}
+	if(interface_variables.move){
+		all_lines = all_lines.concat(lines.moves);
+	}
+
+	if(interface_variables.congruence){
+		all_lines = all_lines.concat(lines.equals);
+	}
+	//console.log(all_lines);
+	return all_lines;
+}
+
 //c is color
 function setLineColor(line, options){
 	switch(line.c){
@@ -79,11 +105,11 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 	//draw lines on bundles
 	lines.groups.forEach(
 		(group) =>{
-			stroke(custom_random()*255,custom_random()*255,custom_random()*255);
+			//stroke(custom_random()*255,custom_random()*255,custom_random()*255);
 			group.l.forEach(
 				(line) => {
 					strokeWeight(Math.min(line.a,14));
-					//setLineColor(line,options);
+					setLineColor(line,options);
 					let newCenter = getMedia(line, leftPos,rightPos);
 					newCenter = {x: (group.m.x *bundling + newCenter.x*(1-bundling)), y: (group.m.y *bundling + newCenter.y*(1-bundling))}
 					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
@@ -112,33 +138,43 @@ function ls_drawLine(options,nodeA, nodeB,leftPos,rightPos){
 	let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
 	curve(origin.x*2, origin.y-50,origin.x + 15 ,origin.y,goal.x -20,goal.y,goal.x ,goal.y+20);
 	//line(origin.x,origin.y,goal.x,goal.y);
+
 }
+
 
 function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
 	 	let origin = {x: leftPos.x + nodeA.x + nodeA.tw, y: leftPos.y +nodeA.y + options.defaultSize/2}
 		let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
 
+		let distX = 0.5;
+		let distY = 0.1;
+		//let centerSmoothnes = 20;
+		let mid_origin_center = {x: (origin.x* distX + center.x*(1-distX)) , y: (origin.y* distY + center.y*(1-distY))}
+		let mid_goal_center = {x: (goal.x* distX + center.x*(1-distX)), y: (goal.y* distY + center.y*(1-distY))}
 
-		let dist = 0.7;
-		let mid_origin_center = {x: (origin.x* dist + center.x*(1-dist)), y: (origin.y* dist + center.y*(1-dist))}
-		let mid_goal_center = {x: (goal.x* dist + center.x*(1-dist)), y: (goal.y* dist + center.y*(1-dist))}
+
 
 		//debug middle
 		ellipse(center.x,center.y,5,5);
 
-		let extra = 10;
+		let extra = 20;
+		origin.x += extra;
+		goal.x -= extra;
 	 	noFill();
         beginShape();
         curveVertex(origin.x,origin.y);
         curveVertex(origin.x,origin.y);
-        bezierVertex(mid_origin_center.x,mid_origin_center.y,origin.x,origin.y,origin.x,origin.y);
-        curveVertex(center.x,center.y);
-        bezierVertex(goal.x,goal.y,mid_goal_center.x,mid_goal_center.y,goal.x,goal.y);
+        bezierVertex(mid_origin_center.x,mid_origin_center.y,-mid_origin_center.x,-mid_origin_center.y,origin.x,origin.y);
+        //bezierVertex(mid_goal_center.x,mid_goal_center.y,mid_origin_center.x,mid_origin_center.y,center.x,center.y);
+        //curveVertex(center.x,center.y);
+        //bezierVertex(center.x - centerSmoothnes,center.y,center.x + centerSmoothnes,center.y,center.x,center.y);
+        bezierVertex(mid_goal_center.x,mid_goal_center.y,-mid_goal_center.x,-mid_goal_center.y,goal.x,goal.y);
+        curveVertex(goal.x,goal.y);
         curveVertex(goal.x,goal.y);
         endShape();
 
 
-
+        //drawBezierPoints(mid_goal_center.x,mid_goal_center.y,mid_origin_center.x,mid_origin_center.y,center.x,center.y);
         //drawBezierPoints(mid_origin_center.x,mid_origin_center.y,origin.x,origin.y,origin.x,origin.y);
         //drawBezierPoints(goal.x,goal.y,mid_goal_center.x,mid_goal_center.y,goal.x,goal.y);
         //drawBezierPoints(center.x -extra,center.y, center.x + extra,center.y, center.x,center.y);
@@ -360,7 +396,7 @@ function removeLinesOf(node){
 		if(spl.o.n != node.n && spl.t.n != node.n ){
 			newSplits.push(spl);
 		}else{
-			console.log("Removed splits: ", spl.o.n, "  ", spl.t.n);
+			//console.log("Removed splits: ", spl.o.n, "  ", spl.t.n);
 		}
 
 	})
@@ -397,7 +433,7 @@ function removeLinesOf(node){
 		if(eql.o.n != node.n && eql.t.n != node.n){
 			newEquals.push(eql);
 		}else{
-			console.log("Removed merges: ", eql.o.n, "  ", eql.t.n);
+			//console.log("Removed merges: ", eql.o.n, "  ", eql.t.n);
 		}
 
 
@@ -447,9 +483,11 @@ function sort_lines_simple(line_array,posL,posR){
 
 function createBundles(posL,posR,radius){
 	let median = [];
-	let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
+	//let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
+	let all_lines = get_all_lines();
+	console.log(all_lines);
 	sort_lines_simple(all_lines,posL,posR);
-	groupsOf(all_lines,posR,posL,radius)
+	groupsOf(all_lines,posL,posR,radius)
 
 
 
@@ -477,7 +515,8 @@ function groupsOf(all_lines,posL,posR,radius){
 
 			if(actualGroup) groups.push(actualGroup);
 			
-			pivot_index.push(Math.floor(Math.random() * Math.floor(all_lines.length-1)));
+			//pivot_index.push(Math.floor(Math.random() * Math.floor(all_lines.length-1)));
+			pivot_index.push(0);
 			actualGroup = {m :{x:0,y:0}, l:[]}
 			//console.log("Random!!");
 		}
@@ -507,7 +546,7 @@ function groupsOf(all_lines,posL,posR,radius){
 		//search if next item is close enought
 		if(current_index  < all_lines.length -1 && getPointDistance( pivot_media,getMedia(all_lines[current_index],posL,posR)) < radius){
 			//console.log("inside top : ",current_index);
-
+			console.log()
 			pivot_index.push(current_index);
 		}
 		//search if previous item is close enought

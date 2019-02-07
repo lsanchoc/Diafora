@@ -10,9 +10,9 @@ console.log(tree2);
 
 /**
 Todo List !!!!!!!!!!!!!!!!!!!!!!!!
---The insertion sort on push into unfolded should be repared, causes nodes to disappear
 --Comments
---Bug that dissapears nodes when focusing by clicking right node, on the rendering system
+Focus should be maitained on last clicked node after sort
+Bug lineas desaparecen al abrir nodos a nivel de especies
 **/
 
 
@@ -57,7 +57,7 @@ var initOptions = {
 	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
 	"atractionForce":0.01,
-	 bundle_radius: 80,
+	 bundle_radius: 60,
 	 dirtyNodes:false,
 }
 
@@ -132,6 +132,7 @@ function setup() {
 	console.log({dispLefTree,dispRightTree,targetDispLefTree,targetDispRightTree});
 	
 
+
 	//make canvas size dynamic
 	canvas = createCanvas(windowWidth*totalCanvasWidth, windowHeight*totalCanvasHeight);
 	canvas.parent('sketch-holder');
@@ -198,19 +199,31 @@ function draw() {
 	dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
 	dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-  translate(xPointer,-yPointer);
-  background(255);
-  fill(0);
 
-  //drawIndentedTree(tree, initOptions);
-  let base_y = windowWidth/2 - initOptions.width/2;
-  //optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
-  //optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
-  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation ,dispLefTree,false);
-  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation ,dispRightTree,true);
-
-  	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
   	right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
+
+
+
+	//if interface lines changed force update
+	if(interface_variables.changedLines){
+		changedLines = false;
+		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+		//console.log("updated lines");
+	}
+
+	translate(xPointer,-yPointer);
+	background(255);
+	fill(0);
+
+	//drawIndentedTree(tree, initOptions);
+	let base_y = windowWidth/2 - initOptions.width/2;
+	//optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
+	//optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
+	optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation ,dispLefTree,false);
+	optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation ,dispRightTree,true);
+
+  	
 
   	/*levelList["species"].forEach(function(taxon){
 		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
@@ -720,8 +733,12 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			//console.log({visible_lbr});
   			//recalculateTree(tree2,initOptions);
 			//console.log("updating");
-			updateP(initOptions,lines.splits);
-			updateP(initOptions,lines.merges);
+			//updateP(initOptions,lines.splits);
+			//updateP(initOptions,lines.merges);
+			//updateP(initOptions,lines.renames);
+			//updateP(initOptions,lines.moves);
+			//updateP(initOptions,lines.equals);
+			
 			//create groups for hierarchical edge bundling
 
 
@@ -1025,6 +1042,9 @@ async function sort_and_update_lines(){
 			//calculate forces for this step
 			updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
 			updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.renames, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.equals, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.moves, targetDispLefTree,targetDispRightTree);
 
 			//calculates a simulation step of physical atraction btwen nodes
 			sort_all_lines(targetDispLefTree,targetDispRightTree);
