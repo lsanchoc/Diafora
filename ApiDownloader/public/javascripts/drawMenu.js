@@ -1,5 +1,7 @@
 const loadingUrl = "http://localhost:3000/";
 
+
+//this variables are accesed all over the code to enable or disable features
 var interface_variables = {
 	lines:true,
 	squares:false,
@@ -15,12 +17,14 @@ var interface_variables = {
 	changedLines:false,
 }
 
+//Used when the buttton exit is cliked
 function onSalir(){
 	window.location.replace(loadingUrl);
 }
 
 
 //writes to info square
+//used in other modules
 function showInfo(title,body){
 	if(title){
 		$( ".infoTitle").html(title);
@@ -30,6 +34,9 @@ function showInfo(title,body){
 		$( ".infoBody").html(body);
 	}
 }
+
+
+//enable and disable the direrent interface variables
 
 function onLineChange(){
 	interface_variables.lines = !interface_variables.lines;
@@ -50,6 +57,8 @@ function onBarsChange(){
 function onAddedChange(){
 	interface_variables.added = !interface_variables.added;
 }
+
+
 //task activating functionss
 function onCongruenceChange(){
 	interface_variables.congruence = !interface_variables.congruence;
@@ -58,7 +67,6 @@ function onCongruenceChange(){
 function onMergeChange(){
 	interface_variables.merge = !interface_variables.merge;
 	interface_variables.changedLines = true;
-	//console.log(interface_variables.merge);
 }
 function onSplitChange(){
 	interface_variables.split = !interface_variables.split;
@@ -78,6 +86,4 @@ function onMoveChange(){
 
 function onSliderChange(value){
 	interface_variables.bundling = value/100;
-	//console.log(value/100);
 }
-//showInfo("tortuga", "body");

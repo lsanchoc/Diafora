@@ -17,10 +17,14 @@
   <body>
     <div class="headerTittle">
 		<h1>
-			L
+			|
 		</h1>
-		<button class="vis_button" onclick="onSalir()">Salir</button>
+		<!--Function comes from ordering menu script -->
+		<button class="vis_button" onclick="onSalir()">Exit</button>
+		<!--Function comes from drawing system -->
 		<button class="sort_button" onclick="sort_and_update_lines()">Sort</button>
+		<!--Function comes from ordering system -->
+		<button class="reset_button" onclick="resetTrees()">Reset</button>
 		<div class="slidecontainer">
 		  	<input type="range" min="0" max="100" value="50" class="slider" id="myRange" 
 		  	oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">

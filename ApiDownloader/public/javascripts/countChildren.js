@@ -40,8 +40,6 @@ function proccesByLevel(root,proccesFunction){
     proccesFunction(actual);
     }
   }
-  
-  
 }
 
 function proccesByLevelConditional(root,proccesFunction,name,value){

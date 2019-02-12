@@ -61,6 +61,16 @@ body {
     border-radius: 5px;
 }
 
+.reset_button{
+    position:  absolute;
+    top: 3%;
+    right: 17%;
+    font-size: 15pt;
+    background-color: rgba(0,0,0,0);
+    display: inline-block;
+    border-radius: 5px;
+}
+
 .button2{
 	margin-left: -55px;
 

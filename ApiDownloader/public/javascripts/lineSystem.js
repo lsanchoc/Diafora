@@ -485,7 +485,7 @@ function createBundles(posL,posR,radius){
 	let median = [];
 	//let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
 	let all_lines = get_all_lines();
-	console.log(all_lines);
+	//console.log(all_lines);
 	sort_lines_simple(all_lines,posL,posR);
 	groupsOf(all_lines,posL,posR,radius)
 

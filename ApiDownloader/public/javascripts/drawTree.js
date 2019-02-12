@@ -1,6 +1,8 @@
 var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
 var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
 treeStr = JSON.stringify(tree);
+
+
 console.log(tree);
 console.log(tree2);
 
@@ -11,17 +13,20 @@ console.log(tree2);
 /**
 Todo List !!!!!!!!!!!!!!!!!!!!!!!!
 --Comments
-Focus should be maitained on last clicked node after sort
+Focus should be maitained on last clicked node after sort or reset
 Bug lineas desaparecen al abrir nodos a nivel de especies
+Extrange flickering
 **/
 
 
 
-
+//checks if bot trees are valid for visualization
 if(!tree || !tree2){
 	window.location.replace(loadingUrl);
 }
 
+
+//all options that can influece how the visualization is displayed
 var initOptions = {
     defaultSize : 20,
     defaultBarSize: 10,
@@ -62,13 +67,13 @@ var initOptions = {
 }
 
 
-var index = tree;
 var canvas = null;
+
+
 //amuount of the screen the canvas takes
 var totalCanvasWidth = 1.0;
 var totalCanvasHeight = 0.9;
-var levelList//list of nodes contained in every level of hierarchy
-var levelList2//list of nodes contained in every level of hierarchy
+
 
 
 //position of canvas focus
@@ -152,16 +157,17 @@ function setup() {
 
 
 	countChildren(tree);
-	levelList = createRankList(tree);
-	initializeIndentedTree(tree,levelList,initOptions,1);
+	initializeIndentedTree(tree,initOptions,1);
 	
 
 	countChildren(tree2);
-	levelList2 = createRankList(tree2);
 	//weird fix, requieres to properly repair  indent grow
-	initializeIndentedTree(tree2,levelList2,initOptions,-1);
+	initializeIndentedTree(tree2,initOptions,-1);
 	
 
+	//calculates al tasks for both taxonomies
+	let levelList = createRankList(tree);
+	let levelList2 = createRankList(tree2);
 	calculate_all_merges(levelList,levelList2);
 
 	/*
@@ -250,7 +256,7 @@ function draw() {
   click = false;
 }
 
-function initializeIndentedTree(originalTree,listByLevel,options,growDirection){
+function initializeIndentedTree(originalTree,options,growDirection){
     proccesByLevel(originalTree,function(node){
       node.x = 0;
       node.y = 0;
@@ -470,8 +476,18 @@ function drawIndentedTree(treeRoot, options){
 }
 
 function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
+	//if nodes are dirty requires update could be moved to a diferent thread
 	if(options.dirtyNodes){
+		//checks positions of nodes, for changes that were not recalculated
+		recalculateTree(tree,initOptions,function(){return;});
+  		recalculateTree(tree2,initOptions,function(){return;});
+
+
 		sortVisualNodes(options);
+		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+
+  		options.dirtyNodes = false;
+
 	}
 
 
@@ -728,16 +744,9 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			click = false;
 			recalculateTree(elder,initOptions,function(){
 				if(cleaning_function){cleaning_function(elder);}
-				});
+			});
+
 			update_lines(node,isRight);
-			//console.log({visible_lbr});
-  			//recalculateTree(tree2,initOptions);
-			//console.log("updating");
-			//updateP(initOptions,lines.splits);
-			//updateP(initOptions,lines.merges);
-			//updateP(initOptions,lines.renames);
-			//updateP(initOptions,lines.moves);
-			//updateP(initOptions,lines.equals);
 			
 			//create groups for hierarchical edge bundling
 
@@ -1067,7 +1076,7 @@ async function sort_and_update_lines(){
 
   		//console.log("rp: ",right_pos.x);
   		//bundles should be created after sorting
-  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+  		//createBundles(left_pos,right_pos,initOptions.bundle_radius);
 	}
 
 
@@ -1100,6 +1109,6 @@ function sortVisualNodes(options){
   			//tree2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
   		});
 
-  		options.dirtyNodes = false;
+  		//options.dirtyNodes = false;
 
 }

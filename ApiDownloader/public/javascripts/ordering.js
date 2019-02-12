@@ -151,6 +151,35 @@ function updateP(options,p_lines,yPosL,yPosR){
 
 
 
+//using functions from counting module
+async function resetTrees(){
+	//reset tree 1 from draw system
+	proccesByLevel(tree,resetSort);
+	proccesByLevel(tree2,resetSort);
+
+	//when moving nodes this should be done
+	forceRenderUpdate(initOptions);
+
+}
+
+
+//sort node children in alphabetical order
+//requires to rerender because nodes are disordered
+function resetSort(node){
+	console.log("sorting node");
+	node.c.sort((a, b) => {
+		if (a.n < b.n) {
+		    return -1;
+		  }
+		  if (a.n > b.n) {
+		    return 1;
+		  }
+		  return 0;
+	});
+}
+
+
+
 
 function getDistance(source, target, yPosL,yPosR){
 	return Math.abs((source.y+yPosL )-(target.y+yPosR ));
