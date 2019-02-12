@@ -159,7 +159,7 @@ function name_changes_left(node_list){
 					)
 				}
 				//node.rename = true;
-			}else{
+			}else if(equivalence == 0){
 				node.removed = true;
 				node.f.forEach(
 					function(familiar){
@@ -188,6 +188,7 @@ function name_changes_right(node_list){
 				if(node.n == eq_node.n && same_author){
 					node.rename = false;
 				}else{
+					//console.log(node.a,eq_node);
 					node.rename = true;
 					node.f.forEach(
 					function(familiar){
@@ -196,7 +197,7 @@ function name_changes_right(node_list){
 					)
 				}
 				//node.rename = true;
-			}else{
+			}else if(equivalence == 0){
 				node.added = true;
 				node.f.forEach(
 					function(familiar){

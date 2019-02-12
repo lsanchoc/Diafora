@@ -6,7 +6,13 @@ var interface_variables = {
 	removed:false,
 	added:false,
 	bars:false,
+	congruence:false,
+	merge:false,
+	split:false,
+	rename:false,
+	move:false,
 	bundling: 0.5,
+	changedLines:false,
 }
 
 function onSalir(){
@@ -37,12 +43,36 @@ function onRemovedChange(){
 	interface_variables.removed = !interface_variables.removed;
 }
 
+function onBarsChange(){
+	interface_variables.bars = !interface_variables.bars;
+}
+
 function onAddedChange(){
 	interface_variables.added = !interface_variables.added;
 }
+//task activating functionss
+function onCongruenceChange(){
+	interface_variables.congruence = !interface_variables.congruence;
+	interface_variables.changedLines = true;
+}
+function onMergeChange(){
+	interface_variables.merge = !interface_variables.merge;
+	interface_variables.changedLines = true;
+	//console.log(interface_variables.merge);
+}
+function onSplitChange(){
+	interface_variables.split = !interface_variables.split;
+	interface_variables.changedLines = true;
+}
 
-function onBarsChange(){
-	interface_variables.bars = !interface_variables.bars;
+function onRenameChange(){
+	interface_variables.rename = !interface_variables.rename;
+	interface_variables.changedLines = true;
+}
+
+function onMoveChange(){
+	interface_variables.move = !interface_variables.move;
+	interface_variables.changedLines = true;
 }
 
 

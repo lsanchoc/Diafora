@@ -17,7 +17,7 @@
   <body>
     <div class="headerTittle">
 		<h1>
-			Taxonomy Visualizer
+			L
 		</h1>
 		<button class="vis_button" onclick="onSalir()">Salir</button>
 		<button class="sort_button" onclick="sort_and_update_lines()">Sort</button>
@@ -30,11 +30,65 @@
 		<!-- Our sketch will go here! -->
 		</div>
 	<div class="optionSquare">
-		<input type="checkbox" name="lineas" onclick="onLineChange()" checked>Show lines</input>
-		<input type="checkbox" name="cajas" onclick="onBoxChange()">Show boxes</input>
-		<input type="checkbox" name="removes" onclick="onRemovedChange()">Removes</input>
-		<input type="checkbox" name="add" onclick="onAddedChange()">Adds</input>
-		<input type="checkbox" name="bars" onclick="onBarsChange()">Bars</input>
+		<label>Lines</label>
+		<label class="switch">
+			<input type="checkbox" name="lineas" onclick="onLineChange()" checked/>
+		 <span class="slider_switch round"></span>
+		</label>
+
+		<!-- <label>Boxes</label>
+		<label class="switch">
+			<input type="checkbox" name="cajas" onclick="onBoxChange()"/>
+		 <span class="slider_switch round"></span>
+		</label>
+		-->
+
+		<label>Bars</label>
+		<label class="switch">
+			<input type="checkbox" name="bars" onclick="onBarsChange()"/>
+		 <span class="slider_switch round"></span>
+		</label>
+
+		<label>Removes</label>
+		<label class="switch">
+			<input type="checkbox" name="removes" onclick="onRemovedChange()"/>
+		 <span class="slider_switch round remove_slider_switch"></span>
+		</label>
+
+		<label>Adds</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onAddedChange()"/>
+		 <span class="slider_switch round add_slider_switch"></span>
+		</label>
+
+		<label>Congruences</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onCongruenceChange()"/>
+		 <span class="slider_switch round congruence_slider_switch"></span>
+		</label>
+
+		<label>Merges</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onMergeChange()"/>
+		 <span class="slider_switch round merge_slider_switch"></span>
+		</label>
+
+		<label>Splits</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onSplitChange()"/>
+		 <span class="slider_switch round split_slider_switch"></span>
+		</label>
+		
+		<label>Renames</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onRenameChange()"/>
+		 <span class="slider_switch round rename_slider_switch"></span>
+		</label>
+		<label>Moves</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onMoveChange()"/>
+		 <span class="slider_switch round rename_slider_switch"></span>
+		</label>
 	</div>
 	<div class="infoSquare">
 		<p class="infoTitle"></p>
