@@ -1,11 +1,14 @@
+/*Todo
+Some lines are removed and never added back
+*/
 
 
-
+//for filtering the ranks whose changes are taking in consideration 
 var filters = {
 	ranks: ["species","infraspecies","subspecies"],
-
 }
 
+//stores all lines of a kind
 var lines = {
 	splits:[],
 	merges:[],
@@ -37,11 +40,11 @@ function get_all_lines(){
 	if(interface_variables.congruence){
 		all_lines = all_lines.concat(lines.equals);
 	}
-	//console.log(all_lines);
 	return all_lines;
 }
 
 //c is color
+//rescives a line type and return a color, should be modified if adding new types
 function setLineColor(line, options){
 	switch(line.c){
 		case "split":
@@ -65,83 +68,54 @@ function setLineColor(line, options){
 }
 
 
-//random for debug
-var seed = 1;
+//Deterministic random number generator
+var seed = 328;
 function custom_random() {
     var x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
 }
 
 
-//draws all lines
+//draws all lines based on bundles created by bundling function
 function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 	
-	//console.log(lines);
 	curveTightness(0);
-	//smooth()
-	//noFill();
-	//stroke(options["split-color"]);
-	/*lines.splits.forEach(function(ln){
-		//console.log(ln.o.x,ln.o.y,ln.t.x,ln.t.y);
-		strokeWeight(ln.a);
-		ls_drawLine(options,ln.o,ln.t,leftPos,rightPos);
-		//let media = getMedia(ln, leftPos,rightPos);
-		//ellipse(media.x,media.y,30,30);
-	});
-	stroke(options["merge-color"]);
-	lines.merges.forEach(function(ln){
-		strokeWeight(ln.a);
-		ls_drawLine(options,ln.o,ln.t,leftPos,rightPos);
-		//let media = getMedia(ln, leftPos,rightPos);
-		//ellipse(media.x,media.y,30,30);
-	});*/
-
-
 	fill(255,0,0);
 	//draw group data
-//rq
 
-	seed = 328;
+
+	//seed = 328;
 	//draw lines on bundles
 	lines.groups.forEach(
 		(group) =>{
 			//stroke(custom_random()*255,custom_random()*255,custom_random()*255);
 			group.l.forEach(
 				(line) => {
-					strokeWeight(Math.min(line.a,14));
+					strokeWeight(Math.max(Math.min(line.a,14),1)); //sets size of line
 					setLineColor(line,options);
 					let newCenter = getMedia(line, leftPos,rightPos);
+
+					//interpolates betwen line center and bundle center acording to bundling variable
 					newCenter = {x: (group.m.x *bundling + newCenter.x*(1-bundling)), y: (group.m.y *bundling + newCenter.y*(1-bundling))}
+					
 					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
 				}
 			)
 		}
 	)
-
-	//center of bundle
-	/*
-	lines.groups.forEach(
-		(group) => {
-			ellipse(group.m.x,group.m.y,20,20);
-		}
-	);
-	*/
-
 }
 
 
 
 //ls draw line betwen node
 function ls_drawLine(options,nodeA, nodeB,leftPos,rightPos){
-	//console.log(leftPos , nodeA.x,nodeA.y, leftPos , nodeB.x,nodeB.y)
 	let origin = {x: leftPos.x + nodeA.x + nodeA.tw, y: leftPos.y +nodeA.y + options.defaultSize/2}
 	let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
 	curve(origin.x*2, origin.y-50,origin.x + 15 ,origin.y,goal.x -20,goal.y,goal.x ,goal.y+20);
-	//line(origin.x,origin.y,goal.x,goal.y);
 
 }
 
-
+//draws a line with tree points
 function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
 	 	let origin = {x: leftPos.x + nodeA.x + nodeA.tw, y: leftPos.y +nodeA.y + options.defaultSize/2}
 		let goal = {x: rightPos.x + nodeB.x - nodeB.tw, y: rightPos.y + nodeB.y + options.defaultSize/2}
@@ -180,6 +154,8 @@ function ls_drawTreePointLine(options,nodeA, nodeB,center,leftPos,rightPos){
         //drawBezierPoints(center.x -extra,center.y, center.x + extra,center.y, center.x,center.y);
 }
 
+
+//draw the control points of a bezier line
 function drawBezierPoints(x1,y1,x2,y2,x3,y3){
  		ellipse(x1,y1,10,10);
         ellipse(x2,y2,10,10);
@@ -187,25 +163,16 @@ function drawBezierPoints(x1,y1,x2,y2,x3,y3){
 }
 
 
-
+//adds and remove lines as needed
 async function update_lines(node,isRight){
-	//reset lines
-	/*lines = {
-		splits:[],
-		merges:[],
-		equals:[],
-		renames:[],
-	}*/
+	// toggle node if collapsed or not 
 	if(node.collapsed) closeNode(node,isRight);
 	else openNode(node,isRight);
-		//slowly but surely start loading lines
 
-		
-
-
+	//onsole.log(lines);
 }
-
-
+  
+//updates lines when opening a node
 function openNode(originalNode,isRight){
 	//remove lines going out from this node
 	removeLinesOf(originalNode);
@@ -215,6 +182,7 @@ function openNode(originalNode,isRight){
 	//add the lines of every children
 }
 
+//updates lines when closing a node
 function closeNode(node,isRight){
 	//go to a rank and execute updating function
 	removeLinesAndChildrenOf(node);
@@ -223,13 +191,11 @@ function closeNode(node,isRight){
 }
 
 
+// counts lines from children and add the to parent
 function updateNodeLines(originalNode,isRight){
-	//console.log("updating lines " + originalNode.n);
 	proccesByLevel(originalNode,function(node){
 	//if the node is present on the new
-	//console.log(node.equivalent.length,filters.ranks.indexOf(node.r),node.r.toLowerCase());
-	//let newSplits;
-	//let newMerges;
+
 	//should not insert repeated lines, insted insert the amount of ocurrences
 	if(node.equivalent && node.equivalent.length > 0 && (filters.ranks.indexOf(node.r.toLowerCase()) > -1)){
 				//console.log(node.n);
@@ -241,9 +207,6 @@ function updateNodeLines(originalNode,isRight){
 								fuente = fuente.f[fuente.f.length-1];
 				}
 
-				/*node.equivalent.forEach(function(eq,index){
-					console.log(eq.merge);
-				});*/
 				//executes only on left tree
 
 				if(node.split || node.equivalent[0].split /*&& node.equivalent.length > 1*/){
@@ -363,6 +326,7 @@ function updateNodeLines(originalNode,isRight){
 }
 
 
+//finds the closest parent node that is visible
 function findOpen(node){
 	//scale on parent for closed nodes
 	if(node.collapsed == false) return node;
@@ -373,7 +337,7 @@ function findOpen(node){
 	return fuente;
 }
 
-
+//removes lines of node and its children
 function removeLinesAndChildrenOf(node,isRight){
 	let pending = [];
 	pending.push(node)
@@ -480,7 +444,8 @@ function sort_lines_simple(line_array,posL,posR){
 
 }
 
-
+//steps involved in the creation of bundles
+//radius is the distance from wich nodes are included in the bundle
 function createBundles(posL,posR,radius){
 	let median = [];
 	//let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
@@ -570,6 +535,7 @@ function groupsOf(all_lines,posL,posR,radius){
 }
 
 
+//return the mediun point betwen two points of al line
 function getMedia(line, posL,posR){
 	let newMedian = {};
 	newMedian.x = (line.o.x+posL.x+line.t.x+posR.x)/2;

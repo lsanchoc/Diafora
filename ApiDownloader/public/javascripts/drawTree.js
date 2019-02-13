@@ -61,6 +61,7 @@ var initOptions = {
 	"rename-color":"#a37c58",
 	"move-color":"#8888CC",
 	"equal-color":"#e8e8e8",
+	"focus-color":"#00000020",
 	"atractionForce":0.01,
 	 bundle_radius: 60,
 	 dirtyNodes:false,
@@ -88,6 +89,8 @@ const SCROLL_SPEED = 0.4;
 
 var changed = false;
 var click = false;
+
+var focusNode = undefined;
 
 tree.visible_lbr = {
       "domain" :        [],
@@ -254,6 +257,16 @@ function draw() {
   	}
 
   click = false;
+
+
+  	//mark focused node
+  	if(focusNode){
+  	fill(initOptions["focus-color"]);
+  	stroke(initOptions["focus-color"]);
+  	strokeWeight(1);
+  	rect(-10,focusNode.y,windowWidth+10,initOptions.defaultSize);
+
+  	}
 }
 
 function initializeIndentedTree(originalTree,options,growDirection){
@@ -507,7 +520,8 @@ function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
 	let infraspecies = listByRank["infraspecies"];
 	
 	
-	/*for(let taxon = 0; taxon < kingdom.length; taxon++){
+	/*
+	for(let taxon = 0; taxon < kingdom.length; taxon++){
 		//drawCutNode(kingdom[taxon],yPointer,yPointer+windowWidth*totalCanvasWidth,options)
 		drawOnlyText(kingdom[taxon],yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 	}*/
@@ -672,36 +686,14 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 					targetDispLefTree = 0;
 					dispLefTree = 0;
 				}
+
+				focusNode = node;
 				forceRenderUpdate(initOptions);
-				console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
+				//console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
 			}
 			
 		}
-		/*if(click && !changed){
-			//keep visible nodes list clean
-			let cleaning_function;
-			let elder = getRoot(node);
-
-			if(node.collapsed){
-				unfoldNode(node);
-				cleaning_function = function(){node.c.forEach( 
-				function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
-			};
-			}else{
-				foldNode(node);
-				cleaning_function = undefined;
-			}
-			changed = true;
-			
-			click = false;
-			recalculateTree(elder,initOptions,function(){
-				if(cleaning_function){cleaning_function(elder);}
-				});
-			//console.log({visible_lbr});
-  			//recalculateTree(tree2,initOptions);
-			//console.log("updating");
-		}*/
 
 	}
 
@@ -1074,10 +1066,22 @@ async function sort_and_update_lines(){
   		forceRenderUpdate(initOptions);
   		
 
+  		focusSelectedNode();
+
   		//console.log("rp: ",right_pos.x);
   		//bundles should be created after sorting
   		//createBundles(left_pos,right_pos,initOptions.bundle_radius);
 	}
+
+
+
+
+//focus the last selected node
+function focusSelectedNode(){
+	if(focusNode){
+		yPointer += focusNode.y-yPointer - windowHeight/2;
+	}
+}
 
 
 //moves the node and tells the grafic system that things need to be reordered;

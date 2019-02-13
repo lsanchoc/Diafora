@@ -18,6 +18,8 @@ var ranks = {
   
 };
 
+
+//return a numeric value from a string containing a rank
 function getValueOfRank(rank){
   let value = ranks[rank.toLowerCase()];
   if(value){
@@ -40,8 +42,12 @@ function proccesByLevel(root,proccesFunction){
     proccesFunction(actual);
     }
   }
+  
+  
 }
 
+
+//Executes function if objecs has a parameter(name) with the value value ---> Object[name] == value
 function proccesByLevelConditional(root,proccesFunction,name,value){
   let pendingNodes = [];
   pendingNodes.push(root);
@@ -59,14 +65,15 @@ function proccesByLevelConditional(root,proccesFunction,name,value){
  
 }
 
-function addParameterToNode(node,name,value,minRank,maxRank
-){
+//receives a nod and adds a parameter based on their rank
+function addParameterToNode(node,name,value,minRank,maxRank){
   if(getValueOfRank(node.r) >= getValueOfRank(minRank) && getValueOfRank(node.r) <= getValueOfRank(maxRank)){
     node[name] = value;
   }
   
 }
 
+//removes a parameter from node based on rank
 function removeParameterToNode(node,name,minRank,maxRank){
   if(getValueOfRank(node.r) >= getValueOfRank(minRank) && getValueOfRank(node.r) <= getValueOfRank(maxRank)){
     delete node[name];
@@ -111,19 +118,9 @@ function memoryTreeIteration(root,proccesFunction){
       }
     }
     
-    
-    
-    
     //if clauses should be unified
     if(actual !== null && actual !== undefined){
     proccesFunction(actual,parentNodes);
-    /*let s = "";
-    parentNodes.forEach(function(p){s += p.n + "--";});
-    s += actual.n;
-    console.log(s);
-    s = "";
-    childrenCount.forEach(function(p){s += p + "--";});
-    console.log(s);*/
     //push as parent if has children
     if(actual.c.length > 0){
       parentNodes.push(actual);
@@ -135,22 +132,19 @@ function memoryTreeIteration(root,proccesFunction){
   
 }
 
+
+//counts all nodes in the tree
 function disperceChildCount(node, parentNodes){
   let childrenAmount = node.c.length;
   node.desendece += node.c.length;
   //console.log(node.n);
   if(childrenAmount > 0){
     //sum this node children to every one of its parent nodes
-    //let parents = ""
     parentNodes.forEach (function(familyNode){
       familyNode.desendece += childrenAmount;
-      //parents += familyNode.n + ":"+ familyNode.cumulativeChildren +"-";
-      //console.log(familyNode.n +" "+ familyNode.cumulativeChildren + "--" + node.n);
     }
     
     );
-    //parents += "--->"+node.n+":"+childrenAmount;
-    //console.log(parents);
   }
 }
 
@@ -170,7 +164,8 @@ function speciesCount(node, parentNodes){
   }
   }
 
-  
+
+//counts all nodes below the specified rank  
 function subRankCount(node, parentNodes,rank){
   let childrenAmount = node.c.length;
   
@@ -181,12 +176,9 @@ function subRankCount(node, parentNodes,rank){
   
   if(childrenAmount > 0 && getValueOfRank(node.r) == getValueOfRank(rank) -1 ){
     //say the node has N species
-    //console.log(node.r +"--"+rank + "  "+(getValueOfRank(node.r))+"/"+(getValueOfRank(rank)-1));
     node["total"+rank] += node.c.length;
     //add species count ot its parents
-    //console.log(node.n);
     parentNodes.forEach (function(familyNode){
-      //console.log(familyNode.n + "---" + familyNode.r +"/" +rank+ "-->" +getValueOfRank(familyNode.r)+"/"+getValueOfRank(rank))
       if(getValueOfRank(familyNode.r) < getValueOfRank(rank)){
         familyNode["total" + rank] += childrenAmount;
       }
@@ -197,19 +189,22 @@ function subRankCount(node, parentNodes,rank){
   }
 
 
+
 function setFamiliars(node, parentNodes){
   node.f = parentNodes.slice(0); ;
 
 
 }
+
+//push node in its corresponding rank on rank list
 function populateRankList(node, ranklist){
   //console.log(node.r.toLowerCase());
-	node.listPosition = ranklist[node.r.toLowerCase()].length;
-	ranklist[node.r.toLowerCase()].push(node);
-	}
+  node.listPosition = ranklist[node.r.toLowerCase()].length;
+  ranklist[node.r.toLowerCase()].push(node);
+  }
 
 function createRankList(treeRoot){
-		let ranklist = {
+    let ranklist = {
       "domain" :        [],
       "kingdom":        [],
       "phylum" :        [],
@@ -226,21 +221,22 @@ function createRankList(treeRoot){
       "infraspecies":   [],
       "subspecies":      [],
   
-			};
-		
-		proccesByLevel(treeRoot,function(node){populateRankList(node,ranklist)});
-		return ranklist;
-	}
+      };
+    
+    proccesByLevel(treeRoot,function(node){populateRankList(node,ranklist)});
+    return ranklist;
+  }
+
 
 function move(node, xmove, ymove){
-		node.x+=xmove;
-		node.y+=ymove;
-	}
+    node.x+=xmove;
+    node.y+=ymove;
+  }
 
 //moves a subtree in x or y cordinates
 function moveSubtree(subtree, xmove, ymove){
-		proccesByLevel(subtree,function(node){move(node,xmove,ymove)});
-	}
+    proccesByLevel(subtree,function(node){move(node,xmove,ymove)});
+  }
 
   //let higerRank = "Family";
   //proccesByLevel(root,function(node){addParameterToNode(node,"total"+rank,0,"kingdom",higerRank)});
@@ -260,34 +256,16 @@ function countChildren(root){
   memoryTreeIteration(root,disperceChildCount);
   
   memoryTreeIteration(root,setFamiliars);
-  rank = "Species";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Genus";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Subgenus";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Tribe";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Subtribe";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Subfamily";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Family";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Superfamily";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Order";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Class";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Phylum";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Infraspecies";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
-  rank = "Subgenus";
-  memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,rank);});
+
+  //executes code for every rank could be a for
+  let all_ranks_processed = ["Species","Genus","Subgenus","Tribe","Subtribe","Subfamily","Family","Superfamily","Order","Class","Phylum","Infraspecies","subgenus"];
+
+  all_ranks_processed.forEach(
+    (current_rank) =>{
+      //counts all aparitions of the nodes with the target rank( current_Rank)
+      memoryTreeIteration(root,function(node,parent){subRankCount(node,parent,current_rank);});
+
+    }
+  );
 
 }
-//console.log(tree.n);
-//countChildren(tree);
-//console.log(tree);
