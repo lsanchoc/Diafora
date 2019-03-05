@@ -1,9 +1,23 @@
 
 
+var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
+var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
+countChildren(tree);
+countChildren(tree2);
+//calculates al tasks for both taxonomies
+let levelList = createRankList(tree);
+let levelList2 = createRankList(tree2);
+calculate_all_merges(levelList,levelList2);
+
+
 var color = "steelblue";
 
 // Generate a 1000 data points using normal distribution with mean=20, deviation=5
-var values = d3.range(1000).map(d3.random.normal(20, 5));
+
+var values = [tree.totalSplits,tree.totalMerges,tree.totalRemoves,tree.totalInsertions,tree.totalMoves,tree.totalRenames]
+var values2 = [tree2.totalSplits,tree2.totalMerges,tree2.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
+console.log(values)
+console.log(values2)
 
 // A formatter for counts.
 var formatCount = d3.format(",.0f");
@@ -18,9 +32,10 @@ var x = d3.scale.linear()
       .domain([min, max])
       .range([0, width]);
 
-// Generate a histogram using twenty uniformly-spaced bins.
+// Generate a histogram using cantBarras.
+var cantBarras = 10
 var data = d3.layout.histogram()
-    .bins(x.ticks(20))
+    .bins(cantBarras)
     (values);
 
 var yMax = d3.max(data, function(d){return d.length});
@@ -106,10 +121,10 @@ function refresh(values){
 
 }
 
-// Calling refresh repeatedly.
+/*// Calling refresh repeatedly.
 setInterval(function() {
   var values = d3.range(1000).map(d3.random.normal(20, 5));
   refresh(values);
   console.log("function");
-}, 2000);
+}, 2000);*/
 
