@@ -1,3 +1,5 @@
+//Not used
+
 function LevenshteinSubminimal(A, B) {
     var a = A.length;
     var b = B.length;

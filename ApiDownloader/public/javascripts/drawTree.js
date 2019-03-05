@@ -1,6 +1,8 @@
 var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
 var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
 treeStr = JSON.stringify(tree);
+
+
 console.log(tree);
 console.log(tree2);
 
@@ -10,79 +12,95 @@ console.log(tree2);
 
 /**
 Todo List !!!!!!!!!!!!!!!!!!!!!!!!
---The insertion sort on push into unfolded should be repared, causes nodes to disappear
 --Comments
---Bug that dissapears nodes when focusing by clicking right node, on the rendering system
+Bug lineas desaparecen al abrir nodos a nivel de especies
+Extrange flickering
 **/
 
 
 
-
+//checks if bot trees are valid for visualization
+//this tree comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
 if(!tree || !tree2){
 	window.location.replace(loadingUrl);
 }
 
+
+//all options that can influece how the visualization is displayed
 var initOptions = {
-    defaultSize : 20,
-    defaultBarSize: 10,
-    indent : 30,
-    increment: 20,
-    hsbColor: 30,
+    defaultSize : 20,				//the size of a node
+    defaultBarSize: 10,				//the size of resume bars
+    indent : 30,					//indent betwen each rank of hierarchy
+    increment: 20,					//old color changin parameters
+    hsbColor: 30,					
     hsbIncrement: 2,
     hsbBrigthnes: 50,
-    hsbbrigthnesIncrement: 7,
-    use_log_scale:false,
+    hsbbrigthnesIncrement: 7,		//end of old color changin parameters
+    use_log_scale:false,			//proporcional scale of nodes acording to their content
     use_resume_bars:true,
-    log_increment: 15,
-    log_scale: 5,
-    text_size: 12,
-    text_hover: 14,
-    "circle-padding": 3,
-    "hierarchy_distance":700,
-    "width" : 350,
-    "height" : 500,
-    separation: 100,
-    "background-color" : undefined,
-    "stroke-color" : undefined,
-    "indent-stroke" : 0.5,
-    "indent-stroke-color" : undefined,
-    "hover-color" : undefined,
-    "hover-color-rect" : undefined,
-	"text-color": undefined,
-	"remove-color":undefined,
-	"add-color":undefined,
-	"split-color":"#e066ff",
-	"merge-color":"#ff9a47",
-	"rename-color":"#a37c58",
-	"move-color":"#8888CC",
-	"equal-color":"#e8e8e8",
-	"atractionForce":0.01,
-	 bundle_radius: 100,
+    log_increment: 15,				//increment of node size by logarigmic level
+    log_scale: 5,					//base of the logaritm for scale
+    text_size: 12,					//display text size in indented tree
+    text_hover: 14,					//Size of text when hovered
+    "circle-padding": 3,			
+    "hierarchy_distance":700,		//distance betwen hierarchys deprecated
+    "width" : 350,					//indented-tree height
+    "height" : 500,					//indented-tree height
+    separation: 100,				//Separation betwen indented-tree and the size of the screen
+    "background-color" : undefined,			//color of the background
+    "stroke-color" : undefined,				
+    "indent-stroke" : 0.5,					// weight of indent iine
+    "indent-stroke-color" : undefined,		// color of indent line
+    "hover-color" : undefined,				//hover color for node deprecated
+    "hover-color-rect" : undefined,			
+	"text-color": undefined,				//Color of display text
+	"remove-color":undefined,				//color of removed nodes used in lines and text
+	"add-color":undefined,					//color of added nodes used in lines and text
+	"split-color":"#e066ff",				//color of split nodes used in lines and text
+	"merge-color":"#ff9a47",				//color of merge nodes used in lines and text
+	"rename-color":"#a37c58",				//color of rename nodes used in lines and text
+	"move-color":"#8888CC",					//color of move nodes used in lines and text
+	"equal-color":"#e8e8e8",				//color of congruence nodes used in lines and text
+	"focus-color":"#00000020",				//color of text when a node is clicked
+	"atractionForce":0.01,					// force by pixel distance causes movement of nodes
+	 bundle_radius: 60,						//radius in pixel to create bundles
+	 dirtyNodes:false,						//flag marked when a node is moved in the children array of its parent
 }
 
-
-var index = tree;
+//stores the canvas
 var canvas = null;
+
+
 //amuount of the screen the canvas takes
 var totalCanvasWidth = 1.0;
 var totalCanvasHeight = 0.9;
-var levelList//list of nodes contained in every level of hierarchy
-var levelList2//list of nodes contained in every level of hierarchy
+
 
 
 //position of canvas focus
-var xPointer = 0;
-var yPointer = 0;
+var xPointer = 0;	//stores x displacement of visualization, not used
+var yPointer = 0;  //stores y displacement of  visualization
+
+//variables for focus and focus animation
 var dispLefTree = 0;
 var dispRightTree = 0;
 var targetDispLefTree = 0;
 var targetDispRightTree = 0;
 
+//speed at wich the mouse scrolls the visualization
 const SCROLL_SPEED = 0.4;
 
-var changed = false;
-var click = false;
+var changed = false;		//
+var click = false; 			//
 
+
+var focusNode = undefined;	//Last node selected by the user
+
+
+//List of visible nodes for both trees by rank
+//Only nodes on this list will be rendered, they are added or removed when user open or closes a node
+//No all nodes on list are drawn, there is an algorithm that determines wich nodes are on the screen
+//It is required that nodes in this tree are sorted by it's  y coordinate any disorder will cause inconcistencis in the render behaviour
 tree.visible_lbr = {
       "domain" :        [],
       "kingdom":        [],
@@ -122,14 +140,11 @@ tree2.visible_lbr = {
 };
 
 
-
-function MouseClicked(){
-
-}
-
+//processing function executed before the first draw
 function setup() {
 	console.log({dispLefTree,dispRightTree,targetDispLefTree,targetDispRightTree});
 	
+
 
 	//make canvas size dynamic
 	canvas = createCanvas(windowWidth*totalCanvasWidth, windowHeight*totalCanvasHeight);
@@ -148,43 +163,40 @@ function setup() {
 	initOptions["remove-color"] = color(255, 96, 96);
 	initOptions["add-color"] = color(177, 255, 175);
 
-
+	//Inicialization of first and second tree
 	countChildren(tree);
-	levelList = createRankList(tree);
-	initializeIndentedTree(tree,levelList,initOptions,1);
+	initializeIndentedTree(tree,initOptions,1);
 	
 
 	countChildren(tree2);
-	levelList2 = createRankList(tree2);
-	//weird fix, requieres to properly repair  indent grow
-	initializeIndentedTree(tree2,levelList2,initOptions,-1);
+	initializeIndentedTree(tree2,initOptions,-1);
 	
 
+	//calculates al tasks for both taxonomies
+	let levelList = createRankList(tree);
+	let levelList2 = createRankList(tree2);
 	calculate_all_merges(levelList,levelList2);
 
-	/*
-	update_lines(tree);
-	updateP(initOptions,lines.splits);
-	updateP(initOptions,lines.merges);
-	sort_tree_nodes(tree);
-	sort_tree_nodes(tree2);
-	*/
+	
+	//first line update before drawing
 	update_lines(tree);
 	sort_and_update_lines();
-
-	//update_lines(tree2);
-
-	//console.log(tree);
-	//console.log(levelList);
 }
 
+
+//processing function to detect mouse wheel movement used to move the visualization
 function mouseWheel(event) {
 	yPointer -= event.delta*SCROLL_SPEED;
-	//print(event.delta);
 }
+
+//processing function to detect mouse click, used to turn on a flag
 function mouseClicked(){
 	click = true;
 }
+
+
+//processing function to detect window change in size
+//resize and change canvas position according to window size
 function windowResized() {
 	resizeCanvas(windowWidth*totalCanvasWidth, windowHeight*totalCanvasHeight);
 	var x = 0;
@@ -192,40 +204,46 @@ function windowResized() {
 	canvas.position(x, y);
 }
 
+
+//processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
 function draw() {
 	//smooth node focusing
 	dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
 	dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-  translate(xPointer,-yPointer);
-  background(255);
-  fill(0);
 
-  //drawIndentedTree(tree, initOptions);
-  let base_y = windowWidth/2 - initOptions.width/2;
-  //optimizedDrawIndentedTree(tree.visible_lbr,initOptions,base_y-initOptions.hierarchy_distance/2,0);
-  //optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,base_y+initOptions.hierarchy_distance/2,0);
-  optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation ,dispLefTree,false);
-  optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation ,dispRightTree,true);
-
-  	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
   	right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
 
-  	/*levelList["species"].forEach(function(taxon){
-		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,left_pos,right_pos,1);
-	});*/
 
-	/*levelList2["species"].forEach(function(taxon){
-		drawLines(taxon,yPointer,yPointer+windowHeight,initOptions,right_pos,left_pos,-1);
-			
-	});*/
 
+	//if interface lines changed force update
+	if(interface_variables.changedLines){
+		changedLines = false;
+		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+		//console.log("updated lines");
+	}
+
+	translate(xPointer,-yPointer);
+	background(255);
+	fill(0);
+
+
+	//draws based on the current window size
+	let base_y = windowWidth/2 - initOptions.width/2;
+
+	//Draw function, this draws the indented-tree
+	optimizedDrawIndentedTree(tree.visible_lbr,initOptions,initOptions.separation ,dispLefTree,false);
+	optimizedDrawIndentedTree(tree2.visible_lbr,initOptions,windowWidth-initOptions.separation ,dispRightTree,true);
+
+  	
 	//bundling comes from draw_menu js
+	//Draw current visible lines
 	ls_drawLines(initOptions,yPointer,left_pos,right_pos,interface_variables.bundling);
-	//initOptions.initOptions["width"]or = (initOptions.hsbColor +2);
-  	//console.log(mouseX +"---"+mouseY);
+
   
   	//check if we are using bars
+  	//this is basicaly a switch when changed executes code
   	if(initOptions.use_resume_bars != interface_variables.bars){
   		initOptions.use_resume_bars = interface_variables.bars
   		//update the tree if we are not using bars
@@ -233,10 +251,25 @@ function draw() {
   		recalculateTree(tree2,initOptions,function(){return;});
   	}
 
-  click = false;
+  	//set click flag to false
+  	click = false;
+
+
+  	//mark focused node, little gray rect on screen
+  	if(focusNode){
+	  	fill(initOptions["focus-color"]);
+	  	stroke(initOptions["focus-color"]);
+	  	strokeWeight(1);
+	  	rect(-10,focusNode.y,windowWidth+10,initOptions.defaultSize);
+  	}
 }
 
-function initializeIndentedTree(originalTree,listByLevel,options,growDirection){
+
+//initialize required values on the json tree
+function initializeIndentedTree(originalTree,options,growDirection){
+
+	//add required variables to node
+	//function comes from countChildren.js
     proccesByLevel(originalTree,function(node){
       node.x = 0;
       node.y = 0;
@@ -246,21 +279,19 @@ function initializeIndentedTree(originalTree,listByLevel,options,growDirection){
     });
     
     
-    
+    //set parent node initial size values
     originalTree.width = options.width;
     originalTree.height = options.defaultSize; 
-    /*originalTree.c.forEach(function (childNode){
-      //childNode.collapsed = false;
-      unfoldNode(childNode,initOptions);  
-    }
-    );*/
-    
+
+    //open first node of each hirarchy
     unfoldNode(originalTree,initOptions);
 
+    //adds indent to tree
     setIndentCordinates(originalTree,options,growDirection);
     calculateSize(originalTree,options);
 	calculateCordinates(originalTree,options,0,0);
 
+	//add tree root to render
 	originalTree.visible_lbr[originalTree.r.toLowerCase()].push(originalTree);
     pushIntoUnfolded(originalTree);
     originalTree.c.forEach(function(child_node){pushIntoUnfolded(child_node)});
@@ -268,18 +299,17 @@ function initializeIndentedTree(originalTree,listByLevel,options,growDirection){
 }
 
 //recaulculates tree
+//this functions updates node size and cordinates when needed
+//it's executed asynchronously so it does not interfere with de drawing process
 async function recalculateTree(originalTree,options,callback) {
-	/*proccesByLevel(originalTree,function(node){
-      node.y = 0;
-      node.height = 0;
-    });*/
+
   	calculateSize(originalTree,options);
 	calculateCordinates(originalTree,options,0,0);
-  	//console.log("reacalculating updatedTree" + {callback});
   	callback();
   	changed = false;
 }
 
+//add indent coordinates to nodes
 function setIndentCordinates(root, options,growDirection){
   let pendingNodes = [];
   pendingNodes.push(root);
@@ -302,11 +332,12 @@ function setIndentCordinates(root, options,growDirection){
   }
 }
 
-
+//calculate node size, supports proportional size on nodes when using logarithmic scale
 function calculateSize(root, options){
   let pendingNodes = [];
   pendingNodes.push(root);
   
+  //iterative iteration of a tree
   while(pendingNodes.length > 0){
     let actual = pendingNodes.pop(); 
     //reset in case of being an actualizatioo
@@ -316,12 +347,12 @@ function calculateSize(root, options){
     }else{
     	actual.height = options.defaultSize;/*options.defaultSize*/;
     }
-    //actual.height = getNodeSize(actual, options);/*options.defaultSize*/;
     actual.y = 0;
 
     if(actual !== null && actual !== undefined){
     let acumulatedSize = options.defaultSize;
-	//actual.height += options.defaultSize*2;
+
+
 	//increaseFamilySize(actual,options.defaultSize*2);
     for(childIndex = 0; childIndex < actual.c.length; childIndex++){
       let childNode = actual.c[childIndex];
@@ -346,17 +377,9 @@ function calculateSize(root, options){
   
 	
 }
-/*
-//return node logaritimicScale
-function getNodeSize(node, options){
-	if(node.desendece)
-		return options.defaultSize + Math.log(node.desendece)/Math.log(options.log_scale)*options.log_increment;
-	return options.defaultSize;
-				
-}
-*/
 
 //return node logaritimicScale
+//this helper functions defines node size
 function getNodeSize(node, options){
 	//stores how much extra size the node gets
 	let extra = 0;
@@ -370,13 +393,14 @@ function getNodeSize(node, options){
 				
 }
 
-
+//adds size to a node based on tis famili
 function increaseFamilySize(node, increment){
 	node.f.forEach(function(fam){
 			fam.height += increment;
 		})
 	}
 
+//sets the position of a node based on other node sizes, and tree cordinates
 function calculateCordinates(root, options, xPos,yPos){
   let pendingNodes = [];
   pendingNodes.push(root);
@@ -406,14 +430,19 @@ function calculateCordinates(root, options, xPos,yPos){
 	
 }
 
+//opens a node
 function unfoldNode(node,options){
 	node.collapsed = false;
 }
-  
+ 
+
+ //closes a bode 
 function foldNode(node, options){
 	//node.collapsed = true;
 	node.collapsed = true;
 	node.c.forEach(
+	
+	//removes node and it's children from render, and closes them if needed
 	function(child_node){
 		proccesByLevelConditional(child_node,function(actual){
 			actual.collapsed = true;
@@ -424,102 +453,87 @@ function foldNode(node, options){
 	)
 }
 
-function drawIndentedTree(treeRoot, options){
-   
-    
-    let pendingNodes = [];
-    pendingNodes.push(treeRoot);
-    while(pendingNodes.length > 0){
-      let actual = pendingNodes.pop();
-      if(actual !== null && actual !== undefined){
-      drawNode(actual,options);
-      if(!actual.collapsed){
-        for(childIndex = 0; childIndex < actual.c.length; childIndex++){
-        let childNode = actual.c[childIndex];
-        if(childNode){
-          //console.log(childNode.n);
-          pendingNodes.unshift(childNode);
-        }
-        }
-      }
 
-      }
-    }
-    
-    /*memoryTreeIteration(treeRoot,function(node){
-      if(node && node.collapsed === false){
-        //console.log("drawing a rect " + node.n);
-        rect(node.x,node.y,300,node.height)
-      }
-    });*/
-  
-}
-
+//Main draw functions this simply cals a draw for each rank on the hierarchy
+//also  checks the state of nodes and if they need to be recalculated to avoid inconsistency on the render
+//uses options.dirtyNodes flag to check if nodes have been reordered
 function optimizedDrawIndentedTree(listByRank,options,xpos,ypos,isRight){
-	let domains = listByRank["domain"];
-	let kingdom = listByRank["kingdom"];
-	let phylum = listByRank["phylum"];
-	let tclass = listByRank["class"];
-	let order = listByRank["order"];
-	let superfamily = listByRank["superfamily"];
-	let family = listByRank["family"];
-	let subfamily = listByRank["subfamily"];
-	let tribe = listByRank["tribe"];
-	let genus = listByRank["genus"];
-	let subgenus = listByRank["subgenus"];
-	let species = listByRank["species"];
-	let subspecies = listByRank["subspecies"];
-	let infraspecies = listByRank["infraspecies"];
+	//if nodes are dirty requires update could be moved to a diferent thread
+	if(options.dirtyNodes){
+		//checks positions of nodes, for changes that were not recalculated
+		recalculateTree(tree,initOptions,function(){return;});
+  		recalculateTree(tree2,initOptions,function(){return;});
+
+
+		sortVisualNodes(options);
+		createBundles(left_pos,right_pos,initOptions.bundle_radius);
+
+  		options.dirtyNodes = false;
+
+	}
+
+	//for debug purposes
+	//stores how many nodes are drawn on each frame
+	let totalDrawnNodes = 0;
 	
-	
-	/*for(let taxon = 0; taxon < kingdom.length; taxon++){
-		//drawCutNode(kingdom[taxon],yPointer,yPointer+windowWidth*totalCanvasWidth,options)
-		drawOnlyText(kingdom[taxon],yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
-	}*/
-	//colorMode(HSB,100);
-	drawHierarchyLevel(kingdom,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(phylum,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(tclass,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(order,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(superfamily,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(family,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(subfamily,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(tribe,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(genus,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(subgenus,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(species,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(subspecies,options,yPointer,xpos,ypos,isRight);
-	drawHierarchyLevel(infraspecies,options,yPointer,xpos,ypos,isRight);
-	
-	
-	//colorMode(RGB, 255);
+	//simple variable with rank names
+	//Extract ranks contained on listByRank
+	let drawRanks = Object.keys(listByRank);
+	//draws each of the specified ranks on listByRank
+	drawRanks.forEach(
+		(rankName) => {
+			let currentRankList = listByRank[rankName];
+			//the drawing function 
+			totalDrawnNodes += drawHierarchyLevel(currentRankList,options,yPointer,xpos,ypos,isRight);
+
+
+		}
+	)
+
+	//console.log("Total draw nodes on render: ", totalDrawnNodes);
 	
 	}
 
+
+//This is the drawing functions
+//Receives a list of nodes sorted by it's y corrdinate and draw only the nodes inside the screen
+//returns the amount of nodes drawn
 function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
-	if(taxons.length <= 0) return;
-	//ypos += isRight ? dispRightTree : dispLefTree
-	pointer += isRight ? 0 : -ypos;
+	if(taxons.length <= 0) return 0; //check if there are node to draw
+	
+	//adds node focus displacement to the corresponding tree
+	pointer += isRight ? -dispRightTree : -dispLefTree;
+
+	//binary search to find the first node inside the screen
 	let initial = findHead(taxons,pointer);
-	//console.log(taxons[0].r+ `->${taxons[initial].n}:  `+initial+ " -------- " + Math.floor(yPointer) +"--"+taxons[initial].y);
-	let iniColor = (options.hsbColor + options.hsbIncrement*getValueOfRank(taxons[0].r))%100;
-	let iniBrigthnes = (options.hsbBrigthnes + options.hsbbrigthnesIncrement*getValueOfRank(taxons[0].r))%100;
-	//console.log(taxons[0].r+": " + initial);
-	let draws = 0;
+
+	//set color acording to rank instead of using defined colors //deprecated
+	let iniColor = (options.hsbColor + options.hsbIncrement*getValueOfRank(taxons[0].r))%100; //deprecated
+	let iniBrigthnes = (options.hsbBrigthnes + options.hsbbrigthnesIncrement*getValueOfRank(taxons[0].r))%100; //deprecated
+
+	//counter for debuggin purposes
+	var draws = 0;
+
+	//Variable to store displacement required if the tree is on the right side
 	let extra_pos = 0;
 
 	if(isRight){
 		extra_pos = -taxons[0].width;
 	}
 
+
+	//draw each node until a taxon is out of the screen
 	for(let taxon = initial; taxon < taxons.length; taxon++){
-		let node = taxons[taxon];
+		let node = taxons[taxon]; //current drawn taxon
 		
+
 		if(node.f.length <= 0 || !node.f[node.f.length-1].collapsed){
-			draws++;
-			let size = (node.totalSpecies) ? node.totalSpecies : "";
-			let node_text_width = textWidth(node.r +":"+node.n + " " + size);
-			node.tw = node_text_width;
+			
+			draws++;//increase draws variable for debug
+			
+			let node_text_width = node.tw;//size of the text displayed on scren
+			//this depends on the data displkayed on DrawOnlyText and should be changed if that variable is changed
+
 			fill(iniColor,0,iniBrigthnes);
 			//drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
 			if(isRight){
@@ -533,28 +547,33 @@ function drawHierarchyLevel(taxons,options,pointer,xpos,ypos,isRight){
 			drawExpandButton(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos,isRight);
 			
 			}
+
+			//checks if need to draw outline of nodes
 			if(interface_variables.squares){
-			drawInside(node, xpos+extra_pos,ypos, options);
+				drawInside(node, xpos+extra_pos,ypos, options);
 			}
+			//chek if indent lines are active or unactive
 			if(interface_variables.lines){
 				drawIndent(node, xpos,ypos, options,isRight);
 			}
+			//check if resume bars must be drawm
 			if(interface_variables.bars)
-			drawResumeBars(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+extra_pos,ypos);
-			
-			//drawResumeDots(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
-			//drawLines(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
-			//drawNode(node,options);
-			//drawNode(node,options)
-
+				drawResumeBars(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos+extra_pos,ypos);
 
 		}
+		//if the node is out of the screen stop drawing
 		if(node.y > pointer + windowHeight*totalCanvasHeight){break;}
 
 	}
+
+	//console.log("amount of draw calls from render:",draws);
 	
+	return draws;
+
 	}
 
+
+//binary search to find first node to draw
 function findHead(list, targetY){
 		let initialIndex = 0;
 		let finalIndex = list.length-1;
@@ -576,6 +595,8 @@ function findHead(list, targetY){
 		return middleIndex;
 	}
 	
+
+//checks if a node is on the screen
 function isOnScreen(node,yScreenPos,screenHeight){
 		if(node.y+node.height >= yScreenPos + screenHeight && node.y <= yScreenPos + screenHeight){
 			return true;
@@ -592,11 +613,18 @@ function isOnScreen(node,yScreenPos,screenHeight){
 		return false;
 	}
 
+
+
 //basic node drawing function
+//draws text
+//set information on screen box
+//this functions knows when the mouse is over a node and also chekcs for clicks
+//this is done every frame
 function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_width){
 	let clicked = false;
 	//hover interaction
 	fill(options["text-color"]);
+	//set color of tasks
 	if(interface_variables.removed && node.removed){
 		fill(options["remove-color"]);
 	}else if(interface_variables.added && node.added){
@@ -604,10 +632,12 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 	}else{
 		fill(options["text-color"]);
 	}
+
+	//check if mouse is over node
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node_text_width,options.defaultSize)){
 		fill(options["hover-color"]); 
 		textSize(options.text_hover);
-		//this functions comes from drawMene.js
+		//this functions comes from drawMenu.js
 		if(showInfo){
 			let author = node.a == "" ? "" : `<br>Author:${node.a}`;
 			let date = (node.ad || node.ad == "") ? "" : `  Date:${node.da}`;
@@ -618,12 +648,15 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let insertions = "----Insertions: "+ node.totalInsertions;
 			let renames = "<br>Renames: "+ node.totalRenames;
 			let moves = "----Moves: "+ node.totalMoves;
-			let pv = "<br>----P: "+ node.y;
+			let pv = "<br>----P: "+ node.p;
+			//shows info on screen
 			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
 		}
 
+		//if mouse is over and the button clicked
 		if(click){
-			if(node.equivalent.length > 0){
+			//focus the equivalent node on the other side
+			if(node.equivalent && node.equivalent.length > 0){
 				if(isRight){
 					targetDispLefTree = node.y - findOpen(node.equivalent[0]).y;
 					yPointer -= targetDispRightTree;
@@ -636,47 +669,31 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 					targetDispLefTree = 0;
 					dispLefTree = 0;
 				}
-				console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
+
+				focusNode = node;
+				forceRenderUpdate(initOptions);
+				//console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
 			}
 			
 		}
-		/*if(click && !changed){
-			//keep visible nodes list clean
-			let cleaning_function;
-			let elder = getRoot(node);
-
-			if(node.collapsed){
-				unfoldNode(node);
-				cleaning_function = function(){node.c.forEach( 
-				function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
-			};
-			}else{
-				foldNode(node);
-				cleaning_function = undefined;
-			}
-			changed = true;
-			
-			click = false;
-			recalculateTree(elder,initOptions,function(){
-				if(cleaning_function){cleaning_function(elder);}
-				});
-			//console.log({visible_lbr});
-  			//recalculateTree(tree2,initOptions);
-			//console.log("updating");
-		}*/
 
 	}
 
 	noStroke();
 
+
 	let size = (node.totalSpecies) ? node.totalSpecies : "";
-	text(node.r +":"+node.n + " " + size,node.x +5 +xpos,ypos + node.y+15);
+	let displayText = node.r +":"+node.n + " " + size; //text displayed as node name
+	node.tw = textWidth(displayText); //update textwidht required on other modules
+	text(displayText,node.x +5 +xpos,ypos + node.y+15); //draw the text !!!!
 	textSize(options.text_size);
 	
 	
 }
 
+
+//draw the button that can open or close nodes
 function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	if(node.c.length <= 0 )return;
 	fill("#FFFFFF");
@@ -686,13 +703,20 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	let button_padding = 3;
 	let node_x_pos = node.x + xpos;
 	let node_y_pos = node.y + ypos + 4;
+
+	//check if mouse is over button
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node_x_pos,node_y_pos,button_size,button_size)){
 		button_size *=  1.2;
+
+		//check if clicked
 		if(click && !changed){
 			//keep visible nodes list clean
 			let cleaning_function;
 			let elder = getRoot(node);
 
+			//cleaning functions is the function executed to the affected nodes
+
+			//open or close node
 			if(node.collapsed){
 				unfoldNode(node);
 				cleaning_function = function(){node.c.forEach( 
@@ -705,28 +729,28 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			changed = true;
 			
 			click = false;
+
+			//update tree acording to changes
 			recalculateTree(elder,initOptions,function(){
 				if(cleaning_function){cleaning_function(elder);}
-				});
-			update_lines(node,isRight);
-			//console.log({visible_lbr});
-  			//recalculateTree(tree2,initOptions);
-			//console.log("updating");
-			updateP(initOptions,lines.splits);
-			updateP(initOptions,lines.merges);
+			});
+
+
+
 			//create groups for hierarchical edge bundling
 
 
 			//recreate lines
 	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
 	  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
-
-	  		//console.log("rp: ",right_pos.x);
+	  		//recreate bundles with the extra or removed liens
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
-			//sort_tree_nodes(tree);
-			//sort_tree_nodes(tree2);
+
+
 		}
 	}
+
+	//draw the graphics of the button
 	rect(node_x_pos,node_y_pos,button_size ,button_size );
 	line(node_x_pos + button_padding,node_y_pos + button_size /2, node_x_pos + button_size - button_padding ,node_y_pos + button_size /2);
 	if(node.collapsed)
@@ -760,6 +784,7 @@ function pushIntoUnfolded(node){
 
 }
 
+//helper function for printen the name of a list of taxons
 function printListNodeNames(printedList){
 	let result = "";
 	for(let i = 0; i < printedList.length; i++){
@@ -779,6 +804,7 @@ function popFromUnfolded(node){
 	}
 }
 
+//gets root of a tree with a given node
 function getRoot(node){
 			if(node.f.length > 0){
 				return node.f[0];
@@ -788,6 +814,7 @@ function getRoot(node){
 }
 
 
+//check if a cordinate is inside a rect
 function isOverRect(xpos,ypos,rxpos,rypos,rwidth,rheight){
 	return (xpos >= rxpos && xpos <= rxpos+rwidth
 		&& ypos >= rypos && ypos <= rypos+rheight);
@@ -795,29 +822,7 @@ function isOverRect(xpos,ypos,rxpos,rypos,rwidth,rheight){
 
 
 
-//deprecated functions !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-function drawNode(node,options){
-	//console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
-	fill(options["background-color"]);
-	stroke(options["stroke-color"]);
-	strokeWeight(2);
-	rect(node.x,node.y,node.width,node.height);
-	noStroke();
-	fill(0);
-	text(node.n,node.x +5 ,node.y+15);
-}
-/*
-function drawNode(node,options){
-	//console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
-	fill(options["background-color"]);
-	stroke(options["stroke-color"]);
-	strokeWeight(2);
-	rect(node.x,node.y + options.defaultSize,node.width,node.height - options.defaultSize);
-	noStroke();
-	fill(0);
-	text(node.n,node.x +5 ,node.y+15);
-}
-*/
+
 
 function drawInside(node,xpos,ypos,options){
 	//console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
@@ -830,6 +835,7 @@ function drawInside(node,xpos,ypos,options){
 	}
 }
 
+//draw indent lines
 function drawIndent(node,xpos,ypos,options, isRight){
 	stroke(options["indent-stroke-color"]);
 	strokeWeight(options["indent-stroke"]);
@@ -845,6 +851,7 @@ function drawIndent(node,xpos,ypos,options, isRight){
 	}
 }
 
+//draws only a part of a node is not used
 function drawCutNode(node,initialY,finalY,options,xpos,ypos){
 	//console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
 	let yCoord = Math.max(node.y,initialY);
@@ -870,6 +877,8 @@ function drawCutNode(node,initialY,finalY,options,xpos,ypos){
 	
 }
 
+
+//deprecated function for drawing resume as dots instead of bars
 function drawResumeDots(node,initialY,finalY,options,xpos,ypos){
 		if(node.collapsed){
 		let bar_width = options["width"] - node.x;
@@ -950,11 +959,13 @@ function drawResumeDots(node,initialY,finalY,options,xpos,ypos){
 }
 }
 
+//annother form of displaying the resume incomplete
 function drawResumeCircles(node,initialY,finalY,options,xpos,ypos){
 
 }
 
 
+//Draw the sumary of tasks as a bar can be activated or deactivated
 function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 	noStroke();
 	//necesita cambiarse por value of rank
@@ -1002,18 +1013,17 @@ function drawResumeBars(node,initialY,finalY,options,xpos,ypos){
 
 //sorts and update relation lines
 async function sort_and_update_lines(){
-		//update_lines(tree);
-		updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
-		updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
-		//sort_tree_nodes(tree);
-		//sort_tree_nodes(tree2);
-		//physics based sort :3
-
-
 		
 		let sort_iterations = 10;
 		//simulate n steps of sort
 		for(let i = 0; i < sort_iterations; i++){
+			//calculate forces for this step
+			updateP(initOptions,lines.splits, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.merges, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.renames, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.equals, targetDispLefTree,targetDispRightTree);
+			updateP(initOptions,lines.moves, targetDispLefTree,targetDispRightTree);
+
 			//calculates a simulation step of physical atraction btwen nodes
 			sort_all_lines(targetDispLefTree,targetDispRightTree);
 			recalculateTree(tree,initOptions,function(){return;});
@@ -1030,8 +1040,39 @@ async function sort_and_update_lines(){
 
   		
 
+  		forceRenderUpdate(initOptions);
+  		focusSelectedNode();
 
-  		//sort visible node order
+	}
+
+
+
+
+//focus the last selected node
+function focusSelectedNode(){
+	if(focusNode){
+		yPointer += focusNode.y-yPointer - windowHeight/2;
+	}
+}
+
+
+//moves the node and tells the grafic system that things need to be reordered;
+function moveNode(node,newX,newY,options){
+	options.dirtyNodes = true;
+	node.x = newX;
+	node.y =newY;
+}
+
+//when you modify position of nodes you need to tell the drawing system
+function forceRenderUpdate(options){
+	options.dirtyNodes = true;
+}
+
+
+//sorts nodes on the list of visible nodes
+//required by the optimized draw function
+function sortVisualNodes(options){
+	//sort visible node order
   		Object.keys(tree.visible_lbr).forEach(function(rank){
   			rank = rank.toLowerCase();
   			//console.log(rank.toUpperCase(),tree.visible_lbr[rank].length);
@@ -1046,8 +1087,6 @@ async function sort_and_update_lines(){
   			//tree2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
   		});
 
+  		//options.dirtyNodes = false;
 
-  		//console.log("rp: ",right_pos.x);
-  		//bundles should be created after sorting
-  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
-	}
+}

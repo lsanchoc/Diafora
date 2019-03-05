@@ -1,3 +1,5 @@
+
+//constant with the ranks to take into consideration for tasks
 const families = [	"class",
 					"order",
 					"superfamily",
@@ -48,18 +50,16 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 			let equivalent = rigth_map[node.n];
 			if(equivalent){
 				//eq is the equivalent node
-				//we have to verify author and date
-				/*if(node.a != equivalent.a || node.ad != equivalent.ad){
-					node.author_changed = true;
-					equivalent.author_changed = true;
-				}*/
 				
+				//we found a equivalent node
 				node.equivalent.push(equivalent);
 				//equivalent.equivalent.push(node);
-				//Compare the parent of each node
+				//Compare the parent of each node, check if parents changed
 				if(node.f.length > 0 && equivalent.f[equivalent.f.length - 1].n != node.f[node.f.length - 1].n){
 					node.moved = true;
 					equivalent.moved = true;
+
+
 					//increase move counter for familiar nodes
 					node.f.forEach(
 					function(familiar){
@@ -77,15 +77,11 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 		function(node){
 			let equivalent = left_map[node.n];
 			if(equivalent){
-				//eq is the equivalent node
-				//we have to verify author and date
-				/*if(node.a != equivalent.a || node.ad != equivalent.ad){
-					node.author_changed = true;
-					equivalent.author_changed = true;
-				}*/
+
+				//we found a equivalent node
 				node.equivalent.push(equivalent);
-				//equivalent.equivalent.push(node);
-				//Compare the parent of each node
+
+				//Compare the parent of each node, check if parents changed
 				if(node.f.length > 0 && equivalent.f[equivalent.f.length - 1].n != node.f[node.f.length - 1].n){
 					node.moved = true;
 					equivalent.moved = true;
@@ -103,6 +99,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 
 
 
+	//compare nodes to other node synonims
 	let synonims_left = [];
 	let synonims_rigth = [];
 
@@ -138,16 +135,18 @@ function name_changes_left(node_list){
 	node_list.forEach(
 		function(node){
 			let equivalence = node.equivalent.length;
-			//console.log(equivalence);
+				
+			//check for merge ---------------------------------------------------------------------------------------
 			 if(equivalence > 1){
 			 	//console.log(node);
 				node.f.forEach(function(familiar){familiar.totalSplits++});
-				//node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalSplits++})});
 				node.split = true;
+
 			}else if(equivalence == 1 && !node.moved){
 				let eq_node = node.equivalent[0];
 				let same_author = compare_author(node.a,eq_node.a);
-				
+
+				//check for  rename ----------------------------------------------------------------------------------
 				if(node.n == eq_node.n && same_author){
 					node.rename = false;
 				}else{
@@ -159,7 +158,8 @@ function name_changes_left(node_list){
 					)
 				}
 				//node.rename = true;
-			}else{
+			//check for remove ---------------------------------------------------------------------------------------
+			}else if(equivalence == 0){
 				node.removed = true;
 				node.f.forEach(
 					function(familiar){
@@ -177,17 +177,19 @@ function name_changes_right(node_list){
 	node_list.forEach(
 		function(node){
 			let equivalence = node.equivalent.length;
+			//check for merge ---------------------------------------------------------------------------------------
 			if(equivalence > 1){
 				node.f.forEach(function(familiar){familiar.totalMerges++});
-				//node.equivalent.forEach(function(eq){eq.f.forEach(function(familiar){familiar.totalMerges++})});
 				node.merge = true;
 			}else if(equivalence == 1 && !node.moved){
 				let eq_node = node.equivalent[0];
 				let same_author = compare_author(node.a,eq_node.a);
 				
+				//check for  rename ----------------------------------------------------------------------------------
 				if(node.n == eq_node.n && same_author){
 					node.rename = false;
 				}else{
+					//console.log(node.a,eq_node);
 					node.rename = true;
 					node.f.forEach(
 					function(familiar){
@@ -195,8 +197,8 @@ function name_changes_right(node_list){
 					}
 					)
 				}
-				//node.rename = true;
-			}else{
+			//check for remove ---------------------------------------------------------------------------------------
+			}else if(equivalence == 0){
 				node.added = true;
 				node.f.forEach(
 					function(familiar){
@@ -209,12 +211,9 @@ function name_changes_right(node_list){
 	);
 }
 
-
+//executes task searching functions for each rank
 
 function calculate_all_merges(left_tree, rigth_tree){
-	//verificar_name_changes(left_tree["kingdom"],rigth_tree["kingdom"]);
-	//verificar_name_changes(left_tree["phylum"],rigth_tree["phylum"]);
-	//proccesByLevel(root,function(node){node.totalSplits = 0; node.totalMerges = 0;});
 	families.forEach(
 		function(rank){
 			verificar_name_changes(left_tree[rank],rigth_tree[rank]);
@@ -224,28 +223,10 @@ function calculate_all_merges(left_tree, rigth_tree){
 	);
 
 
-
-	/*verificar_name_changes(left_tree["class"],rigth_tree["class"]);
-	verificar_name_changes(left_tree["order"],rigth_tree["order"]);
-	verificar_name_changes(left_tree["superfamily"],rigth_tree["superfamily"]);
-	verificar_name_changes(left_tree["family"],rigth_tree["family"]);
-	verificar_name_changes(left_tree["subfamily"],rigth_tree["subfamily"]);
-	verificar_name_changes(left_tree["tribe"],rigth_tree["tribe"]);
-	verificar_name_changes(left_tree["subtribe"],rigth_tree["subtribe"]);
-	console.log("genus");
-	verificar_name_changes(left_tree["genus"],rigth_tree["genus"]);
-	verificar_name_changes(left_tree["subgenus"],rigth_tree["subgenus"]);
-	console.log("species");
-	verificar_name_changes(left_tree["species"],rigth_tree["species"]);
-	console.log("infraspecies");
-	verificar_name_changes(left_tree["infraspecies"],rigth_tree["infraspecies"]);
-	console.log("subspecies");
-	verificar_name_changes(left_tree["subspecies"],rigth_tree["subspecies"]);
-	*/
-
 }
 
 
+//compare actor of nodes
 function compare_author(first_author, second_author){
 	if(first_author.length != second_author.length){
 		return false;
@@ -262,6 +243,7 @@ function compare_author(first_author, second_author){
 }
 	
 
+//compares author date of two nodes
 function compare_author_date(first_author, second_author){
 	if(first_author.a.length != second_author.a.length || first_author.ad.length != second_author.ad.length){
 		return false;
