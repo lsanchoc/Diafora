@@ -9,6 +9,7 @@ var downloadRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var indentedRouter = require('./routes/indented');
 var fileSelectionRouter = require('./routes/fileSelection');
+var graphicsRouter = require('./routes/graphics');
 
 var app = express();
 var cors_proxy = require('cors-anywhere');
@@ -28,6 +29,8 @@ app.use('/', fileSelectionRouter);
 app.use('/download', downloadRouter);
 app.use('/users', usersRouter);
 app.use('/indented', indentedRouter);
+app.use('/graphics', graphicsRouter);
+
 
 
 // catch 404 and forward to error handler
