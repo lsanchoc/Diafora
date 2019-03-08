@@ -1,17 +1,27 @@
 
+var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
+var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
+countChildren(tree);
+countChildren(tree2);
 
-// set the dimensions and margins of the graph
+//Calculates al tasks for both taxonomies
+let levelList = createRankList(tree);
+let levelList2 = createRankList(tree2);
+calculate_all_merges(levelList,levelList2);
+
+
+// Dimensions of Histogram
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-// set the ranges
+// Ranges
 var setXCordinate = d3.scaleBand()
           .range([0, width])
           .padding(0.1);
 var setYCordinate = d3.scaleLinear()
           .range([height,0]);
-var setYCordinate2Print = d3.scaleLinear()
+var setYCordinate2Print = d3.scaleLog()
           .range([height,0]);
           
 // append the svg object to the body of the page
@@ -28,28 +38,16 @@ function getMaxOfArray(numArray){
   return Math.max.apply(null,numArray);
 }
 
-// get the data
-//var data = [{1,2},{4,28},{14,32},{11,92},{1,52}]
-
-
-//data.forEach(drawHistogramItem);
-
-
 function buildHistogram(originalData){
 let processedData = buildData(originalData);
-  // format the data
-  /*data.forEach(function(item) {
-    item.sales = +item.sales;
-  });*/
 
-  // Scale the range of the data in the domains
-  //console.log(Object.keys(originalData));
+
+  // Scale domains based on Data
   setXCordinate.domain(Object.keys(originalData));
   setYCordinate.domain([0, Math.log(getMaxOfArray(originalData))]);
-  //console.log([0, getMaxOfArray(data)]);
-  // append the rectangles for the bar chart
+  setYCordinate2Print.domain([0, getMaxOfArray(originalData)]);
 
-
+  //Append each bar to the graph
   svg.selectAll(".bar")
       .data(processedData)
       .enter().append("rect")
@@ -58,16 +56,16 @@ let processedData = buildData(originalData);
       .attr("width", setXCordinate.bandwidth())
       .attr("y", function(item) { return setYCordinate(Math.log(item.y+1));})
       .attr("height", function(item) { return height - setYCordinate(Math.log(item.y+1)); });
-  //console.log("element: " ,index,"----------",setXCordinate(index), "---",setXCordinate.bandwidth());
-  // add the setXCordinate Axis
+  
+  // Add the setXCordinate Axis
   svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(setXCordinate));
 
-  // add the setYCordinate Axis
-  //setYCordinate.domain([0, getMaxOfArray(originalData)]);
+  // Add the setYCordinate Axis
   svg.append("g")
       .call((d3.axisLeft(setYCordinate)));
+      //.call((d3.axisLeft(setYCordinate2Print)));
 
 }
 
@@ -80,5 +78,8 @@ function buildData(originalData){
   return newData;
 }
 
-var data = [1,2,3,3,4,5,6,150,100000000000]
+var data = [tree.totalSplits,tree2.totalMerges,tree.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
+var data = [tree.totalSplits,tree2.totalMerges,tree.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
+
+console.log(data)
 buildHistogram(data);
