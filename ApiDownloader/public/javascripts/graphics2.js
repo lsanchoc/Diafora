@@ -9,6 +9,14 @@ let levelList = createRankList(tree);
 let levelList2 = createRankList(tree2);
 calculate_all_merges(levelList,levelList2);
 
+var data = [
+{name: "Splits", value: tree.totalSplits},
+{name: "Merges", value: tree.totalMerges},
+{name: "Removes", value: tree.totalRemoves},
+{name: "Insertions", value: tree.totalInsertions},
+{name: "Moves", value: tree.totalMoves},
+{name: "Renames", value: tree.totalRenames},
+];
 
 // Dimensions of Histogram
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -43,19 +51,20 @@ let processedData = buildData(originalData);
 
 
   // Scale domains based on Data
-  setXCordinate.domain(Object.keys(originalData));
-  setYCordinate.domain([0, Math.log(getMaxOfArray(originalData))]);
-  setYCordinate2Print.domain([0, getMaxOfArray(originalData)]);
+  setXCordinate.domain(originalData.map(d => d.value));
+  setYCordinate.domain([0, 120]);
+//setYCordinate.domain([0, (getMaxOfArray(originalData))]);
+  console.log(getMaxOfArray(originalData))
 
   //Append each bar to the graph
   svg.selectAll(".bar")
       .data(processedData)
       .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(item) { return setXCordinate(item.x) })
+      .attr("x", function(item) { return setXCordinate(item.value) })
       .attr("width", setXCordinate.bandwidth())
-      .attr("y", function(item) { return setYCordinate(Math.log(item.y+1));})
-      .attr("height", function(item) { return height - setYCordinate(Math.log(item.y+1)); });
+      .attr("y", function(item) { return setYCordinate((item.value+1));})
+      .attr("height", function(item) { return height - setYCordinate((item.value+1)); });
   
   // Add the setXCordinate Axis
   svg.append("g")
@@ -65,21 +74,21 @@ let processedData = buildData(originalData);
   // Add the setYCordinate Axis
   svg.append("g")
       .call((d3.axisLeft(setYCordinate)));
-      //.call((d3.axisLeft(setYCordinate2Print)));
 
 }
 
 function buildData(originalData){
   let newData = [];
-  originalData.forEach(function(element,index){
-    newData.push({x:index,y:element})
-  });
-
+  /*Object.keys(originalData).forEach(function(objKey,index){
+    let actual = originalData[objKey];
+    newData[objKey] ={x:index,y:actual};
+  });*/
+  originalData.forEach(function(item,index){})
+  console.log(newData);
   return newData;
 }
 
-var data = [tree.totalSplits,tree2.totalMerges,tree.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
-var data = [tree.totalSplits,tree2.totalMerges,tree.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
+//var data = [tree.totalSplits,tree2.totalMerges,tree.totalRemoves,tree2.totalInsertions,tree2.totalMoves,tree2.totalRenames]
 
 console.log(data)
 buildHistogram(data);
