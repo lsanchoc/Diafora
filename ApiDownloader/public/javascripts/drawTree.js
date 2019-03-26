@@ -88,7 +88,7 @@ var targetDispLefTree = 0;
 var targetDispRightTree = 0;
 
 //speed at wich the mouse scrolls the visualization
-const SCROLL_SPEED = 0.4;
+const SCROLL_SPEED = -0.4;
 
 var changed = false;		//
 var click = false; 			//
@@ -744,7 +744,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
 	  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
 	  		//recreate bundles with the extra or removed lines
-	  		update_lines(node);
+	  		update_lines(node,isRight);
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
 
 
