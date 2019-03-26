@@ -743,7 +743,8 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			//recreate lines
 	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
 	  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
-	  		//recreate bundles with the extra or removed liens
+	  		//recreate bundles with the extra or removed lines
+	  		update_lines(node);
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
 
 
@@ -754,7 +755,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	rect(node_x_pos,node_y_pos,button_size ,button_size );
 	line(node_x_pos + button_padding,node_y_pos + button_size /2, node_x_pos + button_size - button_padding ,node_y_pos + button_size /2);
 	if(node.collapsed)
-	line(node_x_pos + button_size /2,node_y_pos +button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
+	line(node_x_pos + button_size /2,node_y_pos + button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
 	
 }
 
