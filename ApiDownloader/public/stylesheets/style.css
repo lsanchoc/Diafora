@@ -39,7 +39,9 @@ body {
     text-align: center;
     margin-top: 1%;
     font-size: 6pt;
-    background-color: #7DB343;	
+    background-color: #7DB343;
+
+
 }
 .vis_button{
     position:  absolute;
@@ -115,26 +117,34 @@ p{
 .optionSquare{
     position: absolute;
     left: 2%;
-    top: 4%
+    top: 4%;
+    height: 50%;
 }
 
 
 
 .slidecontainer {
   width: 40%; /* Width of the outside container */
+  margin-top: 35px;
+  margin-bottom: 10px;
+
 }
 
 /* The slider itself */
 .slider {
-  -webkit-appearance: none;  /* Override default CSS styles */
+  -webkit-appearance: slider-vertical;
   appearance: none;
-  width: 100%; /* Full-width */
-  height: 25px; /* Specified height */
+  width: 30px; /* Full-width */
+  height: 80%; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
   transition: opacity .2s;
+  position:absolute;
+  margin-left: 2%;
+  margin-top:2%;
+
 }
 
 /* Mouse-over effects */
@@ -144,7 +154,8 @@ p{
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */ 
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
+ 
+  -webkit-appearance: none;
   appearance: none;
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
@@ -159,7 +170,10 @@ p{
   cursor: pointer; /* Cursor on hover */
 }
 
-
+.topSpacer {
+  display: inline-block;
+  height: 30%;
+}
 
 /* The switch - the box around the slider */
 .switch {
@@ -167,6 +181,9 @@ p{
   display: inline-block;
   width: 40px;
   height: 22px;
+
+  border: 1px;
+
 }
 
 /* Hide default HTML checkbox */
@@ -187,6 +204,7 @@ p{
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
+
 }
 
 .slider_switch:before {
@@ -229,6 +247,10 @@ input:checked + .rename_slider_switch {
   background-color: #a37c58;
 }
 
+input:checked + .move_slider_switch {
+  background-color: #8888CC;
+}
+
 input:focus + .slider_switch {
   box-shadow: 0 0 1px #2196F3;
 }
@@ -246,4 +268,18 @@ input:checked + .slider_switch:before {
 
 .slider_switch.round:before {
   border-radius: 50%;
+}
+
+
+
+.encircledBox{
+  border: 1px;
+  border-radius:5px;
+  border-color: #00000070;
+  border-style: solid;
+  display: inline-block;
+  padding: 5px;
+  margin-right: 20px;
+
+  position:relative;
 }

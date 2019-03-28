@@ -31,6 +31,7 @@ function VerificarDatos(){
 		    // Code for localStorage/sessionStorage.
 		    if(file1 && file2){
 		    	readFile(file1, function(resultFile1){
+					//console.log(resultFile1.length);
 		    		sessionStorage.setItem("sessionTree1" ,resultFile1);
 		    		readFile(file2,function(resultFile2){
 		    			sessionStorage.setItem("sessionTree2" ,resultFile2);

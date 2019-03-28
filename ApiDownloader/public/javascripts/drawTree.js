@@ -61,7 +61,7 @@ var initOptions = {
 	"rename-color":"#a37c58",				//color of rename nodes used in lines and text
 	"move-color":"#8888CC",					//color of move nodes used in lines and text
 	"equal-color":"#e8e8e8",				//color of congruence nodes used in lines and text
-	"focus-color":"#00000020",				//color of text when a node is clicked
+	"focus-color":"#50500020",				//color of text when a node is clicked
 	"atractionForce":0.01,					// force by pixel distance causes movement of nodes
 	 bundle_radius: 60,						//radius in pixel to create bundles
 	 dirtyNodes:false,						//flag marked when a node is moved in the children array of its parent
@@ -257,10 +257,11 @@ function draw() {
 
   	//mark focused node, little gray rect on screen
   	if(focusNode){
+  		let pc = 0.4;
 	  	fill(initOptions["focus-color"]);
 	  	stroke(initOptions["focus-color"]);
 	  	strokeWeight(1);
-	  	rect(-10,focusNode.y,windowWidth+10,initOptions.defaultSize);
+	  	rect(-10,focusNode.y + initOptions.defaultSize*(1-pc)/2 ,windowWidth+10,initOptions.defaultSize*0.4);
   	}
 }
 
