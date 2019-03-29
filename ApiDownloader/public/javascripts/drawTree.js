@@ -693,7 +693,6 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 	
 }
 
-
 //draw the button that can open or close nodes
 function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	if(node.c.length <= 0 )return;
@@ -711,12 +710,51 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 
 		//check if clicked
 		if(click && !changed){
-			//keep visible nodes list clean
+			synchronizedToggle(node,isRight)
+		}
+	}
+
+	//draw the graphics of the button
+	rect(node_x_pos,node_y_pos,button_size ,button_size );
+	line(node_x_pos + button_padding,node_y_pos + button_size /2, node_x_pos + button_size - button_padding ,node_y_pos + button_size /2);
+	if(node.collapsed)
+	line(node_x_pos + button_size /2,node_y_pos + button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
+	
+}
+
+function synchronizedToggle(node,isRight){
+	if(node.collapsed){
+				node.equivalent.forEach(
+					(eqNode)=>{	scaleToggleNode(eqNode,!isRight);}
+				)
+			}else{
+				node.equivalent.forEach(
+					(eqNode)=>{	
+						//for synchronization change only if they are the same
+						if(node.collapsed == eqNode.collapsed)
+						toggleNode(eqNode,!isRight);}
+				)
+			}
+			toggleNode(node,isRight);
+}
+
+
+function scaleToggleNode(node){
+	node.f.forEach(
+		(familiar) => {if(familiar.collapsed) toggleNode(familiar)}
+	)
+	if(node.collapsed){
+		toggleNode(node);
+	}
+}
+
+//visualy opens or close nodes
+function toggleNode(node,isRight){
+	//keep visible nodes list clean
+			//if its parent is closed  open the higest node in the rank
 			let cleaning_function;
 			let elder = getRoot(node);
-
 			//cleaning functions is the function executed to the affected nodes
-
 			//open or close node
 			if(node.collapsed){
 				unfoldNode(node);
@@ -735,31 +773,14 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 			recalculateTree(elder,initOptions,function(){
 				if(cleaning_function){cleaning_function(elder);}
 			});
-
-
-
 			//create groups for hierarchical edge bundling
-
-
 			//recreate lines
 	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
 	  		let right_pos = {x: windowWidth-initOptions.separation, y: 0 + dispRightTree};
 	  		//recreate bundles with the extra or removed lines
 	  		update_lines(node,isRight);
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
-
-
-		}
-	}
-
-	//draw the graphics of the button
-	rect(node_x_pos,node_y_pos,button_size ,button_size );
-	line(node_x_pos + button_padding,node_y_pos + button_size /2, node_x_pos + button_size - button_padding ,node_y_pos + button_size /2);
-	if(node.collapsed)
-	line(node_x_pos + button_size /2,node_y_pos + button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
-	
 }
-
 
 //add element to rendering queue
 function pushIntoUnfolded(node){
