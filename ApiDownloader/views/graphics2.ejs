@@ -8,68 +8,34 @@
     <script src = "/javascripts/countChildren.js" ></script>
     <script src = "/javascripts/generic.js" ></script>
     <script src = "/javascripts/hierachyThreeDownloader.js" ></script>
+    <script src= "/javascripts/tableToExcel.js"></script>
+    <link rel='stylesheet' href='/stylesheets/graphicsStyle.css' />
+
 
 <h1>Comparison of Biological Taxonomies</h1>
-<h2 id="TaxName"></h2>
+<h2 id="TaxName" class = "inlineHeader"></h2>
+
+<button onclick = "onSaveclick()" class = "saveButton"> Save Excel</button>
+
 
   </head>
-<style>
 
-    body {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        width: 960px;
-        height: 500px;
-        position: relative;
-    }
-
-    svg {
-        width: 100%;
-        height: 100%;
-        position: center;
-    }
-
-    .toolTip {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        position: absolute;
-        display: none;
-        width: auto;
-        height: auto;
-        background: none repeat scroll 0 0 white;
-        border: 0 none;
-        border-radius: 8px 8px 8px 8px;
-        box-shadow: -3px 3px 15px #888888;
-        color: black;
-        font: 12px sans-serif;
-        padding: 5px;
-        text-align: center;
-    }
-
-    text {
-        font: 10px sans-serif;
-        color: white;
-    }
-    text.value {
-        font-size: 120%;
-        fill: white;
-    }
-
-    .axisHorizontal path{
-        fill: none;
-    }
-
-    .axisHorizontal .tick line {
-        stroke-width: 1;
-        stroke: rgba(0, 0, 0, 0.2);
-    }
-
-    .bar {
-        fill: steelblue;
-        fill-opacity: .9;
-    }
-
-</style>
 <body>
 
+<table id="tblData">
+    <tr>
+        <th>Name</th>
+        <th>Taxonomy</th>
+        <th>Amount of Species</th>
+        <th>Source</th>
+        <th>Date</th>
+        <th>AccessDate</th>
+    </tr>
+    <tr id="Tree1"></tr>
+    <tr  id="Tree2"></tr>
+</table>
+
 <script src = "/javascripts/graphics3.js" ></script>
+
 
 </body>
