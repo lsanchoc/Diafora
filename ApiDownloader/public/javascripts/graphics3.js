@@ -19,7 +19,22 @@ var data = [
 {label: "Renames", value: tree.totalRenames},
 ];
 
-document.getElementById("TaxName").innerHTML = tree.r+": "+tree.n +" "+ tree.a +" "+tree.totalSpecies;
+document.getElementById("TaxName").innerHTML = tree.r+": "+tree.n +" "+ tree.a;
+document.getElementById("Tree1").innerHTML =
+         "<td>"+tree.name+"</td>"
+        +"<td>"+tree.taxonomy+"</td>"
+        +"<td>"+tree.totalSpecies+"</td>"
+        +"<td>"+tree.source+"</td>"
+        +"<td>"+tree.date+"</td>"
+        +"<td>"+tree.accessDate+"</td>";
+
+document.getElementById("Tree2").innerHTML =
+            "<td>"+tree2.name+"</td>"
+        +"<td>"+tree2.taxonomy+"</td>"
+        +"<td>"+tree2.totalSpecies+"</td>"
+        +"<td>"+tree2.source+"</td>"
+        +"<td>"+tree2.date+"</td>"
+        +"<td>"+tree2.accessDate+"</td>";
 
 var colors = {
     "split-color":"#e066ff",                //color of split nodes used in lines and text
@@ -27,7 +42,9 @@ var colors = {
     "rename-color":"#a37c58",               //color of rename nodes used in lines and text
     "move-color":"#8888CC",                 //color of move nodes used in lines and text
     "equal-color":"#e8e8e8",                //color of congruence nodes used in lines and text
-    "focus-color":"#00000020"              //color of text when a node is clicked
+    "focus-color":"#00000020",              //color of text when a node is clicked
+    "add-color": "#b1ffaf",
+    "remove-color": "#ff6060"
 }
 
     var div = d3.select("body").append("div").attr("class", "toolTip");
@@ -91,10 +108,10 @@ var colors = {
                     return "#ff9a47"
                     break;
                 case "Removes":
-                    return "#000000"
+                    return "#ff6060"
                     break;
                 case "Insertions":
-                    return "#e8e8e8"
+                    return "#b1ffaf"
                     break;
                 case "Moves":
                     return "#8888CC"
@@ -142,3 +159,5 @@ var colors = {
             .attr("class", "axisHorizontal")
             .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
             .call(xAxis);
+
+function onSaveclick (){exportTableToExcel("tblData","TaxComp_"+tree.name+tree.date+"_"+tree2.name+tree2.date)}
