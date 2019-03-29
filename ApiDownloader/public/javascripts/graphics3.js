@@ -12,25 +12,31 @@ calculate_all_merges(levelList,levelList2);
 
 var data = [
 {label: "Splits", value: tree.totalSplits},
-{label: "Merges", value: tree.totalMerges},
+{label: "Merges", value: tree2.totalMerges},
 {label: "Removes", value: tree.totalRemoves},
-{label: "Insertions", value: tree.totalInsertions},
+{label: "Insertions", value: tree2.totalInsertions},
 {label: "Moves", value: tree.totalMoves},
 {label: "Renames", value: tree.totalRenames},
 ];
 
+document.getElementById("TaxName").innerHTML = tree.r+": "+tree.n +" "+ tree.a +" "+tree.totalSpecies;
 
-
-
-
+var colors = {
+    "split-color":"#e066ff",                //color of split nodes used in lines and text
+    "merge-color":"#ff9a47",                //color of merge nodes used in lines and text
+    "rename-color":"#a37c58",               //color of rename nodes used in lines and text
+    "move-color":"#8888CC",                 //color of move nodes used in lines and text
+    "equal-color":"#e8e8e8",                //color of congruence nodes used in lines and text
+    "focus-color":"#00000020"              //color of text when a node is clicked
+}
 
     var div = d3.select("body").append("div").attr("class", "toolTip");
 
     var axisMargin = 20,
             margin = 40,
             valueMargin = 4,
-            width = parseInt(d3.select('body').style('width'), 10),
-            height = parseInt(d3.select('body').style('height'), 10),
+            width = 960,
+            height =500,
             barHeight = (height-axisMargin-margin*2)* 0.4/data.length,
             barPadding = (height-axisMargin-margin*2)*0.6/data.length,
             data, bar, svg, scale, xAxis, labelWidth = 0;
@@ -48,11 +54,12 @@ var data = [
             .enter()
             .append("g");
 
-    bar.attr("class", "bar")
+        bar.attr("class", "bar")
             .attr("cx",0)
             .attr("transform", function(d, i) {
                 return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
             });
+
 
     bar.append("text")
             .attr("class", "label")
@@ -73,7 +80,32 @@ var data = [
             .tickSize(-height + 2*margin + axisMargin)
             .orient("bottom");
 
+
     bar.append("rect")
+            .attr("fill",function(d) {
+                switch(d.label) {
+                case "Splits":
+                    return "#e066ff"
+                    break;
+                case "Merges":
+                    return "#ff9a47"
+                    break;
+                case "Removes":
+                    return "#000000"
+                    break;
+                case "Insertions":
+                    return "#e8e8e8"
+                    break;
+                case "Moves":
+                    return "#8888CC"
+                    break;
+                case "Renames":
+                    return "#a37c58"
+                    break;
+                default:
+                    // code block
+                }
+                })
             .attr("transform", "translate("+labelWidth+", 0)")
             .attr("height", barHeight)
             .attr("width", function(d){
@@ -110,4 +142,3 @@ var data = [
             .attr("class", "axisHorizontal")
             .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
             .call(xAxis);
-
