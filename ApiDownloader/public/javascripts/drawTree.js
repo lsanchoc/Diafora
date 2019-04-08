@@ -95,6 +95,7 @@ var click = false; 			//
 
 
 var focusNode = undefined;	//Last node selected by the user
+var focusClick = 0;
 
 
 //List of visible nodes for both trees by rank
@@ -658,20 +659,27 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 		if(click){
 			//focus the equivalent node on the other side
 			if(node.equivalent && node.equivalent.length > 0){
+				//iterate equivalent nodes
+				if(focusNode === node) focusClick++
+				else focusClick = 0;
+
 				if(isRight){
-					targetDispLefTree = node.y - findOpen(node.equivalent[0]).y;
+					let index = focusClick%node.equivalent.length;
+					targetDispLefTree = node.y - findOpen(node.equivalent[index]).y;
 					yPointer -= targetDispRightTree;
 					targetDispRightTree = 0;
 					dispRightTree = 0;
 					
 				}else{
-					targetDispRightTree = node.y - findOpen(node.equivalent[0]).y;
+					let index = focusClick%node.equivalent.length;
+					targetDispRightTree = node.y - findOpen(node.equivalent[index]).y;
 					yPointer -= targetDispLefTree;
 					targetDispLefTree = 0;
 					dispLefTree = 0;
 				}
-
+				
 				focusNode = node;
+				console.log(focusClick);
 				forceRenderUpdate(initOptions);
 				//console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
@@ -712,6 +720,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 		if(click && !changed){
 			synchronizedToggle(node,isRight)
 		}
+		forceRenderUpdate(options);
 	}
 
 	//draw the graphics of the button
@@ -720,6 +729,7 @@ function drawExpandButton(node,initialY,finalY,options,xpos,ypos, isRight){
 	if(node.collapsed)
 	line(node_x_pos + button_size /2,node_y_pos + button_padding, node_x_pos + button_size/2 ,node_y_pos + button_size - button_padding);
 	
+
 }
 
 function synchronizedToggle(node,isRight){

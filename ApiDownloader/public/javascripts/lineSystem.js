@@ -26,7 +26,7 @@ function get_all_lines(){
 	//console.log(lines);
 	if(interface_variables.split){
 		all_lines = all_lines.concat(lines.splits);
-		console.log(lines.splits);
+		//console.log(lines.splits);
 	}
 	if(interface_variables.merge){
 		all_lines = all_lines.concat(lines.merges);
