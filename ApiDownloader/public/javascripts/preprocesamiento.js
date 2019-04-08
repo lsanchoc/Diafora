@@ -1,6 +1,7 @@
 
 //constant with the ranks to take into consideration for tasks
-const families = [	"class",
+const families = [	"phylum",
+					"class",
 					"order",
 					"superfamily",
 					"family",
@@ -61,7 +62,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 				if(equivalent && compare_author_date(node,equivalent)){
 
 
-					node.equivalent.push(equivalent);
+					node.equivalent.push(equivalent);7
 
 					//equivalent.equivalent.push(node);
 					//Compare the parent of each node, check if parents changed
@@ -127,6 +128,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 			sinonym_node_array.forEach(
 			(sinonym_node)=>{
 			if(sinonym_node && compare_author_date(node,sinonym_node) && node.n != sinonym.n){
+				if(!containsObject(node,sinonym_node.equivalent))
 				node.equivalent.push(sinonym_node);
 				if(!containsObject(node,sinonym_node.equivalent)){
 						sinonym_node.equivalent.push(node)
@@ -147,6 +149,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 			sinonym_node_array.forEach(
 			(sinonym_node)=>{
 			if(sinonym_node && compare_author_date(node,sinonym_node) && node.n != sinonym.n){
+				if(!containsObject(node,sinonym_node.equivalent))
 				node.equivalent.push(sinonym_node);
 				if(!containsObject(node,sinonym_node.equivalent)){
 						sinonym_node.equivalent.push(node)
