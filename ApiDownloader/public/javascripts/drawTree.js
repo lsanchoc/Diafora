@@ -739,12 +739,12 @@ function synchronizedToggle(node,isRight){
 }
 
 
-function scaleToggleNode(node){
+function scaleToggleNode(node,isRight){
 	node.f.forEach(
-		(familiar) => {if(familiar.collapsed) toggleNode(familiar)}
+		(familiar) => {if(familiar.collapsed) toggleNode(familiar,isRight)}
 	)
 	if(node.collapsed){
-		toggleNode(node);
+		toggleNode(node,isRight);
 	}
 }
 

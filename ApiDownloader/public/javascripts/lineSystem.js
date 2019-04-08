@@ -1,5 +1,5 @@
 /*Todo
-Some lines are removed and never added back
+Some lines are removed and never added back, because the node is closed but only lines from son nodes are added
 */
 
 
@@ -26,6 +26,7 @@ function get_all_lines(){
 	//console.log(lines);
 	if(interface_variables.split){
 		all_lines = all_lines.concat(lines.splits);
+		console.log(lines.splits);
 	}
 	if(interface_variables.merge){
 		all_lines = all_lines.concat(lines.merges);
@@ -191,6 +192,8 @@ function closeNode(node,isRight){
 }
 
 
+
+
 // counts lines from children and add the to parent
 function updateNodeLines(originalNode,isRight){
 	proccesByLevel(originalNode,function(node){
@@ -212,8 +215,9 @@ function updateNodeLines(originalNode,isRight){
 				if(node.split || node.equivalent[0].split /*&& node.equivalent.length > 1*/){
 					//we found a split
 					node.equivalent.forEach(function(eq,index){
-						console.log("split!!!");
+						
 						let target = findOpen(eq);
+						eq.equivalent
 						var found = false;
 						lines.splits.forEach(function(spl){
 							if ((spl.o == fuente && spl.t == target) || (spl.o == target && spl.t == fuente)){
@@ -231,11 +235,13 @@ function updateNodeLines(originalNode,isRight){
 						
 						
 					});
+
 					
 				//executes only on right tree
 				}else if(node.equivalent[0].merge || node.merge){
 					//we found a merge
 					//console.log("merge!!!");
+					console.log("merge!!! --- " + node.n);
 					node.equivalent.forEach(function(eq,index){
 						let target = findOpen(eq);
 						var found = false;
@@ -254,6 +260,11 @@ function updateNodeLines(originalNode,isRight){
 						}
 						//console.log("found: " +found);
 					});
+
+
+
+
+
 				}else if(node.rename || node.equivalent[0].rename ){
 					//we found a merge
 					//console.log("merge!!!");
@@ -372,7 +383,7 @@ function removeLinesOf(node){
 		if(mrg.o.n != node.n && mrg.t.n != node.n){
 			newMerges.push(mrg);
 		}else{
-			console.log("Removed merges: ", mrg.o.n, "  ", mrg.t.n);
+			//console.log("Removed merges: ", mrg.o.n, "  ", mrg.t.n);
 		}
 
 
@@ -384,7 +395,7 @@ function removeLinesOf(node){
 		if(rnm.o.n != node.n && rnm.t.n != node.n){
 			newRenames.push(rnm);
 		}else{
-			console.log("Removed renames: ", rnm.o.n, "  ", rnm.t.n);
+			//console.log("Removed renames: ", rnm.o.n, "  ", rnm.t.n);
 		}
 
 
@@ -409,7 +420,7 @@ function removeLinesOf(node){
 		if(mov.o.n != node.n && mov.t.n != node.n){
 			newMoves.push(mov);
 		}else{
-			console.log("Removed merges: ", mov.o.n, "  ", mov.t.n);
+			//console.log("Removed merges: ", mov.o.n, "  ", mov.t.n);
 		}
 
 
@@ -450,6 +461,9 @@ function createBundles(posL,posR,radius){
 	let median = [];
 	//let all_lines = lines.splits.concat(lines.merges.concat(lines.renames.concat(/*lines.equals*/ lines.moves)));
 	let all_lines = get_all_lines();
+	/*all_lines.forEach(
+		(line) => console.log(line)
+	)*/	
 	//console.log(all_lines);
 	sort_lines_simple(all_lines,posL,posR);
 	groupsOf(all_lines,posL,posR,radius)
