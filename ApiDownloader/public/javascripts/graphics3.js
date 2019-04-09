@@ -26,15 +26,27 @@ document.getElementById("Tree1").innerHTML =
         +"<td>"+tree.totalSpecies+"</td>"
         +"<td>"+tree.source+"</td>"
         +"<td>"+tree.date+"</td>"
-        +"<td>"+tree.accessDate+"</td>";
+        +"<td>"+tree.accessDate+"</td>"
+        +"<td>"+tree.totalSplits+"</td>"
+        +"<td>"+tree.totalMerges+"</td>"
+        +"<td>"+tree.totalRemoves+"</td>"
+        +"<td>"+tree.totalInsertions+"</td>"
+        +"<td>"+tree.totalMoves+"</td>"
+        +"<td>"+tree.totalRenames+"</td>";
 
 document.getElementById("Tree2").innerHTML =
-            "<td>"+tree2.name+"</td>"
+         "<td>"+tree2.name+"</td>"
         +"<td>"+tree2.taxonomy+"</td>"
         +"<td>"+tree2.totalSpecies+"</td>"
         +"<td>"+tree2.source+"</td>"
         +"<td>"+tree2.date+"</td>"
-        +"<td>"+tree2.accessDate+"</td>";
+        +"<td>"+tree2.accessDate+"</td>"
+        +"<td>"+tree2.totalSplits+"</td>"
+        +"<td>"+tree2.totalMerges+"</td>"
+        +"<td>"+tree2.totalRemoves+"</td>"
+        +"<td>"+tree2.totalInsertions+"</td>"
+        +"<td>"+tree2.totalMoves+"</td>"
+        +"<td>"+tree2.totalRenames+"</td>";
 
 var colors = {
     "split-color":"#e066ff",                //color of split nodes used in lines and text
