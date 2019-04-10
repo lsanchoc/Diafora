@@ -22,6 +22,7 @@ const loadingUrl = "http://localhost:3000/";
 
 
 function onSalir(){
+	//alert("salir")
 	window.location.replace(loadingUrl);
 }
 
@@ -43,13 +44,23 @@ $(function () {
         if(name.length > 2){
 				tree.apiCallByName(name,0);
 				tree.setOnReadyStatusCallback( function(){
-				
+					
+					//tree build from downoloading data on catalogue of life
 					let treeResult = tree.createTreeQuery(name,0);
+
+					let newTaxonomy = {};
+					newTaxonomy.name = name;
+					newTaxonomy.source = "http://www.catalogueoflife.org/";
+					//gets current date
+					newTaxonomy.date = year;
+					newTaxonomy.accesDate = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+					newTaxonomy.taxonomy = treeResult;
+
 					//console.log(treeResult);
 					//console.log(treeResult);
 					 //$("#resultadoName").html(JSON.stringify(treeResult));
 					 //alert("cargado");
-					let resultText = JSON.stringify(treeResult);
+					let resultText = JSON.stringify(newTaxonomy);
 					let blob = new Blob([resultText], {type: "application/json"});
 					let url  = URL.createObjectURL(blob);
 
@@ -73,6 +84,12 @@ $(function () {
 						a.click();
 						logString = "";
 					}
+
+					//after finish download reset the download tree
+					tree = new TaxonomyTree();
+					tree.setNotify(Notify);
+					$('#name').val();
+					$('#year').val();
 					
 			}
 			);

@@ -6,7 +6,7 @@
 body {
 	margin: 0px;
 	padding: 0px;
-	background: #4C830C;
+	background: #BCD231;
 	font-family: 'Raleway', sans-serif;
 	font-size: 11pt;
 	font-weight: 400;
@@ -15,12 +15,14 @@ body {
 
 .header{
     margin:auto;
-    width: 35%;
+    width: 70%;
     padding: 10px;
     text-align: center;
-    margin-top: 10%;
-    background-color: #7DB343;	
+    margin-top: 5%;
+    background-color: #D4E27B;	
 }
+
+
 .footerText{
     position: absolute;
     bottom: 5px;
@@ -40,8 +42,12 @@ body {
     margin-top: 1%;
     font-size: 6pt;
     background-color: #7DB343;
+}
 
-
+.textTittle{
+    padding: 2px;
+    text-align: center;
+    font-size: 30pt;
 }
 .vis_button{
     position:  absolute;

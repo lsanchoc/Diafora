@@ -1,3 +1,5 @@
+
+
 var format = "json" // options are xml or json, probably should not be a global variable
 //se inicia a utilizar el proxy https://cors.io/?
 var proxyUrl = "http://127.0.0.1:5757/";
@@ -64,6 +66,7 @@ class TaxonomyTree {
 	 //returns content from three cache
 	 //run after the query is done
 	createTreeQuery(TaxonName){
+		//build format header and save			
 		return this.cache[TaxonName.toLowerCase()];
 	  
 	}
