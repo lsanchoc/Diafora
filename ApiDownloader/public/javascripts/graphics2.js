@@ -1,6 +1,5 @@
-
-var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
-var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
+var tree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
+var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
 countChildren(tree);
 countChildren(tree2);
 

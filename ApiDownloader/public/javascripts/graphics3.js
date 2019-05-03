@@ -1,52 +1,52 @@
 
 
-var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
+var tree  = JSON.parse(sessionStorage.getItem("sessionTree1"));
 var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
-countChildren(tree);
-countChildren(tree2);
+var treeTax  = tree.taxonomy;
+var treeTax2 = tree2.taxonomy;
+
+countChildren(treeTax);
+countChildren(treeTax2);
 
 //Calculates al tasks for both taxonomies
-let levelList = createRankList(tree);
-let levelList2 = createRankList(tree2);
+let levelList = createRankList(treeTax);
+let levelList2 = createRankList(treeTax2);
 calculate_all_merges(levelList,levelList2);
 
 var data = [
-{label: "Splits", value: tree.totalSplits},
-{label: "Merges", value: tree2.totalMerges},
-{label: "Removes", value: tree.totalRemoves},
-{label: "Insertions", value: tree2.totalInsertions},
-{label: "Moves", value: tree.totalMoves},
-{label: "Renames", value: tree.totalRenames},
+{label: "Splits", value: treeTax.totalSplits},
+{label: "Merges", value: treeTax2.totalMerges},
+{label: "Removes", value: treeTax.totalRemoves},
+{label: "Insertions", value: treeTax2.totalInsertions},
+{label: "Moves", value: treeTax.totalMoves},
+{label: "Renames", value: treeTax.totalRenames},
 ];
 
-document.getElementById("TaxName").innerHTML = tree.r+": "+tree.n +" "+ tree.a;
 document.getElementById("Tree1").innerHTML =
          "<td>"+tree.name+"</td>"
-        +"<td>"+tree.taxonomy+"</td>"
-        +"<td>"+tree.totalSpecies+"</td>"
+        +"<td>"+treeTax.totalSpecies+"</td>"
         +"<td>"+tree.source+"</td>"
         +"<td>"+tree.date+"</td>"
         +"<td>"+tree.accessDate+"</td>"
-        +"<td>"+tree.totalSplits+"</td>"
-        +"<td>"+tree.totalMerges+"</td>"
-        +"<td>"+tree.totalRemoves+"</td>"
-        +"<td>"+tree.totalInsertions+"</td>"
-        +"<td>"+tree.totalMoves+"</td>"
-        +"<td>"+tree.totalRenames+"</td>";
+        +"<td>"+treeTax.totalSplits+"</td>"
+        +"<td>"+treeTax.totalMerges+"</td>"
+        +"<td>"+treeTax.totalRemoves+"</td>"
+        +"<td>"+treeTax.totalInsertions+"</td>"
+        +"<td>"+treeTax.totalMoves+"</td>"
+        +"<td>"+treeTax.totalRenames+"</td>";
 
 document.getElementById("Tree2").innerHTML =
          "<td>"+tree2.name+"</td>"
-        +"<td>"+tree2.taxonomy+"</td>"
-        +"<td>"+tree2.totalSpecies+"</td>"
+        +"<td>"+treeTax2.totalSpecies+"</td>"
         +"<td>"+tree2.source+"</td>"
         +"<td>"+tree2.date+"</td>"
         +"<td>"+tree2.accessDate+"</td>"
-        +"<td>"+tree2.totalSplits+"</td>"
-        +"<td>"+tree2.totalMerges+"</td>"
-        +"<td>"+tree2.totalRemoves+"</td>"
-        +"<td>"+tree2.totalInsertions+"</td>"
-        +"<td>"+tree2.totalMoves+"</td>"
-        +"<td>"+tree2.totalRenames+"</td>";
+        +"<td>"+treeTax2.totalSplits+"</td>"
+        +"<td>"+treeTax2.totalMerges+"</td>"
+        +"<td>"+treeTax2.totalRemoves+"</td>"
+        +"<td>"+treeTax2.totalInsertions+"</td>"
+        +"<td>"+treeTax2.totalMoves+"</td>"
+        +"<td>"+treeTax2.totalRenames+"</td>";
 
 var colors = {
     "split-color":"#e066ff",                //color of split nodes used in lines and text

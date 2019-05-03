@@ -9,7 +9,7 @@ var queryFlags = "/webservice?format="+format+"&response=full&" //flags to shape
 
 
 var MAX_JOBS = 100; // max ammount of api requests that can exist  at the same time
-var MAX_RETRYS = 15;
+var MAX_RETRYS = 20;
 
 //regular expressions for author recognition
 var botanyPattern = /\s&\s|\set\s|\sex\s/
@@ -262,12 +262,22 @@ class TaxonomyTree {
 			retryRequest.send();
 			//error repeated MAX_RETRYS times, dont bother anymore
 			}else{
+
+				var doc; 
+	            var result = confirm("Retrys limit exceeded, continue?"); 
+	            if (result == true) { 
+	        		
+	            } else { 
+	                console.log("Cancel Process!!!!!!") 
+	            } 
+
 				//se termino de manera incorrecta el request
 				this.pendingJobs--;
 				//cals log function
 				if(this.log != undefined){
 					this.log("Error " + xhr.status + " : "+ url + "\n");
 				}
+
 			}
 			
 		}

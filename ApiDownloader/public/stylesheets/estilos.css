@@ -1,5 +1,13 @@
+
+:root {
+  --main-bg-color: #268970;
+  --main-color: #054357;
+  --secondary-color: #BED948;
+  --accent-color: #FB7422;
+}
+
 *{
-	background-color: #ffffff;
+	background-color: var(--main-color);
 }
 
 h1{

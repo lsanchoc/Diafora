@@ -53,7 +53,7 @@ $(function () {
 					newTaxonomy.source = "http://www.catalogueoflife.org/";
 					//gets current date
 					newTaxonomy.date = year;
-					newTaxonomy.accesDate = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+					newTaxonomy.accessDate = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 					newTaxonomy.taxonomy = treeResult;
 
 					//console.log(treeResult);
