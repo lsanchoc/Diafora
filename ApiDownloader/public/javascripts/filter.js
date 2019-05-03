@@ -1,7 +1,7 @@
 
 
 
-class FilterSystem(){
+class FilterSystem{
 
 
 
@@ -45,7 +45,6 @@ class FilterSystem(){
 	}
 
 	queryTaxon(rank,name){
-		if(!rank){
 			let keys = name.split(" ");
 			let results = [];
 			keys.forEach(
@@ -60,21 +59,65 @@ class FilterSystem(){
 			let finalResult = results[0];
 			//intersection
 			for (var i =  1; i < results.length; i++) {
-				finalResult = finalResult.filter(x => results[i].has(x));
+				finalResult =new Set([...finalResult].filter(x => results[i].has(x)));
 			}
 
-			
+
+			if(rank){
+				finalResult =new Set([...finalResult].filter(x => x.rank == rank));
+			}	
+
+			finalResult = Array.from(finalResult); 
+
+			return finalResult;
 		}
 
-	}
+
+
 
 	querySpecies(name){
+			let keys = name.split(" ");
+			let results = [];
+			keys.forEach(
+				(rawKey) => {
+					var goalKey = getClosestKey(rawKey);
+					results.push(dataStruct[goalKey]);
+				}
 
 
-	}
+			)
+
+			let finalResult = results[0];
+			//intersection
+			for (var i =  1; i < results.length; i++) {
+				finalResult =new Set([...finalResult].filter(x => results[i].has(x)));
+			}
+
+
+			if(rank){
+				finalResult =new Set([...finalResult].filter(x => x.rank == "species"));
+			}	
+			
+			finalResult = Array.from(finalResult); 
+
+			return finalResult;
+		}
 
 	//the search magic ocurs here
 	getClosestKey(rawString){
+		let keyArray = Array.from(this.keys);
+
+		let bestKey = undefined;
+		let maxVal = -10000000;
+		for (const actualKey of this.keys) {
+  				var similarity = LevenshteinIterative(actualKey,rawString);
+				if(similarity > maxVal){
+					maxVal = similarity;
+					bestKey = actualKey;
+				}
+		}
+
+		return bestKey;
 
 	}
 }
