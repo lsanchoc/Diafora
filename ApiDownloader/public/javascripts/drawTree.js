@@ -1,6 +1,6 @@
-var tree = JSON.parse(sessionStorage.getItem("sessionTree1"));
-var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2"));
-treeStr = JSON.stringify(tree);
+var tree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
+var tree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
+//treeStr = JSON.stringify(tree);
 
 
 console.log(tree);
@@ -182,6 +182,14 @@ function setup() {
 	//first line update before drawing
 	update_lines(tree);
 	sort_and_update_lines();
+
+
+	//filte system 
+	var filter = new FilterSystem(tree,tree2);
+
+	console.log(filter.getClosestKey("Lumbricu"));
+	console.log(filter.getTopNKeys(3,"Lumbricu"));
+	console.log(filter.queryTaxons(null,"alma brunea"));
 }
 
 
