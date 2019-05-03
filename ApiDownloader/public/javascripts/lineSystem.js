@@ -337,6 +337,7 @@ function updateNodeLines(originalNode,isRight){
 }
 
 
+
 //finds the closest parent node that is visible
 function findOpen(node){
 	//scale on parent for closed nodes
