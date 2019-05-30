@@ -1,91 +1,115 @@
-/** {
-    margin:0;
-    padding:0;
-}*/
+/*Search the size of header to change for --top-margin*/
+
+/*
+
+document.getElementById("table_stadistic_id").innerHTML =
+    "<tr> <th>Name</th> <th>" + tree.name + "</th> <th>" + tree2.name + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalSpecies + "</th> <th>" + treeTax2.totalSpecies + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + tree.source + "</th> <th>" + tree2.source + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + tree.date + "</th> <th>" + tree2.date + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + tree.accessDate + "</th> <th>" + tree2.accessDate + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalSplits + "</th> <th>" + treeTax2.totalSplits + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalMerges + "</th> <th>" + treeTax2.totalMerges + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalRemoves + "</th> <th>" + treeTax2.totalRemoves + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalInsertions + "</th> <th>" + treeTax2.totalInsertions + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalMoves + "</th> <th>" + treeTax2.totalMoves + "</th> </tr>" +
+    "<tr> <th>Name</th> <th>" + treeTax.totalRenames + "</th> <th>" + treeTax2.totalRenames + "</th> </tr>";
+
+
+*/
 
 
 :root {
-  --main-bg-color: #268970;
+
+  --grey-color: #7f7f7f;
+  --main-bg-color: #7f7f7f;
   --main-color: #054357;
-  --secondary-color: #BED948;
+  --secondary-color: #CCCCCC;
   --accent-color: #FB7422;
+  --top-margin: 10%;
 }
 
 body {
 	margin: 0px;
 	padding: 0px;
-	background: #BCD231;
+	background: var(--main-bg-color);
 	font-family: 'Raleway', sans-serif;
-	font-size: 11pt;
+	font-size: 12pt;
 	font-weight: 400;
 
+}
+
+.main_body{
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+
+}
+
+/*Stadistics side*/
+.left{
+  top: var(--top-margin);
+  margin-left: 0;
+  width: 20%;
+  background: #cccccc;
+  text-align:center;
+
+}
+
+/*Sketch side*/
+.right{
+  right: 0;
+  width: 80%;
+
+}
+
+.table_stadistic{
+  text-align: right;
+  font-size:9pt;
 }
 
 .header{
     margin:auto;
     width: 70%;
-    padding: 10px;
+    padding: 0px;
     text-align: center;
     margin-top: 5%;
-    background-color: #D4E27B;	
+    background-color: var(--secondary-color);	
 }
 
 
 .footerText{
-    position: absolute;
-    bottom: 5px;
-    text-align:center;
-    left: 0; 
-	right: 0; 
+  position: absolute;
+  bottom: 5px;
+  text-align:center;
 	margin-left: auto; 
 	margin-right: auto; 
 	width: 80%;
-	font-size: 3pt;
+	font-size: 14pt;
 }
 
-.headerTittle{
-	
-    padding: 2px;
-    text-align: center;
-    margin-top: 1%;
-    font-size: 6pt;
-    background-color: #7DB343;
-}
 
 .textTittle{
     padding: 2px;
     text-align: center;
     font-size: 30pt;
 }
-.vis_button{
-    position:  absolute;
-    top: 3%;
-    right: 10%;
+
+.buttonsHeader{
+    position:  relative;
+    top: 4%;
     font-size: 15pt;
     background-color: rgba(0,0,0,0);
     display: inline-block;
     border-radius: 5px;
+    color: white;
+    font-size: 10pt;
+
 }
 
-.sort_button{
-    position:  absolute;
-    top: 3%;
-    right: 3%;
-    font-size: 15pt;
-    background-color: rgba(0,0,0,0);
-    display: inline-block;
-    border-radius: 5px;
-}
-
-.reset_button{
-    position:  absolute;
-    top: 3%;
-    right: 17%;
-    font-size: 15pt;
-    background-color: rgba(0,0,0,0);
-    display: inline-block;
-    border-radius: 5px;
-}
 
 .button2{
 	margin-left: -55px;
@@ -94,11 +118,22 @@ body {
 
 
 p{
-	margin-top: 18%;
+	margin-top: 18 %;
 	color: white;
         font-size: 17px;
 }
 
+.encircledBox{
+  display: inline-grid;
+  padding: 0px;
+  margin-right: 10px;
+  font-size: 12px;
+  color: white;
+
+  position:relative;
+}
+
+/*
 .infoSquare{
     position: absolute;
     bottom: 2%;
@@ -113,7 +148,7 @@ p{
     border-radius: 6px;
     border-width: 2px;
     background-color: white;
-}
+}*/
 
 .infoTitle{
     color: black;
@@ -131,33 +166,35 @@ p{
 .optionSquare{
     position: absolute;
     left: 2%;
-    top: 4%;
+    top: 0%; /* Top Margin */
     height: 50%;
 }
 
 
 
 .slidecontainer {
-  width: 40%; /* Width of the outside container */
-  margin-top: 35px;
-  margin-bottom: 10px;
-
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position:relative;
+  display: inline-grid;
 }
 
 /* The slider itself */
+
+
+
 .slider {
-  -webkit-appearance: slider-vertical;
+
+  -webkit-appearance: slider-horizontal;
   appearance: none;
-  width: 30px; /* Full-width */
-  height: 80%; /* Specified height */
+  width: 100px; /* Full-width */
+  height: 30px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
   transition: opacity .2s;
-  position:absolute;
-  margin-left: 2%;
-  margin-top:2%;
+  
 
 }
 
@@ -185,17 +222,16 @@ p{
 }
 
 .topSpacer {
-  display: inline-block;
+  display: inline-grid;
   height: 30%;
 }
 
 /* The switch - the box around the slider */
 .switch {
   position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-
+  display: inline-grid;
+  width: 30px;
+  height: 17px;
   border: 1px;
 
 }
@@ -224,14 +260,27 @@ p{
 .slider_switch:before {
   position: absolute;
   content: "";
-  height: 14px;
-  width: 14px;
-  left: 4px;
-  bottom: 4px;
+  height: 11px;
+  width: 11px;
+  left: 2px;
+  bottom: 3px;
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
 }
+
+
+/* Rounded sliders */
+.slider_switch.round {
+  border-radius: 5px;
+}
+
+.slider_switch.round:before {
+  border-radius: 50%;
+}
+
+
+
 /*Colors of diferent sliders*/
 input:checked + .slider_switch {
   background-color: #2196F3;
@@ -273,27 +322,4 @@ input:checked + .slider_switch:before {
   -webkit-transform: translateX(18px);
   -ms-transform: translateX(18px);
   transform: translateX(18px);
-}
-
-/* Rounded sliders */
-.slider_switch.round {
-  border-radius: 34px;
-}
-
-.slider_switch.round:before {
-  border-radius: 50%;
-}
-
-
-
-.encircledBox{
-  border: 1px;
-  border-radius:5px;
-  border-color: #00000070;
-  border-style: solid;
-  display: inline-block;
-  padding: 5px;
-  margin-right: 20px;
-
-  position:relative;
 }

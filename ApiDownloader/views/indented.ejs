@@ -13,38 +13,97 @@
 	<script src = "/javascripts/lineSystem.js" ></script>
 	<script src = "/javascripts/filter.js" ></script>
 	<script src = "/javascripts/ordering.js" ></script>
-	<script src = "/javascripts/drawTree.js" ></script>
 	
   </head>
   <body>
-    <div class="headerTittle">
-		<!--Function comes from ordering menu script -->
-		<button class="vis_button" onclick="onSalir()">Exit</button>
-		<!--Function comes from drawing system -->
-		<button class="sort_button" onclick="sort_and_update_lines()">Sort</button>
-		<!--Function comes from ordering system -->
-		<button class="reset_button" onclick="resetTrees()">Reset</button>
-		
-		
-    </div>
-		<div id="sketch-holder">
+
+		<div class="main_body left">
+  		<label>Statistics</label>
+
+		<table id="table_stadistic_id" class="table_stadistic">
+		</table>
+
+		<div id="sketch-holder" class="main_body right">
 		<!-- Our sketch will go here! -->
+		<script src = "/javascripts/drawTree.js" ></script>
 		</div>
+
+  		</div>
+
 	<div class="optionSquare">
+		
+		<div class="encircledBox">	
+		<label>Congruent</label>
+		<label class="switch">
+			<input type="checkbox" name="congruece" onclick="onCongruenceChange()"/>
+		 <span class="slider_switch round congruence_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Split</label>
+		<label class="switch">
+			<input type="checkbox" name="split" onclick="onSplitChange()"/>
+		 <span class="slider_switch round split_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Merged</label>
+		<label class="switch">
+			<input type="checkbox" name="merge" onclick="onMergeChange()"/>
+		 <span class="slider_switch round merge_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Moved</label>
+		<label class="switch">
+			<input type="checkbox" name="move" onclick="onMoveChange()"/>
+		 <span class="slider_switch round move_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Renamed</label>
+		<label class="switch">
+			<input type="checkbox" name="rename" onclick="onRenameChange()"/>
+		 <span class="slider_switch round rename_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Added</label>
+		<label class="switch">
+			<input type="checkbox" name="add" onclick="onAddedChange()"/>
+		 <span class="slider_switch round add_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label>Excluded</label>
+		<label class="switch">
+			<input type="checkbox" name="removes" onclick="onRemovedChange()"/>
+		 <span class="slider_switch round remove_slider_switch"></span>
+		</label>
+		</div>
+
+		<div class="encircledBox">
+		<label></label>
+		<label class="switch">
+			<input type="checkbox" name="space"/>
+		 
+		</label>
+		</div>
+
 		<div class="encircledBox">
 		<label>Lines</label>
-		<label class="switch">
+			<label class="switch">
 			<input type="checkbox" name="lineas" onclick="onLineChange()" checked/>
 		 <span class="slider_switch round"></span>
 		</label>
 		</div>
 
-		<!-- <label>Boxes</label>
-		<label class="switch">
-			<input type="checkbox" name="cajas" onclick="onBoxChange()"/>
-		 <span class="slider_switch round"></span>
-		</label>
-		-->
 		<div class="encircledBox">
 		<label>Bars</label>
 		<label class="switch">
@@ -53,70 +112,23 @@
 		</label>
 		</div>
 
-		<div class="encircledBox">
-		<label>Removes</label>
-		<label class="switch">
-			<input type="checkbox" name="removes" onclick="onRemovedChange()"/>
-		 <span class="slider_switch round remove_slider_switch"></span>
-		</label>
-		</div>
+		<!--Function comes from drawing system -->
+		<button class="buttonsHeader" onclick="sort_and_update_lines()">Sort</button>
+		<!--Function comes from ordering system -->
+		<button class="buttonsHeader" onclick="resetTrees()">Reset</button>
 		
-		<div class="encircledBox">
-		<label>Adds</label>
-		<label class="switch">
-			<input type="checkbox" name="add" onclick="onAddedChange()"/>
-		 <span class="slider_switch round add_slider_switch"></span>
-		</label>
-		</div>
-		
-		<div class="encircledBox">	
-		<label>Congruences</label>
-		<label class="switch">
-			<input type="checkbox" name="congruece" onclick="onCongruenceChange()"/>
-		 <span class="slider_switch round congruence_slider_switch"></span>
-		</label>
+		<div class="slidecontainer">
+		<input type="range" min="0" max="100" value="50" class="slider" id="myRange" 
+		oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
 		</div>
 
-		<div class="encircledBox">
-		<label>Merges</label>
-		<label class="switch">
-			<input type="checkbox" name="merge" onclick="onMergeChange()"/>
-		 <span class="slider_switch round merge_slider_switch"></span>
-		</label>
-		</div>
+		<button class="buttonsHeader" onclick="onSalir()">Table</button>
+	
+		<!--Function comes from ordering menu script -->
+		<button class="buttonsHeader" onclick="onSalir()">Exit</button>
 
-		<div class="encircledBox">
-		<label>Splits</label>
-		<label class="switch">
-			<input type="checkbox" name="split" onclick="onSplitChange()"/>
-		 <span class="slider_switch round split_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Renames</label>
-		<label class="switch">
-			<input type="checkbox" name="rename" onclick="onRenameChange()"/>
-		 <span class="slider_switch round rename_slider_switch"></span>
-		</label>
-		</div>
-
-
-		<div class="encircledBox">
-		<label>Moves</label>
-		<label class="switch">
-			<input type="checkbox" name="move" onclick="onMoveChange()"/>
-		 <span class="slider_switch round move_slider_switch"></span>
-		</label>
-		</div>
 	</div>
-	<div class="slidecontainer">
-		  	<input type="range" min="0" max="100" value="50" class="slider" id="myRange" 
-		  	oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
-	</div>
-	<div class="infoSquare">
-		<p class="infoTitle"></p>
-		<p class="infoBody" ></p>
-	</div>
+	
+
   </body>
 </html>
