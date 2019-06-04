@@ -1,6 +1,7 @@
 
 
 var format = "json" // options are xml or json, probably should not be a global variable
+
 //se inicia a utilizar el proxy https://cors.io/?
 var proxyUrl = "http://127.0.0.1:5757/";
 var especies2000url = "http://webservice.catalogueoflife.org/col"; //direction for current year
@@ -197,8 +198,8 @@ class TaxonomyTree {
 
 		xhttpId.send();
 	}
-  //executed when an api call is completed
-  //gets xmlhttprequest as parameter
+  	//executed when an api call is completed
+  	//gets xmlhttprequest as parameter
 	handleResult(xhr, url,retry){
 		//correct execution of api call
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -275,7 +276,8 @@ class TaxonomyTree {
 				this.pendingJobs--;
 				//cals log function
 				if(this.log != undefined){
-					this.log("Error " + xhr.status + " : "+ url + "\n");
+					this.log("Error " + xhr.status + " : "+ url + "\n" + "P.Jobs: " + this.pendingJobs);
+					console.log("Error en job No:" + this.pendingJobs);
 				}
 
 			}
@@ -287,7 +289,8 @@ class TaxonomyTree {
 			this.pendingJobs--;
 			//cals log function
 			if(this.log != undefined){
-				this.log("Error " + xhr.status + " : "+ url + "\n");
+				this.log("Error " + xhr.status + " : "+ url + "\n" + "P.Jobs: " + this.pendingJobs);
+				console.log("Error en job No:" + this.pendingJobs);
 			}
 		}
 	}
