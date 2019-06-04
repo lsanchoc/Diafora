@@ -11,6 +11,8 @@ var queryFlags = "/webservice?format="+format+"&response=full&" //flags to shape
 
 var MAX_JOBS = 100; // max ammount of api requests that can exist  at the same time
 var MAX_RETRYS = 20;
+const MAX_REQUEST_DURATION = 1000;
+
 
 //regular expressions for author recognition
 var botanyPattern = /\s&\s|\set\s|\sex\s/
@@ -518,6 +520,7 @@ function getAuthor(authorString){
 // Create the XHR object.
 function createCORSRequest(method, url) {
   var xhr = new XMLHttpRequest();
+  xhr.timeout = MAX_REQUEST_DURATION;
   if ("withCredentials" in xhr) {
     // XHR for Chrome/Firefox/Opera/Safari.
     xhr.open(method, url, true);

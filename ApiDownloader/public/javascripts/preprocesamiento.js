@@ -62,7 +62,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 				if(equivalent && compare_author_date(node,equivalent)){
 
 
-					node.equivalent.push(equivalent);7
+					node.equivalent.push(equivalent);
 
 					//equivalent.equivalent.push(node);
 					//Compare the parent of each node, check if parents changed
