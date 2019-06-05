@@ -17,27 +17,33 @@ calculate_all_merges(levelList,levelList2);
 console.log(treeTax);
 console.log(treeTax2);
 
-document.getElementById("table_stadistic_id").innerHTML =
-    "<tr> <th>Name</th> <th>" + tree.name + "</th> <th>" + tree2.name + "</th> </tr>" +
-    "<tr> <th>Total Species</th> <th>" + treeTax.totalSpecies + "</th> <th>" + treeTax2.totalSpecies + "</th> </tr>" +
-    // "<tr> <th>Source</th> <th>" + tree.source + "</th> <th>" + tree2.source + "</th> </tr>" +
-    "<tr> <th>Date</th> <th>" + tree.date + "</th> <th>" + tree2.date + "</th> </tr>" +
-    "<tr> <th>accessDate</th> <th>" + tree.accesDate + "</th> <th>" + tree2.accesDate + "</th> </tr>" +
-    "<tr> <th>Splits</th> <th>" + treeTax.totalSplits + "</th> <th>" + treeTax2.totalSplits + "</th> </tr>" +
-    "<tr> <th>Merges</th> <th>" + treeTax.totalMerges + "</th> <th>" + treeTax2.totalMerges + "</th> </tr>" +
-    "<tr> <th>Moves</th> <th>" + treeTax.totalRemoves + "</th> <th>" + treeTax2.totalRemoves + "</th> </tr>" +
-    "<tr> <th>Insertions</th> <th>" + treeTax.totalInsertions + "</th> <th>" + treeTax2.totalInsertions + "</th> </tr>" +
-    "<tr> <th>Moves</th> <th>" + treeTax.totalMoves + "</th> <th>" + treeTax2.totalMoves + "</th> </tr>" +
-    "<tr> <th>Renames</th> <th>" + treeTax.totalRenames + "</th> <th>" + treeTax2.totalRenames + "</th> </tr>";
+
+document.getElementById("table_taxon_id").innerHTML =
+    "<tr><th></th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
+        "<tr><th>        </th><th>" + tree.author + " " + tree.date  + "</th><th>" + tree2.author + " " + tree2.date + "</th></tr>" +
+		"<tr><th>Rank</th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
+    "<tr> <th>Kingdom</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
+    "<tr> <th>Phylum</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
+    "<tr> <th>Class</th><th>" + treeTax.totalClass + "</th><th>" + treeTax2.totalClass + "</th> </tr>" +
+    "<tr> <th>Family</th><th>" + treeTax.totalFamily + "</th><th>" + treeTax2.totalFamily + "</th> </tr>" +
+    "<tr> <th>Genus</th><th>" + treeTax.totalGenus + "</th><th>" + treeTax2.totalGenus + "</th> </tr>" +
+    "<tr> <th>Species</th><th>" + treeTax.totalSpecies + "</th><th>" + treeTax2.totalSpecies + "</th> </tr>" +
+    "<tr> <th>Total Nodes</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>";
 
 
-/**
-Todo List !!!!!!!!!!!!!!!!!!!!!!!!
---Comments
-Bug lineas desaparecen al abrir nodos a nivel de especies
-Extrange flickering
-**/
-
+document.getElementById("table_rank_id").innerHTML =
+    "<tr><th>Changes</th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
+        "<tr><th>        </th><th>" + tree.author + " " + tree.date  + "</th><th>" + tree2.author + " " + tree2.date + "</th></tr>" +
+		"<tr><th>        </th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
+    "<tr><th>Synonyms</th><th>" + tree.name + "</th><th>" + tree2.name + "</th> </tr>" +
+    "<tr><th>Split</th><th>" + treeTax.totalSplits + "</th><th>" + treeTax2.totalSplits + "</th></tr>" +
+    "<tr><th>Merged</th><th>" + treeTax.totalMerges + "</th><th>" + treeTax2.totalMerges + "</th></tr>" +
+    "<tr><th>Moved</th><th>" + treeTax.totalMoves + "</th><th>" + treeTax2.totalMoves + "</th></tr>" +
+    "<tr><th>Renamed</th><th>" + treeTax.totalRenames + "</th><th>" + treeTax2.totalRenames + "</th></tr>" +
+    "<tr><th>Added</th><th>" + treeTax.totalInsertions + "</th><th>" + treeTax2.totalInsertions + "</th></tr>" +
+    "<tr><th>Excluded</th><th>" + treeTax.totalRemoves + "</th><th>" + treeTax2.totalRemoves + "</th></tr>" +
+    "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
+    "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
 
 
 //checks if bot trees are valid for visualization
@@ -176,7 +182,7 @@ function setup() {
 	canvas = createCanvas(getWindowWidth()*totalCanvasWidth, windowHeight*totalCanvasHeight);
 	canvas.parent('sketch-holder');
 	var x = 0;
-	var y = (windowHeight*(1.0-totalCanvasHeight));
+	var y = 0;//(windowHeight*(1.0-totalCanvasHeight));
 	canvas.position(x, y);
   
 	//setup optiopns that cannot be initialized before setup
@@ -234,7 +240,7 @@ function mouseClicked(){
 function windowResized() {
 	resizeCanvas(getWindowWidth()*totalCanvasWidth, windowHeight*totalCanvasHeight);
 	var x = 0;
-	var y = (windowHeight*(1.0-totalCanvasHeight));
+	var y = 0;//(windowHeight*(1.0-totalCanvasHeight));
 	canvas.position(x, y);
 }
 

@@ -49,7 +49,6 @@ function removeParameterToNode(node,name,minRank,maxRank){
 function disperceChildCount(node, parentNodes){
   let childrenAmount = node.c.length;
   node.desendece += node.c.length;
-  //console.log(node.n);
   if(childrenAmount > 0){
     //sum this node children to every one of its parent nodes
     parentNodes.forEach (function(familyNode){

@@ -87,3 +87,8 @@ function onMoveChange(){
 function onSliderChange(value){
 	interface_variables.bundling = value/100;
 }
+
+function onMatrixClicked(value){
+	// 
+}
+

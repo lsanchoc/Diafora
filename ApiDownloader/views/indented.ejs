@@ -17,19 +17,6 @@
   </head>
   <body>
 
-		<div class="main_body left">
-  		<label>Statistics</label>
-
-		<table id="table_stadistic_id" class="table_stadistic">
-		</table>
-
-		<div id="sketch-holder" class="main_body right">
-		<!-- Our sketch will go here! -->
-		<script src = "/javascripts/drawTree.js" ></script>
-		</div>
-
-  		</div>
-
 	<div class="optionSquare">
 		
 		<div class="encircledBox">	
@@ -91,8 +78,7 @@
 		<div class="encircledBox">
 		<label></label>
 		<label class="switch">
-			<input type="checkbox" name="space"/>
-		 
+		<input type="checkbox" name="space"/>
 		</label>
 		</div>
 
@@ -112,8 +98,16 @@
 		</label>
 		</div>
 
+		<div class="encircledBox">
+		<label></label>
+		<label class="switch">
+		<input type="checkbox" name="space"/>
+		</label>
+		</div>
+
 		<!--Function comes from drawing system -->
 		<button class="buttonsHeader" onclick="sort_and_update_lines()">Sort</button>
+
 		<!--Function comes from ordering system -->
 		<button class="buttonsHeader" onclick="resetTrees()">Reset</button>
 		
@@ -122,12 +116,31 @@
 		oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
 		</div>
 
-		<button class="buttonsHeader" onclick="onSalir()">Table</button>
+		<button type=“button” class="buttonsHeader" onclick="onMatrixClicked()">Matrix</button>
 	
 		<!--Function comes from ordering menu script -->
-		<button class="buttonsHeader" onclick="onSalir()">Exit</button>
+		<button type=“button” class="buttonsHeader" onclick="onSalir()">Exit</button>
 
 	</div>
+
+	<div class="main_body left top">
+		<br>
+		<label>Statistics</label>
+		<br><br>
+		<table id="table_taxon_id" class="table_stadistic">
+		</table>
+		<br>
+		<hr class="separator">
+		<br>
+		<table id="table_rank_id" class="table_stadistic">
+		</table>
+
+		<div id="sketch-holder" class="main_body right top">
+		<!-- Our sketch will go here! -->
+		<script src = "/javascripts/drawTree.js" ></script>
+		</div>
+
+  		</div>
 	
 
   </body>
