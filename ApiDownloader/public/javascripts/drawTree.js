@@ -20,7 +20,7 @@ console.log(treeTax2);
 
 document.getElementById("table_taxon_id").innerHTML =
     "<tr><th></th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
-        "<tr><th>        </th><th>" + tree.author + " " + tree.date  + "</th><th>" + tree2.author + " " + tree2.date + "</th></tr>" +
+        "<tr><th>        </th><th>" + tree.author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
 		"<tr><th>Rank</th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
     "<tr> <th>Kingdom</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
     "<tr> <th>Phylum</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
@@ -33,8 +33,8 @@ document.getElementById("table_taxon_id").innerHTML =
 
 document.getElementById("table_rank_id").innerHTML =
     "<tr><th>Changes</th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
-        "<tr><th>        </th><th>" + tree.author + " " + tree.date  + "</th><th>" + tree2.author + " " + tree2.date + "</th></tr>" +
-		"<tr><th>        </th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
+        "<tr><th>        </th><th>" + tree.author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
+    "<tr><th>        </th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
     "<tr><th>Synonyms</th><th>" + tree.name + "</th><th>" + tree2.name + "</th> </tr>" +
     "<tr><th>Split</th><th>" + treeTax.totalSplits + "</th><th>" + treeTax2.totalSplits + "</th></tr>" +
     "<tr><th>Merged</th><th>" + treeTax.totalMerges + "</th><th>" + treeTax2.totalMerges + "</th></tr>" +
@@ -679,9 +679,11 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 		fill(options["hover-color"]); 
 		textSize(options.text_hover);
 
+
+
 		//this functions comes from drawMenu.js
 		// Pending to delete, code to show a box with data
-		/*if(showInfo){
+		/*if(showInfo){*/
 			let author = node.a == "" ? "" : `<br>Author:${node.a}`;
 			let date = (node.ad || node.ad == "") ? "" : `  Date:${node.da}`;
 			let synonim = node.equivalent ? "<br>Synonims: "+ node.equivalent.length : "";
@@ -692,9 +694,29 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let renames = "<br>Renames: "+ node.totalRenames;
 			let moves = "----Moves: "+ node.totalMoves;
 			let pv = "<br>----P: "+ node.p;
-			//shows info on screen
-			showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
-		}*/
+			//shows info on screen*/
+
+      // document.getElementById("table_rank_id").rows[0].cells[0].innerHTML = node.n;
+
+      "<tr><th>Changes</th><th>" + node.n + "</th><th>" + tree2.name + "</th></tr>" +
+        "<tr><th>        </th><th>" + author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
+    "<tr><th>        </th><th>" + date + "</th><th>" + tree2.accesDate + "</th></tr>" +
+    "<tr><th>Synonyms</th><th>" + tree.name + "</th><th>" + tree2.name + "</th> </tr>" +
+    "<tr><th>Split</th><th>" + splits + "</th><th>" + treeTax2.totalSplits + "</th></tr>" +
+    "<tr><th>Merged</th><th>" + merges + "</th><th>" + treeTax2.totalMerges + "</th></tr>" +
+    "<tr><th>Moved</th><th>" + moves + "</th><th>" + treeTax2.totalMoves + "</th></tr>" +
+    "<tr><th>Renamed</th><th>" + renames + "</th><th>" + treeTax2.totalRenames + "</th></tr>" +
+    "<tr><th>Added</th><th>" + insertions + "</th><th>" + treeTax2.totalInsertions + "</th></tr>" +
+    "<tr><th>Excluded</th><th>" + removes + "</th><th>" + treeTax2.totalRemoves + "</th></tr>" +
+    "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
+    "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
+
+
+			// showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
+		//}
+
+    //Bryan, good job!
+    
 
 		//if mouse is over and the button clicked
 		if(click){
@@ -711,7 +733,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 					targetDispRightTree = 0;
 					dispRightTree = 0;
 					
-				}else{
+				}else{ /* isLeft! */
 					let index = focusClick%node.equivalent.length;
 					targetDispRightTree = node.y - findOpen(node.equivalent[index]).y;
 					yPointer -= targetDispLefTree;
@@ -722,6 +744,22 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 				focusNode = node;
 				console.log(focusClick);
 				forceRenderUpdate(initOptions);
+
+        /*Change table info on click*/
+        document.getElementById("table_rank_id").innerHTML =
+      "<tr><th>Changes</th><th>" + node.n + "</th><th>" + node.equivalent[0].n + "</th></tr>" +
+        "<tr><th>        </th><th>" + node.a + " - " + node.da  + "</th><th>" + node.equivalent[0].a + " - " + node.equivalent[0].da + "</th></tr>" +
+      "<tr><th>        </th><th>" + node.ad + "</th><th>" + node.equivalent[0].ad + "</th></tr>" +
+      "<tr><th>Synonyms</th><th>" + node.equivalent.length + "</th><th>" + node.lenght + "</th> </tr>" +
+      "<tr><th>Split</th><th>" + node.totalSplits + "</th><th>" + node.equivalent[0].totalSplits + "</th></tr>" +
+      "<tr><th>Merged</th><th>" + node.totalMerges + "</th><th>" + node.equivalent[0].totalMerges + "</th></tr>" +
+      "<tr><th>Moved</th><th>" + node.totalMoves + "</th><th>" + node.equivalent[0].totalMoves + "</th></tr>" +
+      "<tr><th>Renamed</th><th>" + node.totalRenames + "</th><th>" + node.equivalent[0].totalRenames + "</th></tr>" +
+      "<tr><th>Added</th><th>" + node.totalInsertions + "</th><th>" + node.equivalent[0].totalInsertions + "</th></tr>" +
+      "<tr><th>Excluded</th><th>" + node.totalRemoves + "</th><th>" + node.equivalent[0].totalRemoves + "</th></tr>" +
+      "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
+      "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
+
 				//console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
 			}
