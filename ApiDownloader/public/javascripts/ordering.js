@@ -151,17 +151,6 @@ function updateP(options,p_lines,yPosL,yPosR){
 
 
 
-//using functions from counting module
-async function resetTrees(){
-	//reset tree 1 from draw system
-	proccesByLevel(tree,resetSort);
-	proccesByLevel(tree2,resetSort);
-
-	//when moving nodes this should be done
-	forceRenderUpdate(initOptions);
-
-}
-
 
 //sort node children in alphabetical order
 //requires to rerender because nodes are disordered

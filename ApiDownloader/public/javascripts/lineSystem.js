@@ -92,7 +92,9 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 			//stroke(custom_random()*255,custom_random()*255,custom_random()*255);
 			group.l.forEach(
 				(line) => {
-					strokeWeight(Math.max(Math.min(line.a,14),1)); //sets size of line
+					var extraStroke = (line.t.selected || line.o.selected) ? 3 : 0;
+
+					strokeWeight(Math.max(Math.min(line.a,14),1) + extraStroke); //sets size of line
 					setLineColor(line,options);
 					let newCenter = getMedia(line, leftPos,rightPos);
 

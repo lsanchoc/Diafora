@@ -102,7 +102,7 @@ function subRankCount(node, parentNodes,rank){
 
 
 function setFamiliars(node, parentNodes){
-  node.f = parentNodes.slice(0); ;
+  node.f = parentNodes.slice(0); 
 
 
 }

@@ -1,7 +1,7 @@
 /**
 * TODO
 * -Mover interface code to a diferent module
-* 
+* -Reset throws console error, not affecting program behaviour in any known way
 *
 *
 */
@@ -260,10 +260,8 @@ function draw() {
 	dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
 	dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-
 	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
   	right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
-
 
 
 	//if interface lines changed force update
@@ -355,7 +353,7 @@ async function recalculateTree(originalTree,options,callback) {
 
   	calculateSize(originalTree,options);
 	calculateCordinates(originalTree,options,0,0);
-  	callback();
+	if(callback)callback();
   	changed = false;
 }
 
@@ -687,7 +685,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node_text_width,options.defaultSize)){
 		fill(options["hover-color"]); 
 		textSize(options.text_hover);
-
+		node.selected = true;
 
 
 		//this functions comes from drawMenu.js
@@ -775,6 +773,8 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			
 		}
 
+	}else{
+		node.selected = false;
 	}
 
 	noStroke();
@@ -1221,11 +1221,10 @@ function sortVisualNodes(options){
 
 //expand button function
 
-
-
+//sets node but does not updates
 function setNode(node,isRight,collapsed){
    if(node.collapsed == collapsed) return;
-	console.log("setting: ",node.n, collapsed,node.equivalent.length);
+	//console.log("setting: ",node.n, collapsed,node.equivalent.length);
   
   let cleaning_function;
   let elder = getRoot(node);
@@ -1241,6 +1240,7 @@ function setNode(node,isRight,collapsed){
 
   changed = true;
   click = false;
+
   //update treeTax acording to changes
   recalculateTree(elder,initOptions,function(){
   if(cleaning_function){cleaning_function(elder);}});
@@ -1256,15 +1256,26 @@ function setNode(node,isRight,collapsed){
 
 
 
+function openParents(node,isRight){
+	node.f.forEach(
+		(familiar) => {
+			if(familiar.collapsed) {
+				setNode(familiar,isRight,false,true)
+			}
+		}
+	)
+}
+
 //scale toggle is unecesary in most cases if it can be ensured that parent nodes are opne
 //is unecesary
 function synchronizedSetState(node,isRight,state){
-		setNode(node,isRight,state);
+		setNode(node,isRight,state,true);
         node.equivalent.forEach(
           (eqNode)=>{ 
           	//open parent nodes if needed
-          	scaleToggleNode(node,!isRight);
-            setNode(eqNode,!isRight,state);}
+            openParents(eqNode,!isRight);
+            setNode(eqNode,!isRight,state,true);
+        }
        )
       
       
@@ -1280,12 +1291,14 @@ function toggleSelection(){
 }
 
 function expandAllLevels(){
+	if(!focusNode)return;
 	let isRight = checkRight(focusNode);
 	//set collaaset to false
 	let newState = false;
 	synchronizedSetState(focusNode,isRight,newState)
   	proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
-
+  	recalculateTree(treeTax,initOptions);
+  	recalculateTree(treeTax2,initOptions);
 }
 
 //requires that node position has been given at least onece
@@ -1297,14 +1310,21 @@ function checkRight(node){
 
 async function resetTrees(){
 
-  toggleNode(treeTax,false)
-  toggleNode(treeTax2,false)
 
   //reset tree 1 from draw system
-  proccesByLevel(tree,resetSort);
-  proccesByLevel(tree2,resetSort);
+  proccesByLevel(treeTax,resetSort);
+  proccesByLevel(treeTax2,resetSort);
 
+
+
+  toggleNode(treeTax,false)
+  toggleNode(treeTax2,true)
+
+  toggleNode(treeTax,false)
+  toggleNode(treeTax2,true)
   //when moving nodes this should be done
   forceRenderUpdate(initOptions);
-
+  targetDispLefTree = 0;
+  targetDispRightTree = 0;
+  yPointer = 0;
 }
