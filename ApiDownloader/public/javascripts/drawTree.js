@@ -2,7 +2,7 @@
 * TODO
 * -Mover interface code to a diferent module
 * -Reset throws console error, not affecting program behaviour in any known way
-*
+* -Check line updating and position updating on expand
 *
 */
 

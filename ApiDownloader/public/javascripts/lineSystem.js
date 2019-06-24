@@ -87,11 +87,14 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 
 	//seed = 328;
 	//draw lines on bundles
+	//stores line as with o,t,c,lp,rp
+	var redrawLine = undefined;
 	lines.groups.forEach(
 		(group) =>{
 			//stroke(custom_random()*255,custom_random()*255,custom_random()*255);
 			group.l.forEach(
 				(line) => {
+					
 					var extraStroke = (line.t.selected || line.o.selected) ? 3 : 0;
 
 					strokeWeight(Math.max(Math.min(line.a,14),1) + extraStroke); //sets size of line
@@ -100,12 +103,25 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 
 					//interpolates betwen line center and bundle center acording to bundling variable
 					newCenter = {x: (group.m.x *bundling + newCenter.x*(1-bundling)), y: (group.m.y *bundling + newCenter.y*(1-bundling))}
-					
+					if (line.t.selected || line.o.selected) {
+						redrawLine = {
+							l: line,
+							c: newCenter,
+							lp: leftPos,
+							rp : rightPos
+						}
+					}
 					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
 				}
 			)
 		}
 	)
+	if(redrawLine){
+		console.log("redrawing");
+		setLineColor(redrawLine.l,options);
+		strokeWeight(Math.max(Math.min(line.a,14),1) + 2);
+		ls_drawTreePointLine(options,redrawLine.l.o,redrawLine.l.t,redrawLine.c, redrawLine.lp,redrawLine.rp);
+	}
 }
 
 
