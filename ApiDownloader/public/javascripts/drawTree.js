@@ -1168,6 +1168,7 @@ function focusSelectedNode(){
 }
 
 
+
 //moves the node and tells the grafic system that things need to be reordered;
 function moveNode(node,newX,newY,options){
 	options.dirtyNodes = true;
@@ -1175,10 +1176,13 @@ function moveNode(node,newX,newY,options){
 	node.y =newY;
 }
 
+
+
 //when you modify position of nodes you need to tell the drawing system
 function forceRenderUpdate(options){
 	options.dirtyNodes = true;
 }
+
 
 
 //sorts nodes on the list of visible nodes
@@ -1204,3 +1208,85 @@ function sortVisualNodes(options){
 }	
 
 
+
+
+//expand button function
+
+
+
+function setNode(node,isRight,state){
+  let cleaning_function;
+  let elder = getRoot(node);
+  if(state){
+      foldNode(node);
+      cleaning_function = undefined;
+  }else{
+      unfoldNode(node);
+      cleaning_function = function(){node.c.forEach( 
+      function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
+  }
+  }
+  changed = true;
+  click = false;
+  //update treeTax acording to changes
+  recalculateTree(elder,initOptions,function(){
+  if(cleaning_function){cleaning_function(elder);}});
+  //create groups for hierarchical edge bundling
+  //recreate lines
+  let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
+  //recreate bundles with the extra or removed lines
+  update_lines(node,isRight);
+  createBundles(left_pos,right_pos,initOptions.bundle_radius);
+  
+}
+
+
+function synchronizedSetState(node,isRight,state){
+  if(node.collapsed){
+        node.equivalent.forEach(
+          (eqNode)=>{ 
+            scaleToggleNode(eqNode,!isRight);
+            setNode(eqNode,!isRight,state);
+          }
+        )
+      }else{
+        node.equivalent.forEach(
+          (eqNode)=>{ 
+            //for synchronization change only if they are the same
+            if(node.collapsed == eqNode.collapsed)
+            setNode(eqNode,!isRight,state);}
+        )
+      }
+      toggleNode(node,isRight);
+}
+
+
+function toggleSelection(){
+  let isRight = checkRight(isRight);
+  let newState = focusNode.collapsed;
+  synchronizedSetState(focusNode,isRight,newState)
+  proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
+
+}
+
+//requires that node position has been given at least onece
+//could acend and ask question to root to remove this limitation
+function checkRight(node){
+  return node.x > getWindowWidth() / 2
+
+}
+
+async function resetTrees(){
+
+  toggleNode(treeTax,false)
+  toggleNode(treeTax2,false)
+
+  //reset tree 1 from draw system
+  proccesByLevel(tree,resetSort);
+  proccesByLevel(tree2,resetSort);
+
+  //when moving nodes this should be done
+  forceRenderUpdate(initOptions);
+
+}
