@@ -241,7 +241,7 @@ function updateNodeLines(originalNode,isRight){
 				}else if(node.equivalent[0].merge || node.merge){
 					//we found a merge
 					//console.log("merge!!!");
-					console.log("merge!!! --- " + node.n);
+					//console.log("merge!!! --- " + node.n);
 					node.equivalent.forEach(function(eq,index){
 						let target = findOpen(eq);
 						var found = false;

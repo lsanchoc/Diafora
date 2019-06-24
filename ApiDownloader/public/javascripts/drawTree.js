@@ -1,3 +1,12 @@
+/**
+* TODO
+* -Mover interface code to a diferent module
+* 
+*
+*
+*/
+
+
 //var trree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
 //var trree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
 
@@ -1214,10 +1223,13 @@ function sortVisualNodes(options){
 
 
 
-function setNode(node,isRight,state){
+function setNode(node,isRight,collapsed){
+   if(node.collapsed == collapsed) return;
+	console.log("setting: ",node.n, collapsed,node.equivalent.length);
+  
   let cleaning_function;
   let elder = getRoot(node);
-  if(state){
+  if(collapsed){
       foldNode(node);
       cleaning_function = undefined;
   }else{
@@ -1226,6 +1238,7 @@ function setNode(node,isRight,state){
       function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
   }
   }
+
   changed = true;
   click = false;
   //update treeTax acording to changes
@@ -1242,31 +1255,36 @@ function setNode(node,isRight,state){
 }
 
 
+
+//scale toggle is unecesary in most cases if it can be ensured that parent nodes are opne
+//is unecesary
 function synchronizedSetState(node,isRight,state){
-  if(node.collapsed){
+		setNode(node,isRight,state);
         node.equivalent.forEach(
           (eqNode)=>{ 
-            scaleToggleNode(eqNode,!isRight);
-            setNode(eqNode,!isRight,state);
-          }
-        )
-      }else{
-        node.equivalent.forEach(
-          (eqNode)=>{ 
-            //for synchronization change only if they are the same
-            if(node.collapsed == eqNode.collapsed)
+          	//open parent nodes if needed
+          	scaleToggleNode(node,!isRight);
             setNode(eqNode,!isRight,state);}
-        )
-      }
-      toggleNode(node,isRight);
+       )
+      
+      
 }
 
 
 function toggleSelection(){
-  let isRight = checkRight(isRight);
-  let newState = focusNode.collapsed;
+  let isRight = checkRight(focusNode);
+  let newState = !focusNode.collapsed;
   synchronizedSetState(focusNode,isRight,newState)
   proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
+
+}
+
+function expandAllLevels(){
+	let isRight = checkRight(focusNode);
+	//set collaaset to false
+	let newState = false;
+	synchronizedSetState(focusNode,isRight,newState)
+  	proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
 
 }
 

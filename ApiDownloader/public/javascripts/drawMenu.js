@@ -92,3 +92,6 @@ function onMatrixClicked(value){
 	// 
 }
 
+function onExpand(){
+	expandAllLevels();
+}
