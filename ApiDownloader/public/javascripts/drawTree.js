@@ -3,7 +3,7 @@
 * -Mover interface code to a diferent module
 * -Reset throws console error, not affecting program behaviour in any known way
 * -Check line updating and position updating on expand
-*
+* -Lines not being displayed on infraespecies
 */
 
 
@@ -749,7 +749,8 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 				}
 				
 				focusNode = node;
-				console.log(focusClick);
+				//console.log(focusNode);
+				//console.log(focusClick);
 				forceRenderUpdate(initOptions);
 
         /*Change table info on click*/
@@ -1174,6 +1175,7 @@ function focusSelectedNode(){
 	if(focusNode){
 		yPointer += focusNode.y-yPointer - windowHeight/2;
 	}
+	
 }
 
 
@@ -1228,6 +1230,7 @@ function setNode(node,isRight,collapsed){
   
   let cleaning_function;
   let elder = getRoot(node);
+
   if(collapsed){
       foldNode(node);
       cleaning_function = undefined;
@@ -1244,14 +1247,9 @@ function setNode(node,isRight,collapsed){
   //update treeTax acording to changes
   recalculateTree(elder,initOptions,function(){
   if(cleaning_function){cleaning_function(elder);}});
-  //create groups for hierarchical edge bundling
-  //recreate lines
-  let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
-  let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
-  //recreate bundles with the extra or removed lines
-  update_lines(node,isRight);
-  createBundles(left_pos,right_pos,initOptions.bundle_radius);
   
+  if(getValueOfRank(node.r) < 8) update_lines(node,isRight);  
+
 }
 
 
@@ -1297,8 +1295,15 @@ function expandAllLevels(){
 	let newState = false;
 	synchronizedSetState(focusNode,isRight,newState)
   	proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
-  	recalculateTree(treeTax,initOptions);
-  	recalculateTree(treeTax2,initOptions);
+  	//recalculateTree(treeTax,initOptions);
+  	//recalculateTree(treeTax2,initOptions);
+
+  	//rebundle all lines
+  	let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  	let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
+  	createBundles(left_pos,right_pos,initOptions.bundle_radius);
+
+  	console.log({lines});
 }
 
 //requires that node position has been given at least onece
@@ -1328,3 +1333,14 @@ async function resetTrees(){
   targetDispRightTree = 0;
   yPointer = 0;
 }
+
+
+//not working properly
+function resetLines(){
+	clearLines();
+	recursiveUpdateLines(treeTax,false);
+	let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  	let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
+  	createBundles(left_pos,right_pos,initOptions.bundle_radius);
+}
+
