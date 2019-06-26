@@ -1,3 +1,12 @@
+/**
+* TODO
+* -Mover interface code to a diferent module
+* -Reset throws console error, not affecting program behaviour in any known way
+* -Check line updating and position updating on expand
+* -Lines not being displayed on infraespecies
+*/
+
+
 //var trree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
 //var trree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
 
@@ -248,10 +257,8 @@ function draw() {
 	dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
 	dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-
 	left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
   	right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
-
 
 
 	//if interface lines changed force update
@@ -343,7 +350,7 @@ async function recalculateTree(originalTree,options,callback) {
 
   	calculateSize(originalTree,options);
 	calculateCordinates(originalTree,options,0,0);
-  	callback();
+	if(callback)callback();
   	changed = false;
 }
 
@@ -675,7 +682,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 	if(isOverRect(mouseX +xPointer, mouseY+yPointer,node.x + xpos,node.y + ypos,node_text_width,options.defaultSize)){
 		fill(options["hover-color"]); 
 		textSize(options.text_hover);
-
+		node.selected = true;
 
 
 		//this functions comes from drawMenu.js
@@ -721,7 +728,8 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 				}
 				
 				focusNode = node;
-				console.log(focusClick);
+				//console.log(focusNode);
+				//console.log(focusClick);
 				forceRenderUpdate(initOptions);
 
         /*Change table info on click*/
@@ -748,6 +756,8 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			
 		}
 
+	}else{
+		node.selected = false;
 	}
 
 	noStroke();
@@ -1147,7 +1157,9 @@ function focusSelectedNode(){
 	if(focusNode){
 		yPointer += focusNode.y-yPointer - windowHeight/2;
 	}
+	
 }
+
 
 
 //moves the node and tells the grafic system that things need to be reordered;
@@ -1157,10 +1169,13 @@ function moveNode(node,newX,newY,options){
 	node.y =newY;
 }
 
+
+
 //when you modify position of nodes you need to tell the drawing system
 function forceRenderUpdate(options){
 	options.dirtyNodes = true;
 }
+
 
 
 //sorts nodes on the list of visible nodes
@@ -1190,3 +1205,129 @@ function sortVisualNodes(options){
 function formatNumber(x) {
     return (Math.round(x*100)/100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+
+
+//expand button function
+
+//sets node but does not updates
+function setNode(node,isRight,collapsed){
+   if(node.collapsed == collapsed) return;
+	//console.log("setting: ",node.n, collapsed,node.equivalent.length);
+  
+  let cleaning_function;
+  let elder = getRoot(node);
+
+  if(collapsed){
+      foldNode(node);
+      cleaning_function = undefined;
+  }else{
+      unfoldNode(node);
+      cleaning_function = function(){node.c.forEach( 
+      function(child_node){if(child_node){pushIntoUnfolded(child_node)}})
+  }
+  }
+
+  changed = true;
+  click = false;
+
+  //update treeTax acording to changes
+  recalculateTree(elder,initOptions,function(){
+  if(cleaning_function){cleaning_function(elder);}});
+  
+  if(getValueOfRank(node.r) < 8) update_lines(node,isRight);  
+
+}
+
+
+
+function openParents(node,isRight){
+	node.f.forEach(
+		(familiar) => {
+			if(familiar.collapsed) {
+				setNode(familiar,isRight,false,true)
+			}
+		}
+	)
+}
+
+//scale toggle is unecesary in most cases if it can be ensured that parent nodes are opne
+//is unecesary
+function synchronizedSetState(node,isRight,state){
+		setNode(node,isRight,state,true);
+        node.equivalent.forEach(
+          (eqNode)=>{ 
+          	//open parent nodes if needed
+            openParents(eqNode,!isRight);
+            setNode(eqNode,!isRight,state,true);
+        }
+       )
+      
+      
+}
+
+
+function toggleSelection(){
+  let isRight = checkRight(focusNode);
+  let newState = !focusNode.collapsed;
+  synchronizedSetState(focusNode,isRight,newState)
+  proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
+
+}
+
+function expandAllLevels(){
+	if(!focusNode)return;
+	let isRight = checkRight(focusNode);
+	//set collaaset to false
+	let newState = false;
+	synchronizedSetState(focusNode,isRight,newState)
+  	proccesByLevel(focusNode, (node) => {synchronizedSetState(node,isRight,newState)})
+  	//recalculateTree(treeTax,initOptions);
+  	//recalculateTree(treeTax2,initOptions);
+
+  	//rebundle all lines
+  	let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  	let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
+  	createBundles(left_pos,right_pos,initOptions.bundle_radius);
+
+  	console.log({lines});
+}
+
+//requires that node position has been given at least onece
+//could acend and ask question to root to remove this limitation
+function checkRight(node){
+  return node.x > getWindowWidth() / 2
+
+}
+
+async function resetTrees(){
+
+
+  //reset tree 1 from draw system
+  proccesByLevel(treeTax,resetSort);
+  proccesByLevel(treeTax2,resetSort);
+
+
+
+  toggleNode(treeTax,false)
+  toggleNode(treeTax2,true)
+
+  toggleNode(treeTax,false)
+  toggleNode(treeTax2,true)
+  //when moving nodes this should be done
+  forceRenderUpdate(initOptions);
+  targetDispLefTree = 0;
+  targetDispRightTree = 0;
+  yPointer = 0;
+}
+
+
+//not working properly
+function resetLines(){
+	clearLines();
+	recursiveUpdateLines(treeTax,false);
+	let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
+  	let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
+  	createBundles(left_pos,right_pos,initOptions.bundle_radius);
+}
+
