@@ -17,41 +17,40 @@ calculate_all_merges(levelList,levelList2);
 console.log(treeTax);
 console.log(treeTax2);
 
-
 document.getElementById("table_taxon_id").innerHTML =
     "<tr><th></th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
-        "<tr><th>        </th><th>" + tree.author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
+        "<tr><th>        </th><th>" + ((tree.author!=null) ? tree.author : "" )+ " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
 		"<tr><th>Rank</th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
-    "<tr> <th>Kingdom</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
-    "<tr> <th>Phylum</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>" +
-    "<tr> <th>Class</th><th>" + treeTax.totalClass + "</th><th>" + treeTax2.totalClass + "</th> </tr>" +
-    "<tr> <th>Family</th><th>" + treeTax.totalFamily + "</th><th>" + treeTax2.totalFamily + "</th> </tr>" +
-    "<tr> <th>Genus</th><th>" + treeTax.totalGenus + "</th><th>" + treeTax2.totalGenus + "</th> </tr>" +
-    "<tr> <th>Species</th><th>" + treeTax.totalSpecies + "</th><th>" + treeTax2.totalSpecies + "</th> </tr>" +
-    "<tr> <th>Total Nodes</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>";
+    (treeTax.totalKingdom != null ?("<tr> <th>Kingdom</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>") : "") +
+    (treeTax.totalPhylum != null ?( "<tr> <th>Phylum</th><th>" + "Buscar" + "</th><th>" + "Buscar" + "</th> </tr>") : "") +
+    (treeTax.totalClass != null ?("<tr> <th>Class</th><th>" + formatNumber(treeTax.totalClass) + "</th><th>" + formatNumber(treeTax2.totalClass) + "</th> </tr>") : "") +
+    (treeTax.totalFamily != null ?("<tr> <th>Family</th><th>" + formatNumber(treeTax.totalFamily) + "</th><th>" + formatNumber(treeTax2.totalFamily) + "</th> </tr>") : "") +
+    (("<tr> <th>Genus</th><th>" + formatNumber(treeTax.totalGenus) + "</th><th>" + formatNumber(treeTax2.totalGenus) + "</th> </tr>")) +
+    "<tr> <th>Species</th><th>" + formatNumber(treeTax.totalSpecies) + "</th><th>" + formatNumber(treeTax2.totalSpecies) + "</th> </tr>" +
+    "<tr> <th>Total Nodes</th><th>" + formatNumber(treeTax.desendece) + "</th><th>" + formatNumber(treeTax2.desendece) + "</th> </tr>";
 
+var totalChanges = treeTax.totalSplits +treeTax.totalMerges +treeTax.totalMoves +treeTax.totalRenames +treeTax.totalInsertions +treeTax.totalRemoves;
+var totalChanges2 = treeTax2.totalSplits +treeTax2.totalMerges +treeTax2.totalMoves +treeTax2.totalRenames +treeTax2.totalInsertions +treeTax2.totalRemoves;
 
 document.getElementById("table_rank_id").innerHTML =
     "<tr><th>Changes</th><th>" + tree.name + "</th><th>" + tree2.name + "</th></tr>" +
         "<tr><th>        </th><th>" + tree.author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
     "<tr><th>        </th><th>" + tree.accesDate + "</th><th>" + tree2.accesDate + "</th></tr>" +
     "<tr><th>Synonyms</th><th>" + tree.name + "</th><th>" + tree2.name + "</th> </tr>" +
-    "<tr><th>Split</th><th>" + treeTax.totalSplits + "</th><th>" + treeTax2.totalSplits + "</th></tr>" +
-    "<tr><th>Merged</th><th>" + treeTax.totalMerges + "</th><th>" + treeTax2.totalMerges + "</th></tr>" +
-    "<tr><th>Moved</th><th>" + treeTax.totalMoves + "</th><th>" + treeTax2.totalMoves + "</th></tr>" +
-    "<tr><th>Renamed</th><th>" + treeTax.totalRenames + "</th><th>" + treeTax2.totalRenames + "</th></tr>" +
-    "<tr><th>Added</th><th>" + treeTax.totalInsertions + "</th><th>" + treeTax2.totalInsertions + "</th></tr>" +
-    "<tr><th>Excluded</th><th>" + treeTax.totalRemoves + "</th><th>" + treeTax2.totalRemoves + "</th></tr>" +
-    "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
-    "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
-
+    "<tr><th>Split</th><th>" + formatNumber(treeTax.totalSplits) + "</th><th>" + formatNumber(treeTax2.totalSplits) + "</th></tr>" +
+    "<tr><th>Merged</th><th>" + formatNumber(treeTax.totalMerges) + "</th><th>" + formatNumber(treeTax2.totalMerges) + "</th></tr>" +
+    "<tr><th>Moved</th><th>" + formatNumber(treeTax.totalMoves) + "</th><th>" + formatNumber(treeTax2.totalMoves) + "</th></tr>" +
+    "<tr><th>Renamed</th><th>" + formatNumber(treeTax.totalRenames) + "</th><th>" + formatNumber(treeTax2.totalRenames) + "</th></tr>" +
+    "<tr><th>Added</th><th>" + formatNumber(treeTax.totalInsertions) + "</th><th>" + formatNumber(treeTax2.totalInsertions) + "</th></tr>" +
+    "<tr><th>Excluded</th><th>" + formatNumber(treeTax.totalRemoves) + "</th><th>" + formatNumber(treeTax2.totalRemoves) + "</th></tr>" +
+    "<tr><th>Taxa changed</th><th>" + formatNumber(totalChanges) + "</th><th>" + formatNumber(totalChanges2) + "</th></tr>" +
+    "<tr><th>% changed</th><th>" +"%"+ formatNumber((totalChanges*100)/treeTax.totalSpecies) + "</th><th>" +"%"+ formatNumber((totalChanges2*100)/treeTax2.totalSpecies) + "</th></tr>";
 
 //checks if bot trees are valid for visualization
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
 if(!treeTax || !treeTax2){
 	window.location.replace(loadingUrl);
 }
-
 
 //all options that can influece how the visualization is displayed
 var initOptions = {
@@ -81,12 +80,12 @@ var initOptions = {
     "hover-color" : undefined,				//hover color for node deprecated
     "hover-color-rect" : undefined,			
 	"text-color": undefined,				//Color of display text
-	"remove-color":undefined,				//color of removed nodes used in lines and text
-	"add-color":undefined,					//color of added nodes used in lines and text
-	"split-color":"#e066ff",				//color of split nodes used in lines and text
-	"merge-color":"#ff9a47",				//color of merge nodes used in lines and text
-	"rename-color":"#a37c58",				//color of rename nodes used in lines and text
-	"move-color":"#8888CC",					//color of move nodes used in lines and text
+	"remove-color":"#D50000",				//color of removed nodes used in lines and text
+	"add-color":"#38B03D",					//color of added nodes used in lines and text
+	"split-color":"#C700BA",				//color of split nodes used in lines and text
+	"merge-color":"#FFA452",				//color of merge nodes used in lines and text
+	"rename-color":"#1700E7",				//color of rename nodes used in lines and text
+	"move-color":"#09D3D3",					//color of move nodes used in lines and text
 	"equal-color":"#e8e8e8",				//color of congruence nodes used in lines and text
 	"focus-color":"#50500020",				//color of text when a node is clicked
 	"atractionForce":0.01,					// force by pixel distance causes movement of nodes
@@ -101,8 +100,6 @@ var canvas = null;
 //amuount of the screen the canvas takes
 var totalCanvasWidth = 1.0;
 var totalCanvasHeight = 0.9;
-
-
 
 //position of canvas focus
 var xPointer = 0;	//stores x displacement of visualization, not used
@@ -192,8 +189,8 @@ function setup() {
 	initOptions["hover-color"] = color(120,80,87);
 	initOptions["text-color"] = color(0,0,0);
 	initOptions["hover-color-rect"] = color(48, 44, 66);
-	initOptions["remove-color"] = color(255, 96, 96);
-	initOptions["add-color"] = color(177, 255, 175);
+	//initOptions["remove-color"] = color(255, 96, 96);
+	//initOptions["add-color"] = color(177, 255, 175);
 
 	//Inicialization of first and second treeTax
 	countChildren(treeTax);
@@ -683,7 +680,7 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 
 		//this functions comes from drawMenu.js
 		// Pending to delete, code to show a box with data
-		/*if(showInfo){*/
+		/*if(showInfo){
 			let author = node.a == "" ? "" : `<br>Author:${node.a}`;
 			let date = (node.ad || node.ad == "") ? "" : `  Date:${node.da}`;
 			let synonim = node.equivalent ? "<br>Synonims: "+ node.equivalent.length : "";
@@ -695,24 +692,6 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 			let moves = "----Moves: "+ node.totalMoves;
 			let pv = "<br>----P: "+ node.p;
 			//shows info on screen*/
-
-      // document.getElementById("table_rank_id").rows[0].cells[0].innerHTML = node.n;
-
-      "<tr><th>Changes</th><th>" + node.n + "</th><th>" + tree2.name + "</th></tr>" +
-        "<tr><th>        </th><th>" + author + " - " + tree.date  + "</th><th>" + tree2.author + " - " + tree2.date + "</th></tr>" +
-    "<tr><th>        </th><th>" + date + "</th><th>" + tree2.accesDate + "</th></tr>" +
-    "<tr><th>Synonyms</th><th>" + tree.name + "</th><th>" + tree2.name + "</th> </tr>" +
-    "<tr><th>Split</th><th>" + splits + "</th><th>" + treeTax2.totalSplits + "</th></tr>" +
-    "<tr><th>Merged</th><th>" + merges + "</th><th>" + treeTax2.totalMerges + "</th></tr>" +
-    "<tr><th>Moved</th><th>" + moves + "</th><th>" + treeTax2.totalMoves + "</th></tr>" +
-    "<tr><th>Renamed</th><th>" + renames + "</th><th>" + treeTax2.totalRenames + "</th></tr>" +
-    "<tr><th>Added</th><th>" + insertions + "</th><th>" + treeTax2.totalInsertions + "</th></tr>" +
-    "<tr><th>Excluded</th><th>" + removes + "</th><th>" + treeTax2.totalRemoves + "</th></tr>" +
-    "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
-    "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
-
-
-			// showInfo(node.n,`Rank: ${node.r}` + author + date + synonim+splits+merges+removes+insertions+renames+moves+pv);
 		//}
 
     //Bryan, good job!
@@ -746,19 +725,22 @@ function drawOnlyText(node,initialY,finalY,options,xpos,ypos, isRight,node_text_
 				forceRenderUpdate(initOptions);
 
         /*Change table info on click*/
+        totalChanges = node.totalSplits + node.totalMerges + node.totalMoves + node.totalRenames + node.totalInsertions + node.totalRemoves;
+        totalChanges2 = node.equivalent[0].totalSplits + node.equivalent[0].totalMerges + node.equivalent[0].totalMoves + node.equivalent[0].totalRenames + node.equivalent[0].totalInsertions + node.equivalent[0].totalRemoves;
+
         document.getElementById("table_rank_id").innerHTML =
       "<tr><th>Changes</th><th>" + node.n + "</th><th>" + node.equivalent[0].n + "</th></tr>" +
-        "<tr><th>        </th><th>" + node.a + " - " + node.da  + "</th><th>" + node.equivalent[0].a + " - " + node.equivalent[0].da + "</th></tr>" +
+        "<tr><th>        </th><th>" + ((node.a!=null) ? node.a : "" ) + " - " + ((node.da!=null) ? node.da : "" )  + "</th><th>" + ((node.equivalent[0].a!=null) ? node.equivalent[0].a : "" ) + " - " +  ((node.equivalent[0].da!=null) ? node.equivalent[0].da : "" )  + "</th></tr>" +
       "<tr><th>        </th><th>" + node.ad + "</th><th>" + node.equivalent[0].ad + "</th></tr>" +
-      "<tr><th>Synonyms</th><th>" + node.equivalent.length + "</th><th>" + node.lenght + "</th> </tr>" +
-      "<tr><th>Split</th><th>" + node.totalSplits + "</th><th>" + node.equivalent[0].totalSplits + "</th></tr>" +
-      "<tr><th>Merged</th><th>" + node.totalMerges + "</th><th>" + node.equivalent[0].totalMerges + "</th></tr>" +
-      "<tr><th>Moved</th><th>" + node.totalMoves + "</th><th>" + node.equivalent[0].totalMoves + "</th></tr>" +
-      "<tr><th>Renamed</th><th>" + node.totalRenames + "</th><th>" + node.equivalent[0].totalRenames + "</th></tr>" +
-      "<tr><th>Added</th><th>" + node.totalInsertions + "</th><th>" + node.equivalent[0].totalInsertions + "</th></tr>" +
-      "<tr><th>Excluded</th><th>" + node.totalRemoves + "</th><th>" + node.equivalent[0].totalRemoves + "</th></tr>" +
-      "<tr><th>Taxa changed</th><th>" + "Revisar ya que implica conjuntos" + "</th><th>" + "Revisar ya que implica conjuntos" + "</th></tr>" +
-      "<tr><th>% changed</th><th>" + "Necesita el valor anterior" + "</th><th>" + "Necesita el valor anterior" + "</th></tr>";
+      "<tr><th>Synonyms</th><th>" + formatNumber(node.equivalent.length) + "</th><th>" + formatNumber(node.equivalent.length) + "</th> </tr>" +
+      "<tr><th>Split</th><th>" +formatNumber( node.totalSplits) + "</th><th>" + formatNumber(node.equivalent[0].totalSplits) + "</th></tr>" +
+      "<tr><th>Merged</th><th>" + formatNumber(node.totalMerges) + "</th><th>" + formatNumber(node.equivalent[0].totalMerges) + "</th></tr>" +
+      "<tr><th>Moved</th><th>" + formatNumber(node.totalMoves) + "</th><th>" + formatNumber(node.equivalent[0].totalMoves) + "</th></tr>" +
+      "<tr><th>Renamed</th><th>" + formatNumber(node.totalRenames) + "</th><th>" + formatNumber(node.equivalent[0].totalRenames) + "</th></tr>" +
+      "<tr><th>Added</th><th>" + formatNumber(node.totalInsertions) + "</th><th>" + formatNumber(node.equivalent[0].totalInsertions) + "</th></tr>" +
+      "<tr><th>Excluded</th><th>" + formatNumber(node.totalRemoves) + "</th><th>" + formatNumber(node.equivalent[0].totalRemoves) + "</th></tr>" +
+      "<tr><th>Taxa changed</th><th>" + formatNumber(totalChanges) + "</th><th>" + formatNumber(totalChanges2) + "</th></tr>" +
+      "<tr><th>% changed</th><th>" +"%"+ formatNumber((totalChanges*100)/node.desendece) + "</th><th>" +"%"+  formatNumber((totalChanges2*100)/treeTax2.totalSpecies) + "</th></tr>";
 
 				//console.log(node.n, node.y , findOpen(node.equivalent[0]).y);
 
@@ -1203,4 +1185,8 @@ function sortVisualNodes(options){
 
 }	
 
-
+/* https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript*/
+/* To format a number with commas */
+function formatNumber(x) {
+    return (Math.round(x*100)/100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
