@@ -100,6 +100,8 @@ var initOptions = {
 	"atractionForce":0.01,					// force by pixel distance causes movement of nodes
 	 bundle_radius: 60,						//radius in pixel to create bundles
 	 dirtyNodes:false,						//flag marked when a node is moved in the children array of its parent
+	 lineTransparency: 0.7,
+	 lineDispersion: 40
 }
 
 //stores the canvas
@@ -217,7 +219,7 @@ function setup() {
 
 	
 	//first line update before drawing
-	update_lines(treeTax);
+	update_lines(treeTax,false,initOptions);
 	sort_and_update_lines();
 
 
@@ -859,7 +861,7 @@ function toggleNode(node,isRight){
 	  		let left_pos = {x: initOptions.separation, y: 0 + dispLefTree};
 	  		let right_pos = {x: getWindowWidth()-initOptions.separation, y: 0 + dispRightTree};
 	  		//recreate bundles with the extra or removed lines
-	  		update_lines(node,isRight);
+	  		update_lines(node,isRight,initOptions);
 	  		createBundles(left_pos,right_pos,initOptions.bundle_radius);
 }
 
@@ -1235,7 +1237,7 @@ function setNode(node,isRight,collapsed){
   recalculateTree(elder,initOptions,function(){
   if(cleaning_function){cleaning_function(elder);}});
   
-  if(getValueOfRank(node.r) < 8) update_lines(node,isRight);  
+  if(getValueOfRank(node.r) < 8) update_lines(node,isRight,initOptions);  
 
 }
 
