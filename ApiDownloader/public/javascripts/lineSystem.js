@@ -60,25 +60,30 @@ function get_all_lines(){
 //c is color
 //rescives a line type and return a color, should be modified if adding new types
 function setLineColor(line, options){
+	const tranparency = options.lineTransparency * 255;
+	let newColor;
 	switch(line.c){
 		case "split":
-			stroke(options["split-color"]);
+			newColor = color(options["split-color"]);
 			break;
 		case "merge":
-			stroke(options["merge-color"]);
+			newColor = color(options["merge-color"]);
 			break;
 		case "rename":
-			stroke(options["rename-color"]);
+			newColor = color(options["rename-color"]);
 			break;
 		case "equal":
-			stroke(options["equal-color"]);
+			newColor = color(options["equal-color"]);
 			break;
 		case "move":
-			stroke(options["move-color"]);
+			newColor = color(options["move-color"]);
 			break;
 		default:
-			stroke(0);
+			newColor = color(0);
 	}
+	newColor.setAlpha(tranparency);
+
+	stroke(newColor);
 }
 
 
@@ -124,6 +129,9 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 							rp : rightPos
 						}
 					}
+					//console.log(line.xe,line.ye)
+					newCenter.x += line.xe;
+					newCenter.y += line.ye;
 					ls_drawTreePointLine(options,line.o,line.t,newCenter, leftPos,rightPos);
 				}
 			)
@@ -196,10 +204,10 @@ function drawBezierPoints(x1,y1,x2,y2,x3,y3){
 
 
 //adds and remove lines as needed
-async function update_lines(node,isRight){
+async function update_lines(node,isRight,options){
 	// toggle node if collapsed or not 
-	if(node.collapsed) closeNode(node,isRight);
-	else openNode(node,isRight);
+	if(node.collapsed) closeNode(node,isRight,options);
+	else openNode(node,isRight,options);
 
 	//onsole.log(lines);
 }
@@ -216,21 +224,21 @@ async function recursiveUpdateLines(node,isRight){
 
   
 //updates lines when opening a node
-function openNode(originalNode,isRight){
+function openNode(originalNode,isRight,options){
 	//remove lines going out from this node
 	//only if it is higher than species, openeing a specie does not have a purpose
 	if(getValueOfRank(originalNode.r) < 8) removeLinesOf(originalNode);
 	originalNode.c.forEach(function(node){
-		updateNodeLines(node,isRight);
+		updateNodeLines(node,isRight,options);
 	})
 	//add the lines of every children
 }
 
 //updates lines when closing a node
-function closeNode(node,isRight){
+function closeNode(node,isRight,options){
 	//go to a rank and execute updating function
 	removeLinesAndChildrenOf(node);
-	updateNodeLines(node,isRight);
+	updateNodeLines(node,isRight,options);
 	//console.log(lines);
 }
 
@@ -250,7 +258,7 @@ function findParameter(nodeArray,parameter){
 
 
 // counts lines from children and add the to parent
-function updateNodeLines(originalNode,isRight){
+function updateNodeLines(originalNode,isRight,options){
 	proccesByLevel(originalNode,function(node){
 	//if the node is present on the new
 
@@ -258,7 +266,7 @@ function updateNodeLines(originalNode,isRight){
 	if(node.equivalent && node.equivalent.length > 0 && (filters.ranks.indexOf(node.r.toLowerCase()) > -1)){
 				//console.log(node.n);
 				let fuente = node;
-
+				let d = options.lineDispersion;
 				//scale on parent for closed nodes
 				
 				while(fuente.f.length > 0 && fuente.f[fuente.f.length-1].collapsed){
@@ -282,9 +290,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.splits.push({"o": target, "t": fuente ,"a" : 1, c:"split"});	
+							lines.splits.push({"o": target, "t": fuente ,"a" : 1, c:"split", xe : Math.random()*d, ye: Math.random()*d});	
 							}else{
-							lines.splits.push({"o": fuente, "t": target ,"a" : 1, c:"split"});	
+							lines.splits.push({"o": fuente, "t": target ,"a" : 1, c:"split",xe : Math.random()*d, ye: Math.random()*d});	
 							}
 						}
 						
@@ -309,9 +317,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.merges.push({"o": target, "t": fuente,"a" : 1,c:"merge"});
+							lines.merges.push({"o": target, "t": fuente,"a" : 1,c:"merge",xe : Math.random()*d, ye: Math.random()*d});
 							}else{
-							lines.merges.push({"o": fuente, "t": target,"a" : 1,c:"merge"});
+							lines.merges.push({"o": fuente, "t": target,"a" : 1,c:"merge",xe : Math.random()*d, ye: Math.random()*d});
 							}
 						}
 						//console.log("found: " +found);
@@ -336,9 +344,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.renames.push({"o": target, "t": fuente,"a" : 1,c:"rename"});
+							lines.renames.push({"o": target, "t": fuente,"a" : 1,c:"rename",xe : Math.random()*d, ye: Math.random()*d});
 							}else{
-							lines.renames.push({"o": fuente, "t": target,"a" : 1,c:"rename"});
+							lines.renames.push({"o": fuente, "t": target,"a" : 1,c:"rename",xe : Math.random()*d, ye: Math.random()*d});
 							}
 						}
 						//console.log("found: " +found);
@@ -358,9 +366,9 @@ function updateNodeLines(originalNode,isRight){
 						})
 						if(!found){
 							if(isRight){
-							lines.moves.push({"o": target, "t": fuente,"a" : 1,c:"move"});
+							lines.moves.push({"o": target, "t": fuente,"a" : 1,c:"move",xe : Math.random()*d, ye: Math.random()*d});
 							}else{
-							lines.moves.push({"o": fuente, "t": target,"a" : 1,c:"move"});
+							lines.moves.push({"o": fuente, "t": target,"a" : 1,c:"move",xe : Math.random()*d, ye: Math.random()*d});
 							}
 						}
 						//console.log("found: " +found);
