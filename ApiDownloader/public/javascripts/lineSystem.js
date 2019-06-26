@@ -18,6 +18,19 @@ var lines = {
 	groups:[],
 }
 
+//reset lines to its intial state
+function clearLines(){
+	lines = {
+	splits:[],
+	merges:[],
+	equals:[],
+	renames:[],
+	moves:[],
+	groups:[],
+	}	
+	console.log("cleared");
+}
+
 //returns filtered lines acording to user interface
 //when variables are changed we require to update bundles
 function get_all_lines(){
@@ -117,7 +130,7 @@ function ls_drawLines(options,initialY,leftPos,rightPos, bundling){
 		}
 	)
 	if(redrawLine){
-		console.log("redrawing");
+		//console.log("redrawing");
 		setLineColor(redrawLine.l,options);
 		strokeWeight(Math.max(Math.min(line.a,14),1) + 2);
 		ls_drawTreePointLine(options,redrawLine.l.o,redrawLine.l.t,redrawLine.c, redrawLine.lp,redrawLine.rp);
@@ -190,11 +203,23 @@ async function update_lines(node,isRight){
 
 	//onsole.log(lines);
 }
+
+async function recursiveUpdateLines(node,isRight){
+	proccesByLevel(node, 
+		(child) => {
+			if(child.collapsed){
+				update_lines(node,isRight);
+			}
+		}
+	);
+}
+
   
 //updates lines when opening a node
 function openNode(originalNode,isRight){
 	//remove lines going out from this node
-	removeLinesOf(originalNode);
+	//only if it is higher than species, openeing a specie does not have a purpose
+	if(getValueOfRank(originalNode.r) < 8) removeLinesOf(originalNode);
 	originalNode.c.forEach(function(node){
 		updateNodeLines(node,isRight);
 	})
@@ -210,6 +235,18 @@ function closeNode(node,isRight){
 }
 
 
+
+
+
+
+function findParameter(nodeArray,parameter){
+	for (var i = nodeArray.length - 1; i >= 0; i--) {
+		if(nodeArray[i][parameter]) return true;
+	}
+
+	return false;
+
+}
 
 
 // counts lines from children and add the to parent
@@ -230,7 +267,7 @@ function updateNodeLines(originalNode,isRight){
 
 				//executes only on left tree
 
-				if(node.split || node.equivalent[0].split /*&& node.equivalent.length > 1*/){
+				if(node.split || findParameter(node.equivalent, "split") /*&& node.equivalent.length > 1*/){
 					//we found a split
 					node.equivalent.forEach(function(eq,index){
 						
@@ -256,7 +293,8 @@ function updateNodeLines(originalNode,isRight){
 
 					
 				//executes only on right tree
-				}else if(node.equivalent[0].merge || node.merge){
+				}
+				if(findParameter(node.equivalent,"merge") || node.merge){
 					//we found a merge
 					//console.log("merge!!!");
 					//console.log("merge!!! --- " + node.n);
@@ -283,7 +321,8 @@ function updateNodeLines(originalNode,isRight){
 
 
 
-				}else if(node.rename || node.equivalent[0].rename ){
+				}
+				if(node.rename || findParameter(node.equivalent,"rename")){
 					//we found a merge
 					//console.log("merge!!!");
 					node.equivalent.forEach(function(eq,index){
@@ -304,7 +343,8 @@ function updateNodeLines(originalNode,isRight){
 						}
 						//console.log("found: " +found);
 					});
-				}else if(node.moved || node.equivalent[0].moved){
+				}
+				if(node.moved || findParameter(node.equivalent,"moved")){
 					//we found a merge
 					//console.log("merge!!!");
 					node.equivalent.forEach(function(eq,index){
@@ -325,8 +365,11 @@ function updateNodeLines(originalNode,isRight){
 						}
 						//console.log("found: " +found);
 					});
-				}else{
-					//we found a merge
+				}
+
+				//check for equals
+				if(node.equivalent.length == 1 && node.equivalent[0].equivalent.length == 1){
+					//we found equality
 					//console.log("merge!!!");
 					node.equivalent.forEach(function(eq,index){
 						let target = findOpen(eq);
@@ -366,6 +409,7 @@ function findOpen(node){
 	}
 	return fuente;
 }
+
 
 //removes lines of node and its children
 function removeLinesAndChildrenOf(node,isRight){
