@@ -14,8 +14,10 @@ const families = [	"phylum",
 					"infraspecies",
 					"subspecies"];
 //todo tasks:
-/*
-Renames 
+/**
+* -Some nodes ares spliting and merging at the same time 
+*
+*
 */
 //rename cambia el nombre si o si
 
@@ -165,6 +167,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes){
 }
 
 //preguntar sobre el conteo de splits
+//tasks like merges and splits stop being exclusive
 function name_changes_left(node_list){
 	node_list.forEach(
 		function(node){

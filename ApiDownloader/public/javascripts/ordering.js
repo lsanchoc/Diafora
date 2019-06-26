@@ -1,4 +1,10 @@
-
+/**
+* TODO
+* sort must ascend to parent nodes
+*
+*
+*
+*/
 
 //from https://codeburst.io/binary-search-in-javascript-a-practical-example-7fda60ce59a1
 //this binary search is customized to be used on taxons of our hierarchy
@@ -150,17 +156,6 @@ function updateP(options,p_lines,yPosL,yPosR){
 }
 
 
-
-//using functions from counting module
-async function resetTrees(){
-	//reset tree 1 from draw system
-	proccesByLevel(tree,resetSort);
-	proccesByLevel(tree2,resetSort);
-
-	//when moving nodes this should be done
-	forceRenderUpdate(initOptions);
-
-}
 
 
 //sort node children in alphabetical order
