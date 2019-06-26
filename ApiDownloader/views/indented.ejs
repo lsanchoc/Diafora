@@ -13,7 +13,7 @@
 	<script src = "/javascripts/lineSystem.js" ></script>
 	<script src = "/javascripts/filter.js" ></script>
 	<script src = "/javascripts/ordering.js" ></script>
-	
+
   </head>
   <body>
 
@@ -86,7 +86,7 @@
 		<label>Lines</label>
 			<label class="switch">
 			<input type="checkbox" name="lineas" onclick="onLineChange()" checked/>
-		 <span class="slider_switch round"></span>
+		 <span class="slider_switch round other_slider_switch"></span>
 		</label>
 		</div>
 
@@ -94,19 +94,10 @@
 		<label>Bars</label>
 		<label class="switch">
 			<input type="checkbox" name="bars" onclick="onBarsChange()"/>
-		 <span class="slider_switch round"></span>
+		 <span class="slider_switch round other_slider_switch"></span>
 		</label>
 		</div>
 		
-		<!--
-		<div class="encircledBox">
-		<label>Expand</label>
-		<label class="switch">
-			<input type="checkbox" name="expand" onclick="onExpand()"/>
-		 <span class="slider_switch round"></span>
-		</label>
-		</div>
-		-->		
 		<div class="encircledBox">
 		<label></label>
 		<label class="switch">
@@ -126,7 +117,8 @@
 		oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
 		</div>
 
-		<button type=“button” class=" matrix buttonsHeader " onclick="onMatrixClicked()">Matrix</button>
+		<!-- <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>-->
+		<button type="button" class="matrix"  onclick="onMatrixClicked()"></button>
 	
 		<!--Function comes from ordering menu script -->
 		<button type=“button” class="buttonsHeader" onclick="onSalir()">Exit</button>
