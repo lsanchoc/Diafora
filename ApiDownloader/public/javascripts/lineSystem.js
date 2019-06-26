@@ -36,10 +36,13 @@ function clearLines(){
 function get_all_lines(){
 
 	let all_lines = [];
-	//console.log(lines);
+
+
+	if(interface_variables.congruence){
+		all_lines = all_lines.concat(lines.equals);
+	}
 	if(interface_variables.split){
 		all_lines = all_lines.concat(lines.splits);
-		//console.log(lines.splits);
 	}
 	if(interface_variables.merge){
 		all_lines = all_lines.concat(lines.merges);
@@ -51,9 +54,18 @@ function get_all_lines(){
 		all_lines = all_lines.concat(lines.moves);
 	}
 
-	if(interface_variables.congruence){
-		all_lines = all_lines.concat(lines.equals);
-	}
+	//sort by size draw first the biggest lines and on top the smaller ones
+	all_lines.sort(function (lineA, lineB) {
+	  if (lineA.a > lineB.a) {
+	    return 1;
+	  }
+	  if (lineA.a < lineB.a) {
+	    return -1;
+	  }
+	  // a must be equal to b
+	  return 0;
+	});
+
 	return all_lines;
 }
 
