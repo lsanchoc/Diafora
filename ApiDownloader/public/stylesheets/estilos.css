@@ -1,57 +1,53 @@
-
 :root {
-  --main-bg-color: #268970;
-  --main-color: #054357;
-  --secondary-color: #BED948;
-  --accent-color: #FB7422;
+  --grey-color: #7f7f7f;
+  --main-bg-color: #7f7f7f;
+  --main-color: #7f7f7f;
+  --secondary-color: #CCCCCC;
+  --accent-color: #4c4c4c;
 }
 
 *{
-	background-color: var(--main-color);
+	background-color: var(--main-bg-color);
 }
 
 h1{
 	margin-left: 20px;
-	font-size: 24px;
-  color: black;
+	font-size: 16pt;
+  color: white;
   text-align: center;
 }
 
+#label{
+  color: white;
+  font-size: 12pt;
+
+}
 
 #content{
 	position: absolute;
 	margin-top: 0%;
 	padding: 0px;
-	background-color: #ffffff;
+	background-color: var(--main-color);
 	width: 100%;
 	height: 100%;
-  vertical-align:  center;
+  vertical-align: center;
 }
-.Taxonomy1{
-  position: absolute;
+
+.Taxonomy{
+  position: relative;
   width: 100px;
   height: 34px;
   left: 20px;
   top: 0px;
   color: white;
-  font-size: 18px;
-}
-
-.Taxonomy2{
-  position: absolute;
-  width: 100px;
-  height: 34px;
-  left: 20px;
-  top: 50px;
-  color: white;
-  font-size: 18px;
+  font-size: 8px;
 }
 
 .file_input{
   width: 80%;
   font-size: 16pt;
   text-align: left;
-  background:#4CAF50;
+  background: var(--accent-color);
   color: white;
   margin-bottom: 3%;
   text-align: left;
@@ -60,7 +56,7 @@ h1{
 }
 
 .file_input:hover{
-  background:#000;
+  background: black;
   color: white;
 }
 
@@ -70,24 +66,20 @@ h1{
   text-align: center;
 }
 
-.not_important_button{
+.important_button{
     float: bottom;
     margin-top: 3%;
     color: white;
-    background:#2C8F30;
+    background: var(--accent-color);
     margin-left: 5px;
     margin-right: 5px;
     width: 20%;
     padding: 2px;
-
 }
-
-
 
 .selection_body{
   text-align: center
 }
-
 
 .file1{
   position: absolute;
@@ -154,12 +146,11 @@ h1{
   font-size: 14px;
   border-radius: 5px;
 
-
 }
 
 .table{
   width: 50%;
-  margin-left: 300px;
+  margin-left: 25%;
 
 }
 
@@ -167,6 +158,5 @@ label{
   color: black;
   font-size: 24px;
   text-align: left;
-
 
 }
