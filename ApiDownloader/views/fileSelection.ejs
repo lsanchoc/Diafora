@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,17 +11,16 @@
 	<h1>Select Taxonomies</h1>
 	<p id="error_text" class="alert_display"></p>
 	<div id="content" class="selection_body">	
-		<table class = "table">
+		<table class ="table">
 		<td width="30%"><label id="label">First Taxonomy</label></td>
-		<td><input id="file1" class="file_input" type="file" name="Taxonomy1" value="Taxonomy1" accept=".json"></input></br></td>
+		<td><input id="file1" class="file_input" type="file" name="Taxonomy1" value="Taxonomy" accept=".json"></input></br></td>
 		<tr>
-		<td width="50%"><label id="label">Second Taxonomy</label></td>
-		<td><input id="file2" class="file_input"type="file" name="Taxonomy2" value="Taxonomy2" accept=".json"></input></br></td>
+		<td width="30%"><label id="label">Second Taxonomy</label></td>
+		<td><input id="file2" class="file_input"type="file" name="Taxonomy2" value="Taxonomy" accept=".json"></input></br></td>
 		</table>
-		<input type="button" onclick="VerificarDatos()" name="Save" id="Save" class="Save" value="Load"></br>
-		<button onclick="onDownload()" class="not_important_button">Download from Col</button>
-		<button class="not_important_button">About</button>
-		
+		<button onclick="VerificarDatos()" id="Save" class="important_button">Load</button>
+		<button onclick="onDownload()" class="important_button">Download from Col</button>
+		<button class="important_button">About</button>
 	</div>
 </body>
 </html>
