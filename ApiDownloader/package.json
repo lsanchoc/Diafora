@@ -16,5 +16,21 @@
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.10"
-  }
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "prettier": "^1.18.2"
+  },
+  "prettier":{
+	  "trailingComma": "es5",
+	  "tabWidth": 4,
+	  "semi": true,
+	  "singleQuote": true
+	}
 }

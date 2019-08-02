@@ -1,77 +1,135 @@
-/** {
-    margin:0;
-    padding:0;
-}*/
+/* Search the size of header to change for --top-margin */
+
+:root {
+
+  --grey-color: #7f7f7f;
+  --main-bg-color: #7f7f7f;
+  --main-color: #054357;
+  --secondary-color: #CCCCCC;
+  --accent-color: #FB7422;
+  --top-margin: 10%;
+
+  --remove-color: #D50000;      
+  --add-color: #38B03D;        
+  --split-color: #C700BA;  
+  --merge-color: #FFA452;    
+  --rename-color: #1700E7;    
+  --move-color: #09D3D3;    
+  --equal-color: #e8e8e8;        
+  --focus-color: #50500020;
+  --other-color: #4c4c4c;
+}
 
 body {
 	margin: 0px;
 	padding: 0px;
-	background: #4C830C;
+	background: var(--main-bg-color);
 	font-family: 'Raleway', sans-serif;
-	font-size: 11pt;
+	font-size: 12pt;
 	font-weight: 400;
 
 }
 
+.main_body{
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+
+}
+
+/*Stadistics side*/
+.left{
+  width: 20%;
+  background: #cccccc;
+  text-align: center;
+
+}
+
+/*Sketch side*/
+.right{
+  /*top: var(--top-margin);*/
+  right: 0;
+  width: 80%;
+}
+
+.top{
+  top: var(--top-margin);
+}
+
+/*Tables style*/
+.table_stadistic{
+  position: relative;
+  border-collapse: collapse;
+  text-align: right;
+  font-size:8pt;
+  color: #222222;
+  border-bottom: 1px solid #999999;
+  left-padding: 8px;
+  width: 80%;
+  margin-left: 10%;
+}
+
+th, td {
+  text-align: right;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {background-color: #f5f5f5;}
+
+/*Separator Style*/
+.separator{
+  size: "6";
+  width: "50%";
+  color: "#cccccc";
+}
+
 .header{
     margin:auto;
-    width: 35%;
-    padding: 10px;
+    width: 70%;
+    padding: 0px;
     text-align: center;
-    margin-top: 10%;
-    background-color: #7DB343;	
+    margin-top: 5%;
+    background-color: var(--secondary-color);	
 }
+
+
 .footerText{
-    position: absolute;
-    bottom: 5px;
-    text-align:center;
-    left: 0; 
-	right: 0; 
+  position: absolute;
+  bottom: 5px;
+  text-align:center;
 	margin-left: auto; 
 	margin-right: auto; 
 	width: 80%;
-	font-size: 3pt;
+	font-size: 14pt;
 }
 
-.headerTittle{
-	
+
+.textTittle{
     padding: 2px;
     text-align: center;
-    margin-top: 1%;
-    font-size: 6pt;
-    background-color: #7DB343;
-
-
+    font-size: 30pt;
 }
-.vis_button{
-    position:  absolute;
-    top: 3%;
-    right: 10%;
+
+.buttonsHeader{
+    position:  relative;
+    top: 4%; 
+    margin-right:10px;
     font-size: 15pt;
     background-color: rgba(0,0,0,0);
-    display: inline-block;
+    display: inline-grid;
     border-radius: 5px;
+    color: white;
+    font-size: 10pt;
+
 }
 
-.sort_button{
-    position:  absolute;
-    top: 3%;
-    right: 3%;
-    font-size: 15pt;
-    background-color: rgba(0,0,0,0);
-    display: inline-block;
-    border-radius: 5px;
+.matrix{
+  width: 40px;
+  height: 20px;
 }
 
-.reset_button{
-    position:  absolute;
-    top: 3%;
-    right: 17%;
-    font-size: 15pt;
-    background-color: rgba(0,0,0,0);
-    display: inline-block;
-    border-radius: 5px;
-}
 
 .button2{
 	margin-left: -55px;
@@ -80,11 +138,24 @@ body {
 
 
 p{
-	margin-top: 18%;
+	margin-top: 18 %;
 	color: white;
         font-size: 17px;
 }
 
+.encircledBox{
+  display: inline-grid;
+  padding: 0px;
+  margin-right: 10px;
+  font-size: 12px;
+  color: white;
+  position:relative;
+  width: 5%;
+
+  text-align: left;
+}
+
+/*
 .infoSquare{
     position: absolute;
     bottom: 2%;
@@ -106,7 +177,7 @@ p{
     font-size: 15pt;
     margin: 0 auto;
     text-align:  center;
-}
+} */
 
 .infoBody{
     color: black;
@@ -117,33 +188,36 @@ p{
 .optionSquare{
     position: absolute;
     left: 2%;
-    top: 4%;
-    height: 50%;
+    height: 10%;
+    width: 100%;
+    vertical-align: left;
+    top: 1.5%;
+
 }
 
-
-
 .slidecontainer {
-  width: 40%; /* Width of the outside container */
-  margin-top: 35px;
-  margin-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position:relative;
+  display: inline-grid;
+  vertical-align: bottom;
 
 }
 
 /* The slider itself */
+
 .slider {
-  -webkit-appearance: slider-vertical;
+
+  -webkit-appearance: slider-horizontal;
   appearance: none;
-  width: 30px; /* Full-width */
-  height: 80%; /* Specified height */
+  width: 100px; /* Full-width */
+  height: 30px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
   transition: opacity .2s;
-  position:absolute;
-  margin-left: 2%;
-  margin-top:2%;
+      
 
 }
 
@@ -171,19 +245,18 @@ p{
 }
 
 .topSpacer {
-  display: inline-block;
+  display: inline-grid;
   height: 30%;
 }
 
 /* The switch - the box around the slider */
 .switch {
   position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-
+  display: inline-grid;
+  width: 30px;
+  height: 17px;
   border: 1px;
-
+  
 }
 
 /* Hide default HTML checkbox */
@@ -210,45 +283,62 @@ p{
 .slider_switch:before {
   position: absolute;
   content: "";
-  height: 14px;
-  width: 14px;
-  left: 4px;
-  bottom: 4px;
+  height: 11px;
+  width: 11px;
+  left: 2px;
+  bottom: 3px;
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
 }
+
+
+/* Rounded sliders */
+.slider_switch.round {
+  border-radius: 5px;
+}
+
+.slider_switch.round:before {
+  border-radius: 50%;
+}
+
+
+
 /*Colors of diferent sliders*/
 input:checked + .slider_switch {
   background-color: #2196F3;
 }
 
 input:checked + .remove_slider_switch {
-  background-color: #ff6060;
+  background-color: var(--remove-color);
 }
 
 input:checked + .add_slider_switch {
-  background-color: #B5ffB5;
+  background-color: var(--add-color);
 }
 
 input:checked + .congruence_slider_switch {
-  background-color: #e8e8e8;
+  background-color: var(--equal-color);
 }
 
 input:checked + .merge_slider_switch {
-  background-color: #ff9a47;
+  background-color: var(--merge-color);
 }
 
 input:checked + .split_slider_switch {
-  background-color: #e066ff;
+  background-color: var(--split-color);
 }
 
 input:checked + .rename_slider_switch {
-  background-color: #a37c58;
+  background-color: var(--rename-color);
 }
 
 input:checked + .move_slider_switch {
-  background-color: #8888CC;
+  background-color: var(--move-color);
+}
+
+input:checked + .other_slider_switch {
+  background-color: var(--other-color);
 }
 
 input:focus + .slider_switch {
@@ -259,27 +349,4 @@ input:checked + .slider_switch:before {
   -webkit-transform: translateX(18px);
   -ms-transform: translateX(18px);
   transform: translateX(18px);
-}
-
-/* Rounded sliders */
-.slider_switch.round {
-  border-radius: 34px;
-}
-
-.slider_switch.round:before {
-  border-radius: 50%;
-}
-
-
-
-.encircledBox{
-  border: 1px;
-  border-radius:5px;
-  border-color: #00000070;
-  border-style: solid;
-  display: inline-block;
-  padding: 5px;
-  margin-right: 20px;
-
-  position:relative;
 }

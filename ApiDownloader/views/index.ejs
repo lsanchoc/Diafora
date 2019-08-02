@@ -2,43 +2,46 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/styleDownloader.css' />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src = "/javascripts/xmlToJSON.js" ></script>
 	<script src = "/javascripts/hierachyThreeDownloader.js" ></script>
 	<script src = "/javascripts/handleQueryIndex.js" ></script>
   </head>
   <body>
+  	<button class="interfaceButton vis_button" onclick="onSalir()">Volver</button>
     <div class="header">
-		<h1>
+		<h1 class="textTittle">
 			Taxonomy Downloader
 		</h1>
 	
-		<button class="vis_button" onclick="onSalir()">Volver</button>
-	<div>
-		<label for="yearL">Year</label>
-		&nbsp;
-		<input type="number" id = "year" name="year">
-	</div><br>
-		<div class="button2">
-		<label for="taxonL">Target Taxon</label>
-			&nbsp;
-		<input type="text" id = "name" name="taxon">
-		<br>
-		<br>
-		<button type="button" id = "searchButton">Buscar</button>
-	</div>
+	<table class="centeredTable">
+	<tr >
+		<td class="spacedTableRow">
+		<label class="downloaderInputLabel" for="yearL">Year</label>
+		</td>
+		<td class="spacedTableRow"> 
+		<input class = "downloaderInput" type="number" id = "year" name="year"  title="The year of of the taxonomy consulted" placeholder="Year">
+		</td>
+	</tr>
+	<tr >
+		<td class="spacedTableRow">
+			<label class="downloaderInputLabel" for="taxonL">Target Taxon</label>
+		</td>
+		<td class="spacedTableRow">
+			<input class = "downloaderInput" type="text" id = "name" name="taxon" title="The name of the taxon consulted" placeholder="Taxon name">
+		</td>
+	</tr>
+	</table>
+	<button type="button" id = "searchButton" class="interfaceButton search_button">Buscar</button>
 	<div id = "resultadoName">
 		<p id = "notify"></p>
     </div>
     <div id = "resultadoId">
     </div>
-    
     </div>
-		<p>
+		<p class="footerText">
 		This webside downloads taxonomies from  CATALOGUE OF LIFE (www.catalogueoflife.org) in json format, also you can download images from ENCYCOPEDIA OF LIFE if you want.
 		</p>  
-	</div>
-	</div>
   </body>
 </html>

@@ -1,0 +1,196 @@
+/*color scheme https://coolors.co/d4e27b-c8da56-bcd231-9aac29-788620*/
+
+:root {
+  --main-bg-color: #268970;
+  --main-color: #054357;
+  --secondary-color: #BED948;
+  --accent-color: #FB7422;
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	background: var(--main-color);
+	font-family: 'Raleway', sans-serif;
+	font-size: 12pt;
+	font-weight: 400;
+
+}
+
+.header{
+    position:absolute;
+    margin:auto;
+    width: 70%;
+    height: 70%;
+    left:15%;
+    padding: 10px;
+    top:10%;
+    text-align: center;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    align-items: center;
+}
+
+
+.centeredTable{
+  margin:auto;
+  text-align: left;
+  padding-top: 20px;
+}
+
+.spacedTableRow{
+  padding-top: 20px;
+}
+
+.headerTittle{
+	
+    padding: 2px;
+    text-align: center;
+    margin-top: 1%;
+    font-size: 6pt;
+    background-color: #7DB343;
+}
+
+.textTittle{
+    padding: 2px;
+    text-align: center;
+    font-size: 30pt;
+    color: white;
+}
+
+.downloaderInput{
+  display: block;
+  width: 100%;
+  padding-top: 20px;
+  border: none;
+  color: white;
+  background: var(--secondary-color);
+  font-size: 20pt;
+  transition: .3s ease;
+  border-bottom: 2px solid var(--accent-color);
+
+}
+
+.downloaderInputLabel{
+  font-size: 18pt;
+  color: white;
+  font-weight: bold;
+  margin-right: 25px;
+
+}
+
+.vis_button{
+    position:  absolute;
+    top: 3%;
+    right: 10%;
+}
+
+.search_button{
+  margin-top: 20px;
+}
+
+.sort_button{
+    position:  absolute;
+    top: 3%;
+    right: 3%;
+    font-size: 15pt;
+    background-color: rgba(0,0,0,0);
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.reset_button{
+    position:  absolute;
+    top: 3%;
+    right: 17%;
+    font-size: 15pt;
+    background-color: rgba(0,0,0,0);
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.button2{
+	margin-left: -55px;
+
+}
+
+.footerText{
+  position: absolute;
+  bottom: 5%;
+  left: 10%;
+  width: 80%;
+	color: white;
+  font-size: 17px;
+}
+
+.infoSquare{
+    position: absolute;
+    bottom: 2%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 280px;
+    height: 20%;
+    color: #000;
+    border-style: solid;
+    border-color: #000000;
+    border-radius: 6px;
+    border-width: 2px;
+    background-color: white;
+}
+
+.infoTitle{
+    color: white;
+    font-size: 15pt;
+    margin: 0 auto;
+    text-align:  center;
+}
+
+.infoBody{
+    color: white;
+    margin: 0 auto;
+    font-size: 11pt;
+}
+
+.optionSquare{
+    position: absolute;
+    left: 2%;
+    top: 4%;
+    height: 50%;
+}
+
+.interfaceButton {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #77b55a), color-stop(1, #72b352));
+  background:-moz-linear-gradient(top, #77b55a 5%, #72b352 100%);
+  background:-webkit-linear-gradient(top, #77b55a 5%, #72b352 100%);
+  background:-o-linear-gradient(top, #77b55a 5%, #72b352 100%);
+  background:-ms-linear-gradient(top, #77b55a 5%, #72b352 100%);
+  background:linear-gradient(to bottom, #77b55a 5%, #72b352 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77b55a', endColorstr='#72b352',GradientType=0);
+  background-color:#77b55a;
+  -moz-border-radius:4px;
+  -webkit-border-radius:4px;
+  border-radius:4px;
+  border:2px solid #4b8f29;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:18px;
+  font-weight:bold;
+  padding:7px 16px;
+  text-decoration:none;
+  text-shadow:0px 2px 0px #5b8a3c;
+}
+
+.interfaceButton:hover {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #72b352), color-stop(1, #77b55a));
+  background:-moz-linear-gradient(top, #72b352 5%, #77b55a 100%);
+  background:-webkit-linear-gradient(top, #72b352 5%, #77b55a 100%);
+  background:-o-linear-gradient(top, #72b352 5%, #77b55a 100%);
+  background:-ms-linear-gradient(top, #72b352 5%, #77b55a 100%);
+  background:linear-gradient(to bottom, #72b352 5%, #77b55a 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#72b352', endColorstr='#77b55a',GradientType=0);
+  background-color:#72b352;
+}
+

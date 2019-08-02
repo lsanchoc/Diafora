@@ -18,11 +18,11 @@
  *
  */
 
-var xmlToJSON = (function () {
+var xmlToJSON = function() {
+    this.version = '1.3.4';
 
-    this.version = "1.3.4";
-
-    var options = { // set up the default options
+    var options = {
+        // set up the default options
         mergeCDATA: true, // extract cdata and merge with text
         grokAttr: true, // convert truthy attributes to boolean, etc
         grokText: true, // convert truthy text/attr to boolean, etc
@@ -36,18 +36,18 @@ var xmlToJSON = (function () {
         attrsAsObject: true, // if false, key is used as prefix to name, set prefix to '' to merge children and attrs.
         stripAttrPrefix: true, // remove namespace prefixes from attributes
         stripElemPrefix: true, // for elements of same name in diff namespaces, you can enable namespaces and access the nskey property
-        childrenAsArray: true // force children into arrays
+        childrenAsArray: true, // force children into arrays
     };
 
     var prefixMatch = new RegExp(/(?!xmlns)^.*:/);
     var trimMatch = new RegExp(/^\s+|\s+$/g);
 
-    this.grokType = function (sValue) {
+    this.grokType = function(sValue) {
         if (/^\s*$/.test(sValue)) {
             return null;
         }
         if (/^(?:true|false)$/i.test(sValue)) {
-            return sValue.toLowerCase() === "true";
+            return sValue.toLowerCase() === 'true';
         }
         if (isFinite(sValue)) {
             return parseFloat(sValue);
@@ -55,12 +55,11 @@ var xmlToJSON = (function () {
         return sValue;
     };
 
-    this.parseString = function (xmlString, opt) {
+    this.parseString = function(xmlString, opt) {
         return this.parseXML(this.stringToXML(xmlString), opt);
-    }
+    };
 
-    this.parseXML = function (oXMLParent, opt) {
-
+    this.parseXML = function(oXMLParent, opt) {
         // initialize options
         for (var key in opt) {
             options[key] = opt[key];
@@ -68,7 +67,7 @@ var xmlToJSON = (function () {
 
         var vResult = {},
             nLength = 0,
-            sCollectedTxt = "";
+            sCollectedTxt = '';
 
         // parse namespace information
         if (options.xmlns && oXMLParent.namespaceURI) {
@@ -87,22 +86,27 @@ var xmlToJSON = (function () {
 
                 if (options.stripAttrPrefix) {
                     attribName = oAttrib.name.replace(prefixMatch, '');
-
                 } else {
                     attribName = oAttrib.name;
                 }
 
                 if (options.grokAttr) {
-                    vContent[options.valueKey] = this.grokType(oAttrib.value.replace(trimMatch, ''));
+                    vContent[options.valueKey] = this.grokType(
+                        oAttrib.value.replace(trimMatch, '')
+                    );
                 } else {
-                    vContent[options.valueKey] = oAttrib.value.replace(trimMatch, '');
+                    vContent[options.valueKey] = oAttrib.value.replace(
+                        trimMatch,
+                        ''
+                    );
                 }
 
                 if (options.xmlns && oAttrib.namespaceURI) {
                     vContent[options.namespaceKey] = oAttrib.namespaceURI;
                 }
 
-                if (options.attrsAsObject) { // attributes with same local name must enable prefixes
+                if (options.attrsAsObject) {
+                    // attributes with same local name must enable prefixes
                     vAttribs[attribName] = vContent;
                 } else {
                     vResult[options.attrKey + attribName] = vContent;
@@ -111,12 +115,17 @@ var xmlToJSON = (function () {
 
             if (options.attrsAsObject) {
                 vResult[options.attrKey] = vAttribs;
-            } else { }
+            } else {
+            }
         }
 
         // iterate over the children
         if (oXMLParent.hasChildNodes()) {
-            for (var oNode, sProp, vContent, nItem = 0; nItem < oXMLParent.childNodes.length; nItem++) {
+            for (
+                var oNode, sProp, vContent, nItem = 0;
+                nItem < oXMLParent.childNodes.length;
+                nItem++
+            ) {
                 oNode = oXMLParent.childNodes.item(nItem);
 
                 if (oNode.nodeType === 4) {
@@ -124,11 +133,14 @@ var xmlToJSON = (function () {
                         sCollectedTxt += oNode.nodeValue;
                     } else {
                         if (vResult.hasOwnProperty(options.cdataKey)) {
-                            if (vResult[options.cdataKey].constructor !== Array) {
-                                vResult[options.cdataKey] = [vResult[options.cdataKey]];
+                            if (
+                                vResult[options.cdataKey].constructor !== Array
+                            ) {
+                                vResult[options.cdataKey] = [
+                                    vResult[options.cdataKey],
+                                ];
                             }
                             vResult[options.cdataKey].push(oNode.nodeValue);
-
                         } else {
                             if (options.childrenAsArray) {
                                 vResult[options.cdataKey] = [];
@@ -138,11 +150,12 @@ var xmlToJSON = (function () {
                             }
                         }
                     }
-                } /* nodeType is "CDATASection" (4) */
-                else if (oNode.nodeType === 3) {
+                } /* nodeType is "CDATASection" (4) */ else if (
+                    oNode.nodeType === 3
+                ) {
                     sCollectedTxt += oNode.nodeValue;
-                } /* nodeType is "Text" (3) */
-                else if (oNode.nodeType === 1) { /* nodeType is "Element" (1) */
+                } /* nodeType is "Text" (3) */ else if (oNode.nodeType === 1) {
+                    /* nodeType is "Element" (1) */
 
                     if (nLength === 0) {
                         vResult = {};
@@ -162,7 +175,6 @@ var xmlToJSON = (function () {
                             vResult[sProp] = [vResult[sProp]];
                         }
                         vResult[sProp].push(vContent);
-
                     } else {
                         if (options.childrenAsArray) {
                             vResult[sProp] = [];
@@ -174,7 +186,8 @@ var xmlToJSON = (function () {
                     }
                 }
             }
-        } else if (!sCollectedTxt) { // no children and no text, return null
+        } else if (!sCollectedTxt) {
+            // no children and no text, return null
             if (options.childrenAsArray) {
                 vResult[options.textKey] = [];
                 vResult[options.textKey].push(null);
@@ -190,41 +203,43 @@ var xmlToJSON = (function () {
                     vResult[options.textKey] = value;
                 }
             } else if (options.normalize) {
-                vResult[options.textKey] = sCollectedTxt.replace(trimMatch, '').replace(/\s+/g, " ");
+                vResult[options.textKey] = sCollectedTxt
+                    .replace(trimMatch, '')
+                    .replace(/\s+/g, ' ');
             } else {
                 vResult[options.textKey] = sCollectedTxt.replace(trimMatch, '');
             }
         }
 
         return vResult;
-    }
-
+    };
 
     // Convert xmlDocument to a string
     // Returns null on failure
-    this.xmlToString = function (xmlDoc) {
+    this.xmlToString = function(xmlDoc) {
         try {
-            var xmlString = xmlDoc.xml ? xmlDoc.xml : (new XMLSerializer()).serializeToString(xmlDoc);
+            var xmlString = xmlDoc.xml
+                ? xmlDoc.xml
+                : new XMLSerializer().serializeToString(xmlDoc);
             return xmlString;
         } catch (err) {
             return null;
         }
-    }
+    };
 
     // Convert a string to XML Node Structure
     // Returns null on failure
-    this.stringToXML = function (xmlString) {
+    this.stringToXML = function(xmlString) {
         try {
             var xmlDoc = null;
 
             if (window.DOMParser) {
-
                 var parser = new DOMParser();
-                xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
                 return xmlDoc;
             } else {
-                xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc = new ActiveXObject('Microsoft.XMLDOM');
                 xmlDoc.async = false;
                 xmlDoc.loadXML(xmlString);
 
@@ -233,10 +248,14 @@ var xmlToJSON = (function () {
         } catch (e) {
             return null;
         }
-    }
+    };
 
     return this;
-}).call({});
+}.call({});
 
-if (typeof module != "undefined" && module !== null && module.exports) module.exports = xmlToJSON;
-else if (typeof define === "function" && define.amd) define(function () { return xmlToJSON });
+if (typeof module != 'undefined' && module !== null && module.exports)
+    module.exports = xmlToJSON;
+else if (typeof define === 'function' && define.amd)
+    define(function() {
+        return xmlToJSON;
+    });
