@@ -8,7 +8,7 @@
 	<li>Go to the folder "api downloader".</li>
 	<li>Run the command npm install (this is to install the dependencies).</li>
 	<li>Run the command npm start.</li>
-	<li><a target="_blank" rel="noopener noreferrer" href="http://localhost:3000" >Acceder a la direccion en que corre el servidor</a></li>
+	<li><a target="_blank" rel="noopener noreferrer" href="http://localhost:3000" >Access the address where the server is running.</a></li>
 </ul>
 </br>
 <h3>Authors and acknowledgments </h3>
