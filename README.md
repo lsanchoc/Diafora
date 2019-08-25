@@ -1,20 +1,20 @@
 <h1>TaxComp</h1>
 
-<p>Este proyecto busca explorar nuevas herramientas y metodos para la visualizacion de grandes jerarquias taxonomicas</p>
-<h3>Como correr el proyecto:</h3>
+<p>Diaforá is a tool that addresses the problem of visualizing differences between two versions of a biological taxonomy. It uses edge-drawing as the main comparison method in order to visualize differences between the two versions.  Differences are due to splits, merges, taxa moved from a group into another, as well as renamed, added or exclused taxa.</p>
+<h3>How to run this project?</h3>
 <ul style="list-style-type:circle">
-	<li>Clonar o descargar este repositorio</li>
-	<li>Instalar node js</li>
-	<li>Entrar a la carpeta api downloader</li>
-	<li>Correr el comando npm install(Esto para instalar las dependencias del proyecto)</li>
-	<li>Correr el comando npm start</li>
+	<li>Clone or download this repository.</li>
+	<li>Install node js.</li>
+	<li>Go to the folder "api downloader".</li>
+	<li>Run the command npm install (this is to install the dependencies).</li>
+	<li>Run the command npm start.</li>
 	<li><a target="_blank" rel="noopener noreferrer" href="http://localhost:3000" >Acceder a la direccion en que corre el servidor</a></li>
 </ul>
 </br>
-<h3>Utilizacion del repositorio</h3>
+<h3>Authors and acknowledgments </h3>
 <ul style="list-style-type:circle">
-	<li>Todo cambio se sube a la rama dev, y pasa a ser parte de master hasta ser aprovado</li>
-	<li>Antes de realizar un push debe de actualizar su version local del repositorio utilizando el comando pull</li>
-	<li>Solo debe agregar al push los archivos modificados</li>
-	<li>No se debe agregar al repositorio la carpeta de node modules, esta se crea al correr npm install</li>
+	<li>This work is part of a research project by Lilliana Sancho-Chavarría (*), Carlos Gómez-Soza (*), Fabian Beck (**), and Erick Mata-Montero (*)</li>
+	<li>(*) Escuela de Computación, Instituto Tecnológio de Costa Rica</li>
+	<li>(**) paluno, University of Düisburg-Essen, Germany</li>
+	<li>This research is funded in part by Instituto Tecnológico de Costa Rica. We also want to thank Computer Science student Bryan Hernández for his support on data acquisition and formatting.</li>
 </ul>
