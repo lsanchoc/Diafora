@@ -1,4 +1,4 @@
-<h1>TaxComp</h1>
+<h1>Diaforá</h1>
 
 <p>Diaforá is a tool that addresses the problem of visualizing differences between two versions of a biological taxonomy. It uses edge-drawing as the main comparison method in order to visualize differences between the two versions.  Differences are due to splits, merges, taxa moved from a group into another, as well as renamed, added or exclused taxa.</p>
 <h3>How to run this project?</h3>
